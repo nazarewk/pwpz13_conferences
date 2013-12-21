@@ -2,7 +2,7 @@ pwpz13_conferences
 ==================
 
 
-Installing Python 2.7.6
+Installing Python 2.7.6 @ Windows
 ------------------------
 Install:
 
