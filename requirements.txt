@@ -24,5 +24,3 @@ django-extensions==1.2.5
 
 # Anti-logout when not AFK
 django-session-security==2.1.2
-
-#git commit test
