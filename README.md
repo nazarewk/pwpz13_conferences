@@ -12,7 +12,7 @@ Installing Python 2.7.6 @ Windows
 
         C:\Python27\Scripts;C:\Python27\; ...
 
-3. Download & install compiler for some plugins:
+3. Download & install Visual Studio 2008 Express Edition (must be 2008!):
 
         http://go.microsoft.com/?linkid=7729279
 
