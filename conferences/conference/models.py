@@ -50,9 +50,15 @@ class ConferencesFile(models.Model):
 
     https://docs.djangoproject.com/en/1.6/topics/db/models/#multi-table-inheritance
     '''
+
     author = models.ForeignKey(User)
     file = FilerFileField()
-    rejected = models.BooleanField(default=False)
+    status = models.CharField(max_length=2, choices=(
+        ('W8', _('Waiting')),
+        ('OK', _('Accepted')),
+        ('NO', _('Rejected')),
+        ('ER', _('Spam')),
+    ))
     extra_info = models.CharField(max_length=128)
 
 
@@ -171,10 +177,9 @@ class Payment(models.Model):
     short_description = models.CharField(max_length=128)
     full_description = models.TextField(blank=True)
 
-    currency_choices = (
+    currency = models.CharField(max_length=3, choices=(
         ('PLN', 'Złote polskie'),
-    )
-    currency = models.CharField(max_length=3, default='PLN')
+    ))
     amount = models.DecimalField(max_digits=10, decimal_places=3)
     paid = models.DecimalField(max_digits=10, decimal_places=3)
 
