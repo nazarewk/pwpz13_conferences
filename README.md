@@ -18,8 +18,7 @@ Installing Python 2.7.6 @ Windows
         
 Installing PIP
 --------------
-
-        http://www.pip-installer.org/en/latest/installing.html
+Follow instructions http://www.pip-installer.org/en/latest/installing.html
 
 
 Installing Django CMS 3 beta
