@@ -29,7 +29,13 @@ Installing requirements.txt
 
         pip install -r requirements.txt
         
+
 Local settings
 ----------------
-For development settings create 'local_settings.py' in same folder as 'settings.py' and put modifications there.
-        
+For local development settings create 'local_settings.py' in same folder as 'settings.py' and put modifications there.
+
+Starting development server
+------------------------
+
+    python manage.py runserver_plus
+
