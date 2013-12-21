@@ -1,4 +1,12 @@
+# Django + Python
 *.log
 *.pot
 *.pyc
 local_settings.py
+
+# SQLite
+*.sqlite3
+
+# IntelliJ IDEA project files
+*.iml
+.idea
