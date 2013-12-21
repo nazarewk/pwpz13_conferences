@@ -15,6 +15,11 @@ Installing Python 2.7.6 @ Windows
 3. Download & install Visual Studio 2008 Express Edition (must be 2008!):
 
         http://go.microsoft.com/?linkid=7729279
+        
+Installing PIP
+--------------
+
+        http://www.pip-installer.org/en/latest/installing.html
 
 
 Installing Django CMS 3 beta
