@@ -34,8 +34,13 @@ Local settings
 ----------------
 For local development settings create 'local_settings.py' in same folder as 'settings.py' and put modifications there.
 
+Synchronizing database
+----------------------
+
+        manage.py syncdb
+
 Starting development server
 ------------------------
 
-    python manage.py runserver_plus
+        python manage.py runserver_plus
 

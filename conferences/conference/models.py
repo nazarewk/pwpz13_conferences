@@ -52,6 +52,8 @@ class ConferencesFile(models.Model):
     '''
     author = models.ForeignKey(User)
     file = FilerFileField()
+    rejected = models.BooleanField(default=False)
+    extra_info = models.CharField(max_length=128)
 
 
 class Summary(ConferencesFile):

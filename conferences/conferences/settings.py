@@ -104,7 +104,7 @@ STATIC_ROOT = os.path.join(PROJ_DIR, 'static')
 STATIC_URL = SITE_URL + '/static/'
 
 STATICFILES_DIRS = (
-    os.path.join(PROJ_DIR, 'static'),
+    # os.path.join(PROJ_DIR, 'static'),
 )
 
 STATICFILES_FINDERS = (
@@ -205,7 +205,7 @@ def uniquify(seq):
 
 
 try:
-    from .local_settings import *
+    from local_settings import *
 except ImportError:
     pass
 
