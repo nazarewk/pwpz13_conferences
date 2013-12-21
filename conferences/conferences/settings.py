@@ -160,7 +160,10 @@ INSTALLED_APPS += [
     'django.contrib.admindocs',
     'django.contrib.flatpages',
     'django_extensions',
-    'sekizai'
+    'sekizai',
+    'filer',
+    'easy_thumbnails',
+    'conference',
 ]
 
 #########################
@@ -202,7 +205,7 @@ def uniquify(seq):
 
 
 try:
-    from local_settings import *
+    from .local_settings import *
 except ImportError:
     pass
 
