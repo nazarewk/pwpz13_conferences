@@ -72,8 +72,8 @@ DATABASES = {
 TIME_ZONE = 'Europe/Warsaw'
 
 LANGUAGES = (
+    ('en', _(u'Angielski')),
     ('pl', _(u'Polski')),
-    #('en', _(u'Angielski')),
 )
 LANGUAGE_CODE = 'pl'
 

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.db.models import Q
 from django.utils.translation import ugettext as _
 from django.db import models
 from django.contrib.sites.models import Site
@@ -22,11 +23,6 @@ class TimePeriod(models.Model):
     start = models.DateTimeField()
     end = models.DateTimeField()
 
-    use_duration = models.BooleanField(
-        default=False,
-        help_text=_('Should use length instead of end date?'))
-    duration = models.PositiveIntegerField(help_text=_('Duration in minutes'))
-
     # 'conference_durations' = FK(Conference)
     # 'summaries_submissions' = FK(Conference)
     # 'publications_submissions' = FK(Conference)
@@ -39,30 +35,7 @@ class TimePeriod(models.Model):
         '''
         Returns datetime.timedelta representing duration
         '''
-        if self.use_duration:
-            return timedelta(minutes=self.duration)
         return self.end - self.start
-
-    def get_end(self):
-        if self.use_duration:
-            return self.start + timedelta(minutes=self.duration)
-        return self.end
-
-    def to_duration(self):
-        if not self.use_duration:
-            self.duration = self.get_duration().min
-            self.use_duration = True
-
-    def to_dates(self):
-        if self.use_duration:
-            self.end = self.get_end()
-            self.use_duration = False
-
-    def sync(self):
-        if self.use_duration:
-            self.end = self.get_end
-        else:
-            self.duration = self.get_duration().minutes
 
 
 class Conference(models.Model):
@@ -130,12 +103,36 @@ class Reviewer(models.Model):
 
     is_retired = models.BooleanField(default=False)
 
-    # reviewers available by default for 30 days
-    available_until = models.DateTimeField(default=lambda d:
-    timezone.now() + timedelta(days=30))
+    availability = models.ManyToManyField(
+        TimePeriod, related_name='reviewer_availability')
+    unavailability = models.ManyToManyField(
+        TimePeriod, related_name='reviewer_unavailability')
 
-    def is_available(self):
-        return not self.is_retired and self.available_until > timezone.now()
+    def is_available(self, from_date=timezone.now(), for_days=0):
+        '''
+        Returns true if reviewer is available for given number of days starting
+         with specified date.
+        By default returns true if reviewer is available right now
+        '''
+        to_date = from_date + timedelta(days=for_days)
+        # Q object info:
+        # https://docs.djangoproject.com/en/1.6/topics/db/queries/#complex-lookups-with-q-objects
+
+        # isn't available if any unavailability period exists within range
+        if self.unavailability.filter(
+                        Q(start__gt=to_date) |
+                        Q(end__lt=from_date)).exists():
+            return False
+        # isn't available if availability periods aren't continuous
+        last_end = from_date
+        for cur in self.availability.filter(
+                        Q(start__lt=from_date) |
+                        Q(end__gt=to_date)).order_by('start'):
+            if last_end < cur.end:
+                last_end = cur.end
+            if last_end < cur.start:
+                return False
+        return True
 
 
 class Review(models.Model):
