@@ -6,7 +6,7 @@ from django.db import models
 from django.contrib.sites.models import Site
 from django.conf import settings
 from django.utils import timezone
-from datetime import timedelta
+from datetime import datetime, timedelta, MAXYEAR, MINYEAR
 from filer.fields.file import FilerFileField
 import random
 import string
@@ -38,6 +38,22 @@ class TimePeriod(models.Model):
         Returns datetime.timedelta representing duration
         '''
         return self.end - self.start
+
+    @staticmethod
+    def are_continuous(
+            time_periods_query_set,
+            from_date=datetime(MINYEAR, 1, 1),
+            to_date=datetime(MAXYEAR, 1, 1)):
+        time_periods_query_set = time_periods_query_set.order_by('start')
+        last_end = from_date
+        for tp in time_periods_query_set:
+            if tp.start > to_date:
+                break
+            if last_end < tp.end:
+                last_end = tp.end
+            if last_end < tp.start:
+                return False
+        return True
 
 
 class Conference(models.Model):
@@ -120,21 +136,14 @@ class Reviewer(models.Model):
         # Q object info:
         # https://docs.djangoproject.com/en/1.6/topics/db/queries/#complex-lookups-with-q-objects
 
-        # isn't available if any unavailability period exists within range
-        if self.unavailability.filter(
-                        Q(start__gt=to_date) |
-                        Q(end__lt=from_date)).exists():
-            return False
-        # isn't available if availability periods aren't continuous
-        last_end = from_date
-        for cur in self.availability.filter(
-                        Q(start__lt=from_date) |
-                        Q(end__gt=to_date)).order_by('start'):
-            if last_end < cur.end:
-                last_end = cur.end
-            if last_end < cur.start:
-                return False
-        return True
+        return self.unavailability.filter(
+            Q(start__gt=to_date) | Q(end__lt=from_date)
+        ).exists() and TimePeriod.are_continuous(
+            self.availability.filter(
+                Q(start__lt=from_date) | Q(end__gt=to_date)),
+            from_date,
+            to_date
+        )
 
 
 class Review(models.Model):
