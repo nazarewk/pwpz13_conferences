@@ -22,10 +22,10 @@ class TimePeriod(models.Model):
     start = models.DateTimeField()
     end = models.DateTimeField()
 
-    use_length = models.BooleanField(
+    use_duration = models.BooleanField(
         default=False,
         help_text=_( 'Should use length instead of end date?'))
-    length = models.PositiveIntegerField(help_text=_('Length in minutes'))
+    duration = models.PositiveIntegerField(help_text=_('Duration in minutes'))
 
     # 'conference_durations' = FK(Conference)
     # 'summaries_submissions' = FK(Conference)
@@ -34,6 +34,19 @@ class TimePeriod(models.Model):
     # 'sessions_dates' = FK(Session)
     # 'lectures_dates' = FK(Lecture)
     # 'payments' = FK(Payment)
+
+    def get_length(self):
+        '''
+        Returns datetime.timedelta representing duration
+        '''
+        if self.use_duration:
+            return timedelta(minutes=self.duration)
+        return self.end - self.start
+
+    def get_end(self):
+        if self.use_duration:
+            return self.start + timedelta(minutes=self.duration)
+        return self.end
 
 
 class Conference(models.Model):
