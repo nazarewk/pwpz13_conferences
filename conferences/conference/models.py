@@ -13,35 +13,45 @@ import string
 User = settings.AUTH_USER_MODEL
 
 
+class TimePeriod(models.Model):
+    '''
+    Class representing time periods with description, start date and either
+     end date or length
+    '''
+    description = models.CharField(max_length=128)
+    start = models.DateTimeField()
+    end = models.DateTimeField()
+
+    use_length = models.BooleanField(
+        default=False,
+        help_text=_( 'Should use length instead of end date?'))
+    length = models.PositiveIntegerField(help_text=_('Length in minutes'))
+
+    # 'conference_durations' = FK(Conference)
+    # 'summaries_submissions' = FK(Conference)
+    # 'publications_submissions' = FK(Conference)
+    # 'registration_periods' = MM(Conference)
+    # 'sessions_dates' = FK(Session)
+    # 'lectures_dates' = FK(Lecture)
+    # 'payments' = FK(Payment)
+
+
 class Conference(models.Model):
     site = models.OneToOneField(Site)
     admins = models.ManyToManyField(User)
 
     name = models.CharField(max_length=256)
 
-    date_start = models.DateTimeField(null=True, blank=True)
-    date_end = models.DateTimeField(null=True, blank=True)
-
-    summaries_submit_start = models.DateTimeField(null=True, blank=True)
+    duration = models.ForeignKey(
+        TimePeriod, related_name='conference_durations')
+    summaries_submission_period = models.ForeignKey(
+        TimePeriod, related_name='summaries_submissions')
     # 'summaries' = FK(Summary)
-    summaries_submit_end = models.DateTimeField(null=True, blank=True)
-
-    publications_submit_start = models.DateTimeField(null=True, blank=True)
+    publications_submission_period = models.ForeignKey(
+        TimePeriod, related_name='publications_submissions')
     # 'sessions__lectures__publications'
-    publications_submit_end = models.DateTimeField(null=True, blank=True)
-
-    # 'registration_periods' = FK(RegistrationPeriod)
-
-
-class RegistrationPeriod(models.Model):
-    '''
-    Represents registrations periods for calculating discounts
-    '''
-
-    conference = models.ForeignKey(Conference,
-                                   related_name='registration_periods')
-    start = models.DateTimeField(null=True, blank=True)
-    end = models.DateTimeField(null=True, blank=True)
+    registration_periods = models.ManyToManyField(
+        TimePeriod, related_name='registration_periods')
 
 
 class ConferencesFile(models.Model):
@@ -149,8 +159,8 @@ class Session(models.Model):
     topic = models.OneToOneField(Topic)
 
     name = models.CharField(max_length=256)
-    date_start = models.DateTimeField(null=True, blank=True)
-    date_end = models.DateTimeField(null=True, blank=True)
+    duration = models.ForeignKey(
+        TimePeriod, related_name='sessions_dates')
 
 
 class Lecture(models.Model):
@@ -164,8 +174,8 @@ class Lecture(models.Model):
     summary = models.OneToOneField(Summary)
     # 'publications' = FK(Publication)
 
-    date_start = models.DateTimeField(null=True, blank=True)
-    date_end = models.DateTimeField(null=True, blank=True)
+    duration = models.ForeignKey(
+        TimePeriod, related_name='lectures_dates')
 
 
 class Balance(models.Model):
@@ -176,6 +186,9 @@ class Payment(models.Model):
     balance = models.ForeignKey(Balance)
     short_description = models.CharField(max_length=128)
     full_description = models.TextField(blank=True)
+
+    time_to_pay = models.ForeignKey(
+        TimePeriod, related_name='payments')
 
     currency = models.CharField(max_length=3, choices=(
         ('PLN', 'Złote polskie'),
