@@ -30,6 +30,8 @@ class TimePeriod(models.Model):
     # 'sessions_dates' = FK(Session)
     # 'lectures_dates' = FK(Lecture)
     # 'payments' = FK(Payment)
+    # 'reviewer_availability' = MM(Reviewer)
+    # 'reviewer_unavailability' = MM(Reviewer)
 
     def get_duration(self):
         '''
@@ -142,6 +144,7 @@ class Review(models.Model):
     reviewer = models.ForeignKey(Reviewer)
     file_reviewed = models.ForeignKey(ConferencesFile)
 
+    # unguessable ID for use in urls
     unguessable_id_length = 32
     unguessable_id = models.CharField(
         max_length=unguessable_id_length, unique=True,
