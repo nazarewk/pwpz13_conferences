@@ -18,13 +18,13 @@ class TimePeriod(models.Model):
     Class representing time periods with description, start date and either
      end date or length
     '''
-    description = models.CharField(max_length=128)
+    description = models.CharField(max_length=128, blank=True)
     start = models.DateTimeField()
     end = models.DateTimeField()
 
     use_duration = models.BooleanField(
         default=False,
-        help_text=_( 'Should use length instead of end date?'))
+        help_text=_('Should use length instead of end date?'))
     duration = models.PositiveIntegerField(help_text=_('Duration in minutes'))
 
     # 'conference_durations' = FK(Conference)
@@ -35,7 +35,7 @@ class TimePeriod(models.Model):
     # 'lectures_dates' = FK(Lecture)
     # 'payments' = FK(Payment)
 
-    def get_length(self):
+    def get_duration(self):
         '''
         Returns datetime.timedelta representing duration
         '''
@@ -47,6 +47,22 @@ class TimePeriod(models.Model):
         if self.use_duration:
             return self.start + timedelta(minutes=self.duration)
         return self.end
+
+    def to_duration(self):
+        if not self.use_duration:
+            self.duration = self.get_duration().min
+            self.use_duration = True
+
+    def to_dates(self):
+        if self.use_duration:
+            self.end = self.get_end()
+            self.use_duration = False
+
+    def sync(self):
+        if self.use_duration:
+            self.end = self.get_end
+        else:
+            self.duration = self.get_duration().minutes
 
 
 class Conference(models.Model):
@@ -77,7 +93,8 @@ class ConferencesFile(models.Model):
     author = models.ForeignKey(User)
     file = FilerFileField()
     status = models.CharField(max_length=2, choices=(
-        ('W8', _('Waiting')),
+        ('PR', _('Processing')),
+        ('RD', _('Ready')), # Ready for admin's decision to accept or reject
         ('OK', _('Accepted')),
         ('NO', _('Rejected')),
         ('ER', _('Spam')),
@@ -193,6 +210,7 @@ class Lecture(models.Model):
 
 class Balance(models.Model):
     user = models.ForeignKey(User)
+    is_student = models.BooleanField(default=False)
 
 
 class Payment(models.Model):
