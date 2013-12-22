@@ -10,7 +10,7 @@ https://docs.djangoproject.com/en/1.6/howto/deployment/wsgi/
 import os
 import sys
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "conferences.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "conferences_site.settings")
 
 SITE_DIR = os.path.abspath(os.path.dirname(__file__))
 PROJ_DIR = os.path.dirname(SITE_DIR)

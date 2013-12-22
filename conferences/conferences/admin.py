@@ -15,4 +15,4 @@ def autoregister(*app_list):
                 pass
 
 
-autoregister('conference')
+autoregister('conferences')

@@ -95,14 +95,14 @@ class ConferencesFile(models.Model):
 
 class Summary(ConferencesFile):
     '''
-    Represents summaries to accept for further lectures during conference
+    Represents summaries to accept for further lectures during conferences
     '''
     conference = models.ForeignKey(Conference, related_name='summaries')
 
 
 class Publication(ConferencesFile):
     '''
-    Represents post-conference publications related to given lectures
+    Represents post-conferences publications related to given lectures
     '''
     lecture = models.ForeignKey('Lecture', related_name='publications')
 
@@ -178,7 +178,7 @@ class Review(models.Model):
 
 class Topic(models.Model):
     '''
-    Class represents topics structure of the conference,
+    Class represents topics structure of the conferences,
      topics without super_topic are the most general
     '''
     conference = models.ForeignKey(Conference)
@@ -206,7 +206,7 @@ class Lecture(models.Model):
     '''
     Represents single speech during the session,
      Lectures are based upon reviewed and accepted summaries
-     Lectures can have post-conference publications
+     Lectures can have post-conferences publications
     '''
     session = models.ForeignKey(Session, related_name='lectures')
     referents = models.ManyToManyField(User)
