@@ -47,9 +47,9 @@ MIDDLEWARE_CLASSES += [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'conferences_site.urls'
+ROOT_URLCONF = 'conferences.urls'
 
-WSGI_APPLICATION = 'conferences_site.wsgi.application'
+WSGI_APPLICATION = 'conferences.wsgi.application'
 
 
 # Database
@@ -163,7 +163,7 @@ INSTALLED_APPS += [
     'sekizai',
     'filer',
     'easy_thumbnails',
-    'conferences',
+    'conference',
 ]
 
 #########################
