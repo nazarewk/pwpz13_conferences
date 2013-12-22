@@ -12,6 +12,11 @@ urlpatterns = patterns(
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
+    url(
+        regex=r'^$',
+        view="conferences.views.home",
+        name="home"
+    ),
 )
 
 if settings.DEBUG:
