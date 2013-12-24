@@ -2,8 +2,6 @@ from django.conf import settings
 from django.conf.urls import patterns, include, url
 
 from django.contrib import admin
-from conferences.views import ReviewerListView
-from conferences.views import ReviewerDetailView
 
 
 admin.autodiscover()
@@ -15,23 +13,7 @@ urlpatterns = patterns(
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
-    url(
-        regex=r'^$',
-        view="conferences.views.home",
-        name="home"
-    ),
-
-    #reviewers urls section
-    url(
-        regex=r'^reviewers/$',
-        view=ReviewerListView.as_view(),
-        name="reviewer_list"
-    ),
-    url(
-        regex=r'^reviewers/(?P<pk>\d+)/$',
-        view=ReviewerDetailView.as_view(),
-        name="reviewer_detail"
-    ),
+    url(r'', include('conferences.urls')),
 )
 
 if settings.DEBUG:
