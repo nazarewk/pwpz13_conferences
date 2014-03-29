@@ -1,0 +1,13 @@
+{% extends "conferences/base.html" %}
+{% block content %}
+Recenzenci <a href="/reviewers/add">Dodaj</a>
+<ul>
+{% for r in reviewers %}
+	<li>
+        <a href="/reviewers/{{r.pk}}">{{ r.name }}</a>
+        <a href="/reviewers/{{r.pk}}/edit" title="Edytuj"><img src="{{ MEDIA_URL }}editicon.png" width="16" height="16" /></a>
+        <a href="/reviewers/{{r.pk}}/remove" onclick="confirm('Usunąć recenzenta?');" title="Usuń"><img src="{{ MEDIA_URL }}deleteicon.png" width="16" height="16" /></a>
+    </li>
+{% endfor %}
+</ul>
+{% endblock %}

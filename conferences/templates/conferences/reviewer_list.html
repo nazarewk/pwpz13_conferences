@@ -1,9 +1,0 @@
-{% extends "conferences/base.html" %}
-{% block content %}
-<input type="button" id="new-reviewer-button" title="Dodaj recenzenta" value="Dodaj" />
-<ul>Recenzenci
-{% for r in object_list %}
-	<li><a href="/reviewers/{{r.pk}}">{{ r.title }}</a></li>
-{% endfor %}
-</ul>
-{% endblock %}

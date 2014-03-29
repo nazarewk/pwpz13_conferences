@@ -1,0 +1,18 @@
+{% extends "conferences/base.html" %}
+{% block content %}
+<script src="{{ MEDIA_URL }}reviewers.js"></script>
+<form method="post">{% csrf_token %}
+{{ form.as_p }}
+<input type="submit" value="Update" />
+</form>
+<script>
+    $("#id_user_account").change(function(){
+        UpdateReviewerFields();
+    });
+
+    $(document).ready(function(){
+        UpdateReviewerFields()
+    });
+</script>
+{% endblock %}
+

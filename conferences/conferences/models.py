@@ -8,6 +8,7 @@ from django.conf import settings
 from django.utils import timezone
 from datetime import datetime, timedelta, MAXYEAR, MINYEAR
 from filer.fields.file import FilerFileField
+
 import random
 import string
 
@@ -112,19 +113,19 @@ class Reviewer(models.Model):
     Represents both out-of-system and in-system reviewers including
         availability information
     '''
-    user_account = models.ForeignKey(User, null=True, blank=True)
-    title = models.CharField(max_length=64)
-    first_name = models.CharField(max_length=64)
-    last_name = models.CharField(max_length=64)
-    email = models.EmailField(max_length=254) # RFC3696/5321-compliant length
-    contact_phone = models.CharField(max_length=64)
+    user_account = models.ForeignKey(User, null=True, blank=True,verbose_name=u"Konto użytkownika")
+    title = models.CharField(null=True, blank=True,max_length=64,verbose_name=u"Tytuł")
+    first_name = models.CharField(null=True, blank=True,max_length=64,verbose_name=u"Imię")
+    last_name = models.CharField(null=True, blank=True,max_length=64,verbose_name=u"Nazwisko")
+    email = models.EmailField(null=True, blank=True,max_length=254,verbose_name=u"Email") # RFC3696/5321-compliant length
+    contact_phone = models.CharField(null=True, blank=True,max_length=64,verbose_name=u"Telefon")
 
-    is_retired = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True,verbose_name=u"Aktywny")
 
     availability = models.ManyToManyField(
-        TimePeriod, related_name='reviewer_availability')
+        TimePeriod, related_name='reviewer_availability',verbose_name=u"Dostępność")
     unavailability = models.ManyToManyField(
-        TimePeriod, related_name='reviewer_unavailability')
+        TimePeriod, related_name='reviewer_unavailability',verbose_name=u"Niedostępność")
 
     def is_available(self, from_date=timezone.now(), for_days=0):
         '''
@@ -145,6 +146,27 @@ class Reviewer(models.Model):
             to_date
         )
 
+    def clean(self):
+        error_messages = []
+        from django.core.exceptions import ValidationError
+        if(self.user_account):
+            return
+        if not self.title:
+            error_messages.append(ValidationError('Tytuł jest wymagany!'))
+        if not self.first_name:
+            error_messages.append(ValidationError('Imię jest wymagane!'))
+        if not self.last_name:
+            error_messages.append(ValidationError('Nazwisko jest wymagane!'))
+        if not self.email:
+            error_messages.append(ValidationError('Email jest wymagany!'))
+        if( len(error_messages)>0):
+            raise ValidationError(error_messages)
+
+    def name(self):
+        if(self.user_account):
+            return "%s %s" % (self.user_account.first_name, self.user_account.last_name)
+        else:
+            return "%s %s" % (self.first_name, self.last_name)
 
 class Review(models.Model):
     '''
@@ -236,4 +258,9 @@ class Payment(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=3)
     paid = models.DecimalField(max_digits=10, decimal_places=3)
 
+from django.forms import ModelForm
 
+class ReviewerForm(ModelForm):
+    class Meta:
+        model=Reviewer
+        fields = ['user_account','first_name','last_name','email','title','contact_phone']
