@@ -49,5 +49,6 @@ urlpatterns += patterns("conferences.views",
     url(r'^sessions/$', "session_list"),
     url(r'^sessions/edit/(?P<pk>\d+)/$', "edit_session"),
     url(r'^sessions/delete/(?P<pk>\d+)/$', "remove_session"),
+    url(r'^sessions/timeperiod/$', "add_timeperiod"),
 
 )

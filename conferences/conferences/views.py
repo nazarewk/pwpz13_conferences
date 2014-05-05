@@ -13,8 +13,8 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.template import RequestContext
 
-from .models import ReviewerForm, SessionForm
-from .models import Reviewer, Session
+from .models import ReviewerForm, SessionForm, TimePeriodForm
+from .models import Reviewer, Session, TimePeriod
 
 
 def home(request):
@@ -134,3 +134,25 @@ def remove_session(request, pk):
     context_dict['sessions_del'] = session_del
 
     return render_to_response('conferences/sessions/remove_session.html', context_dict, context)
+
+
+def add_timeperiod(request):
+
+    context = RequestContext(request)
+
+    if request.method =='POST':
+        form = TimePeriodForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+            return home(request)
+
+        else:
+            form.errors
+
+    else:
+        form = TimePeriodForm()
+
+
+    return render_to_response('conferences/sessions/add_timeperiod.html', { 'form':form }, context)

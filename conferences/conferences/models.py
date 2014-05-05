@@ -37,6 +37,9 @@ class TimePeriod(models.Model):
     # 'reviewer_availability' = MM(Reviewer)
     # 'reviewer_unavailability' = MM(Reviewer)
 
+    def __str__(self):
+        return '%s - %s' %(self.start, self.end)
+
     def get_duration(self):
         '''
         Returns datetime.timedelta representing duration
@@ -76,6 +79,9 @@ class Conference(models.Model):
     # 'sessions__lectures__publications'
     registration_periods = models.ManyToManyField(
         TimePeriod, related_name='registration_periods')
+
+    def __str__(self):
+        return self.name
 
 
 class ConferencesFile(models.Model):
@@ -229,6 +235,9 @@ class Session(models.Model):
     duration = models.ForeignKey(
         TimePeriod, related_name='sessions_dates')
 
+    def __str__(self):
+        return self.name
+
 
 class Lecture(models.Model):
     '''
@@ -277,6 +286,11 @@ class SessionForm(ModelForm):
     conference = forms.ModelChoiceField(queryset=Conference.objects.all(), help_text="Please choose conference")
     topic = forms.ModelChoiceField (queryset=Topic.objects.all(), help_text="Please choose session topic")
     admins = forms.ModelMultipleChoiceField (queryset=User.objects.all())
-    admins.help_text = 'Choose Admin'
+    admins.help_text = 'Please choose Admin'
     class Meta:
         model = Session
+
+
+class TimePeriodForm(ModelForm):
+    class Meta:
+        model = TimePeriod
