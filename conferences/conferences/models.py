@@ -3,16 +3,19 @@ from __future__ import unicode_literals
 from django.db.models import Q
 from django.utils.translation import ugettext as _
 from django.db import models
+from django.forms import ModelForm
+from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.conf import settings
 from django.utils import timezone
+from django import forms
 from datetime import datetime, timedelta, MAXYEAR, MINYEAR
 from filer.fields.file import FilerFileField
 
 import random
 import string
 
-User = settings.AUTH_USER_MODEL
+User = get_user_model()
 
 
 class TimePeriod(models.Model):
@@ -208,6 +211,8 @@ class Topic(models.Model):
     super_topic = models.ForeignKey('self', null=True, blank=True,
                                     related_name='sub_topics')
 
+    def __str__(self):
+        return self.name
 
 class Session(models.Model):
     '''
@@ -220,6 +225,7 @@ class Session(models.Model):
     topic = models.OneToOneField(Topic)
 
     name = models.CharField(max_length=256)
+
     duration = models.ForeignKey(
         TimePeriod, related_name='sessions_dates')
 
@@ -258,9 +264,19 @@ class Payment(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=3)
     paid = models.DecimalField(max_digits=10, decimal_places=3)
 
-from django.forms import ModelForm
 
 class ReviewerForm(ModelForm):
     class Meta:
         model=Reviewer
         fields = ['user_account','first_name','last_name','email','title','contact_phone']
+
+
+class SessionForm(ModelForm):
+    name = forms.CharField(max_length=128, help_text="Please enter the session name")
+    duration = forms.ModelChoiceField(queryset=TimePeriod.objects.all(), help_text="Please choose duration of session")
+    conference = forms.ModelChoiceField(queryset=Conference.objects.all(), help_text="Please choose conference")
+    topic = forms.ModelChoiceField (queryset=Topic.objects.all(), help_text="Please choose session topic")
+    admins = forms.ModelMultipleChoiceField (queryset=User.objects.all())
+    admins.help_text = 'Choose Admin'
+    class Meta:
+        model = Session

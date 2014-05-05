@@ -1,0 +1,15 @@
+
+<h1>Sesja: {{ session.name }}<br></h1>
+<ul>
+    <li>Temat: {{ session.topic.name }}</li>
+    <li> Czas trwania: {{ session.duration.start }} - {{ session.duration.end }} </li>
+    <li> Konferencja: {{ session.conference.name }}</li>
+    {% for admin in session.admins.all %}
+        <li> Admin: {{ admin }}</li>
+    {% endfor %}
+</ul>
+
+<br>
+<a href="/sessions/edit/{{ session.id }}">Edit session</a><br>
+<a href="/sessions/delete/{{ session.id }}/">Remove This Session</a><br>
+<a href="/">Back to homepage</a>

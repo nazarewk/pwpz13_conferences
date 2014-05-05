@@ -43,3 +43,11 @@ urlpatterns += patterns(
     ),
 )
 
+urlpatterns += patterns("conferences.views",
+    url(r'^sessions/(?P<pk>\d+)/$', "session"),
+    url(r'^sessions/add/$', "add_session"),
+    url(r'^sessions/$', "session_list"),
+    url(r'^sessions/edit/(?P<pk>\d+)/$', "edit_session"),
+    url(r'^sessions/delete/(?P<pk>\d+)/$', "remove_session"),
+
+)
