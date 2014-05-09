@@ -1,26 +1,15 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title></title>
-    </head>
-    <body>
-    {% block body_block %}
-        <h1>Add a session</h1>
+{% extends "conferences/base.html" %}
+{% block content %}
+	<h1>Add a session</h1>
+    <form id="session_form" method="post" action="/sessions/add/">
+        {% csrf_token %}
+        {% for field in form.visible_fields %}
+            <br>
+            <b>{{ field.errors }}</b>
+            {{ field.help_text }} - {{ field }}
+            <br>
+        {% endfor %}
 
-        <form id="session_form" method="post" action="/sessions/add/">
-
-            {% csrf_token %}
-
-            {% for field in form.visible_fields %}
-                <br>
-                <b>{{ field.errors }}</b>
-                {{ field.help_text }} - {{ field }}
-                <br>
-            {% endfor %}
-
-            <input type="submit" name="submit" value="Create Session">
-            <a href="/">Back to homepage</a>
-        </form>
-    {% endblock %}
-    </body>
-</html>
+        <input type="submit" name="submit" value="Create Session">
+    </form>
+{% endblock %}

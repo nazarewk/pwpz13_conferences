@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html>
-    <head>
-
-    </head>
-
-    <body>
-
-        {% if sessions %}
+{% extends "conferences/base.html" %}
+{% block content %}
+	{% if sessions %}
             <ul>
                 {% for session in sessions %}
                 <li><a href="/sessions/{{ session.id }}"> {{ session.name }}</a></li>
@@ -15,6 +9,4 @@
         {% else %}
             <strong>There are no sessions present.</strong>
         {% endif %}
-        <a href="/">Back to homepage</a>
-    </body>
-</html>
+{% endblock %}

@@ -1,2 +1,6 @@
-<meta http-equiv="refresh" content="1; URL=http://127.0.0.1:8000/sessions/">
-        <strong>Session {{ session.name }} has removed!</strong>
+{% extends "conferences/base.html" %}
+{% block content %}
+	<meta http-equiv="refresh" content="1; URL=http://127.0.0.1:8000/sessions/">
+    <strong>Session {{ session.name }} has removed!</strong>
+{% endblock %}
+
