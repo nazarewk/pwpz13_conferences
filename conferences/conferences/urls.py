@@ -57,8 +57,8 @@ urlpatterns += patterns("conferences.views",
     url(r'^lectures/(?P<pk>\d+)/$', "lecture"),
     url(r'^lectures/add/$', "add_lecture"),
     url(r'^lectures/$', "lecture_list"),
-    #url(r'^sessions/edit/(?P<pk>\d+)/$', "edit_session"),
-    #url(r'^sessions/delete/(?P<pk>\d+)/$', "remove_session"),
+    url(r'^lectures/edit/(?P<pk>\d+)/$', "edit_lecture"),
+    url(r'^lectures/delete/(?P<pk>\d+)/$', "remove_lecture"),
     url(r'^lectures/timeperiod/$', "add_timeperiod"),
 
 )

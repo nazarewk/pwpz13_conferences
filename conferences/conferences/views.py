@@ -113,7 +113,7 @@ def add_session(request):
 def edit_session(request, pk):
 
     context = RequestContext(request)
-    session = Session.objects.get(pk=pk)
+    session = get_object_or_404(Session, pk=pk)
 
     if request.method == 'POST':
         form = SessionForm(request.POST, instance=session)
@@ -202,3 +202,35 @@ def add_lecture(request):
         form = LectureForm()
 
     return render_to_response('conferences/lectures/add_lecture.html', {'form': form}, context)
+
+
+def edit_lecture(request, pk):
+
+    context = RequestContext(request)
+    lecture = get_object_or_404(Lecture,pk=pk)
+
+    if request.method == 'POST':
+        form = LectureForm(request.POST, instance=lecture)
+
+        if form.is_valid():
+            form.save(commit=True)
+
+            return home(request)
+        else:
+            print form.errors
+    else:
+        form = LectureForm(instance=lecture)
+
+    return render_to_response('conferences/lectures/edit_lecture.html', {'form': form}, context)
+
+
+def remove_lecture(request, pk):
+
+    context = RequestContext(request)
+    context_dict = {}
+    lecture = get_object_or_404(Lecture, pk=pk)
+    context_dict['lecture'] = lecture
+    lecture_del = lecture.delete()
+    context_dict['lecture_del'] = lecture_del
+
+    return render_to_response('conferences/lectures/remove_lecture.html', context_dict, context)
