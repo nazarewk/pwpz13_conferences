@@ -15,6 +15,9 @@ urlpatterns = patterns(
         "conferences.views.home",
         name="home"
     ),
+    url(
+        r'^my_admin/jsi18n',
+        'django.views.i18n.javascript_catalog'),
 )
 
 #reviewers urls section
