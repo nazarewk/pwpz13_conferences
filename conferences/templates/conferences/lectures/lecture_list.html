@@ -1,14 +1,16 @@
 {% extends "conferences/base.html" %}
-
 {% block content %}
-    Referaty <a href="/">Dodaj</a><br>
-	{% if lectures %}
-            <ul>
-                {% for lecture in lectures %}
-                <li><a href="/lectures/{{ lecture.id }}">{{ lecture.id }}</a></li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <strong>There are no lectures present.</strong>
-        {% endif %}
+	<h1>Referaty</h1>
+	<div class="listContainer">
+	{% if sessions %}
+		<ul>
+            {% for lecture in lectures %}
+				<li><a href="/lectures/{{ lecture.id }}">{{ lecture.id }}</a></li>
+            {% endfor %}
+		</ul>
+	{% else %}
+		<p>Nie został utworzony jeszcze żaden referat</p>	
+	{% endif %}
+	</div>
+	<input class="createBtn" type="button" value="Dodaj referat" onclick='window.location.href="/lectures/add"'>
 {% endblock %}

@@ -1,13 +1,16 @@
 {% extends "conferences/base.html" %}
-{% block content %}
-    Sesje <a href="/sessions/add">Dodaj</a><br>
+{% block content %}		
+	<h1>Sesje</h1>
+	<div class="listContainer">
 	{% if sessions %}
-            <ul>
-                {% for session in sessions %}
+		<ul>
+            {% for session in sessions %}
                 <li><a href="/sessions/{{ session.id }}"> {{ session.name }}</a></li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <strong>There are no sessions present.</strong>
-        {% endif %}
+            {% endfor %}
+        </ul>
+	{% else %}
+		<p>Nie została utworzona jeszcze żadna sesja.</p>	
+	{% endif %}
+	</div>
+	<input class="createBtn" type="button" value="Dodaj sesję" onclick='window.location.href="/sessions/add"'>
 {% endblock %}

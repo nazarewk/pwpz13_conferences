@@ -23,7 +23,7 @@ p a, p a:visited { line-height: inherit; }
 /* Base Type Styles Using Modular Scale ---------------------- */
 body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, p, blockquote, th, td { margin: 0; padding: 0; font-size: 14px; }
 
-p { color:#bbb; font-size: 14px; line-height: 1.6; margin-bottom: 17px; }
+p { color:#000; font-size: 14px; line-height: 1.6; margin-bottom: 17px; }
 
 /* Lists ---------------------- */
 ul, ol { font-size: 14px; line-height: 1; margin: 0; list-style-position: inside; }
