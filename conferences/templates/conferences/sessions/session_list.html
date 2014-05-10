@@ -5,7 +5,12 @@
 	{% if sessions %}
 		<ul>
             {% for session in sessions %}
-                <li><a href="/sessions/{{ session.id }}"> {{ session.name }}</a></li>
+                <li>
+                    <a href="/sessions/{{ session.id }}"> {{ session.name }}</a>
+                    <a href="/sessions/edit/{{ session.id }}" title="Edytuj"><img src="{{ MEDIA_URL }}editicon.png" width="16" height="16" /></a>
+					<a href="/sessions/remove/{{ session.id }}" onclick="return confirm('Usunąć sesje?');" title="Usuń"><img src="{{ MEDIA_URL }}deleteicon.png" width="16" height="16" /></a>
+                </li>
+
             {% endfor %}
         </ul>
 	{% else %}

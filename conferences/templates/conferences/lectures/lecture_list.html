@@ -2,10 +2,14 @@
 {% block content %}
 	<h1>Referaty</h1>
 	<div class="listContainer">
-	{% if sessions %}
+	{% if lectures %}
 		<ul>
             {% for lecture in lectures %}
-				<li><a href="/lectures/{{ lecture.id }}">{{ lecture.id }}</a></li>
+				<li>
+                <a href="/lectures/{{ lecture.id }}">{{ lecture.id }}</a>
+                <a href="/" title="Edytuj"><img src="{{ MEDIA_URL }}editicon.png" width="16" height="16" /></a>
+				<a href="/" onclick="return confirm('Usunąć referat?');" title="Usuń"><img src="{{ MEDIA_URL }}deleteicon.png" width="16" height="16" /></a>
+                </li>
             {% endfor %}
 		</ul>
 	{% else %}

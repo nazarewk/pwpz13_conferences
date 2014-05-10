@@ -9,9 +9,7 @@
             {{ field.help_text }} - {{ field }}
             <br>
         {% endfor %}
-        <a href="/sessions/timeperiod/">Create a time period</a>
-        <br>
-
+        <input class="createBtn" type="button" value="Add time period" onclick='window.location.href="/sessions/timeperiod/"'>
         <input type="submit" name="submit" value="Create Session">
     </form>
 {% endblock %}
