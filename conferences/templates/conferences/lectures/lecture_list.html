@@ -1,0 +1,14 @@
+{% extends "conferences/base.html" %}
+
+{% block content %}
+    Referaty <a href="/">Dodaj</a><br>
+	{% if lectures %}
+            <ul>
+                {% for lecture in lectures %}
+                <li><a href="/lectures/{{ lecture.id }}">{{ lecture.id }}</a></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <strong>There are no lectures present.</strong>
+        {% endif %}
+{% endblock %}

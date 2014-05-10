@@ -4,6 +4,8 @@ from django.db.models import Q
 from django.utils.translation import ugettext as _
 from django.db import models
 from django.forms import ModelForm
+from django.contrib.admin import widgets
+from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.conf import settings
@@ -38,7 +40,7 @@ class TimePeriod(models.Model):
     # 'reviewer_unavailability' = MM(Reviewer)
 
     def __str__(self):
-        return '%s - %s' %(self.start, self.end)
+        return '%s %s' %(self.start.strftime('%Y-%m-%d %H:%M'), self.end.strftime('%Y-%m-%d %H:%M'))
 
     def get_duration(self):
         '''
@@ -257,6 +259,8 @@ class Lecture(models.Model):
         TimePeriod, related_name='lectures_dates')
 
 
+
+
 class Balance(models.Model):
     user = models.ForeignKey(User)
     is_student = models.BooleanField(default=False)
@@ -290,10 +294,19 @@ class SessionForm(ModelForm):
     topic = forms.ModelChoiceField (queryset=Topic.objects.all(), help_text="Please choose session topic")
     admins = forms.ModelMultipleChoiceField (queryset=User.objects.all())
     admins.help_text = 'Please choose Admin'
+
     class Meta:
         model = Session
 
-
 class TimePeriodForm(ModelForm):
+    description = forms.CharField(max_length=128, help_text="Please enter the description of the Time Period")
+    start = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M'])
+    end = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M'])
+
     class Meta:
         model = TimePeriod
+
+    def __init__(self, *args, **kwargs):
+        super(TimePeriodForm, self).__init__(*args, **kwargs)
+        self.fields['start'].widget = widgets.AdminSplitDateTime()
+        self.fields['end'].widget = widgets.AdminSplitDateTime()

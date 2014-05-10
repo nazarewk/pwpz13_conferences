@@ -14,7 +14,7 @@ from django.shortcuts import redirect
 from django.template import RequestContext
 
 from .models import ReviewerForm, SessionForm, TimePeriodForm
-from .models import Reviewer, Session, TimePeriod
+from .models import Reviewer, Session, TimePeriod, Lecture
 
 
 def home(request):
@@ -134,7 +134,7 @@ def remove_session(request, pk):
 
     context = RequestContext(request)
     context_dict = {}
-    session = Session.objects.get(pk=pk)
+    session = get_object_or_404(Session, pk=pk)
     context_dict['session'] = session
     session_del = session.delete()
     context_dict['sessions_del'] = session_del
@@ -160,5 +160,27 @@ def add_timeperiod(request):
     else:
         form = TimePeriodForm()
 
-
     return render_to_response('conferences/sessions/add_timeperiod.html', { 'form':form }, context)
+
+
+def lecture(request, pk):
+    context = RequestContext(request)
+    context_dict = {}
+
+    try:
+        lecture = get_object_or_404(Lecture,pk=pk)
+        context_dict['lecture'] = lecture
+    except Session.DoesNotExist:
+        pass
+
+    return render_to_response('conferences/lectures/lecture.html', context_dict, context)
+
+
+def lecture_list(request):
+
+    context = RequestContext(request)
+    context_dict = {}
+    lectures_list = Lecture.objects.all()
+    context_dict['lectures'] = lectures_list
+
+    return render_to_response('conferences/lectures/lecture_list.html', context_dict, context)
