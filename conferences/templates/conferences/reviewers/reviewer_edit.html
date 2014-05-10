@@ -1,9 +1,14 @@
 {% extends "conferences/base.html" %}
 {% block content %}
 <script src="{{ MEDIA_URL }}reviewers.js"></script>
-<form method="post">{% csrf_token %}
-{{ form.as_p }}
-<input type="submit" value="Update" />
+<form method="post">
+	{% csrf_token %}
+	{{ form.as_p }}
+	<p>
+		<label for="availability">Dostępność:</label>
+		<input id="id_availability" maxlength="10" name="availability" type="text">
+	</p>
+	<input type="submit" value="Update" />
 </form>
 <script>
     $("#id_user_account").change(function(){

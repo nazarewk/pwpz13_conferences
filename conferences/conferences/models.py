@@ -173,7 +173,10 @@ class Reviewer(models.Model):
 
     def name(self):
         if(self.user_account):
-            return "%s %s" % (self.user_account.first_name, self.user_account.last_name)
+			if(self.user_account.first_name or self.user_account.last_name):
+				return "%s %s" % (self.user_account.first_name, self.user_account.last_name)
+			else:
+				return self.user_account.username
         else:
             return "%s %s" % (self.first_name, self.last_name)
 

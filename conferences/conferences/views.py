@@ -18,7 +18,7 @@ from .models import Reviewer, Session, TimePeriod
 
 
 def home(request):
-    return render_to_response("conferences/home.html", {'data': "Hello there!"})
+    return render(request,"conferences/home.html")
 
 #reviewers views section
 
@@ -47,13 +47,19 @@ def reviewer_create(request):
 def reviewer_edit(request,pk):
     reviewer = get_object_or_404(Reviewer,pk=pk)
     if request.method=='POST':
-        form=ReviewerForm(data=request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('/reviewers/')
+		availability = request.POST.get('id_availability')
+		form=ReviewerForm(request.POST, instance=reviewer)
+		form.title=availability
+		if form.is_valid():
+			form.save()
+			return redirect('/reviewers/')
     else:
-        form = ReviewerForm(instance=reviewer)
-    return render(request,"conferences/reviewers/reviewer_edit.html", {'form':form})
+		if(reviewer.user_account):
+			reviewer.first_name=reviewer.user_account.first_name
+			reviewer.last_name=reviewer.user_account.last_name
+			reviewer.email=reviewer.user_account.email
+		form = ReviewerForm(instance=reviewer)
+    return render(request,"conferences/reviewers/reviewer_edit.html", {'form':form, 'aa':reviewer._meta.get_field('availability').verbose_name })
 
 def RetireReviewer(request,pk):
     reviewer=Reviewer.objects.get(pk=pk)

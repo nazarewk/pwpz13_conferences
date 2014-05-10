@@ -2,23 +2,20 @@
     <head>
         <title>Konferencje naukowe!</title>
         <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+		<link href="{{ MEDIA_URL }}style.css" type="text/css" rel="stylesheet" />
     </head>
     <body>
         <div id="header">
           <h1>Witaj!</h1>
         </div>
-        <div id="menu" style="float:left">
-            Menu
+        <div class="leftNav">
             <ul>
-                <li><a href="/">Strona główna</a></li>
+                <li><a href="/"><img src="{{ MEDIA_URL }}home.png" width="30" height="30" align="middle" />Strona główna</a></li>
                 <li><a href="/reviewers">Recenzenci</a></li>
-                <li><a href="/sessions/add">Dodaj sesje</a></li>
-                <li><a href="/sessions/">Lista Sesji</a></li>
-
-
+                <li><a href="/sessions/"><img src="{{ MEDIA_URL }}meeting.png" width="30" height="30" align="middle" />Lista Sesji</a></li>
             </ul>
         </div>
-        <div id="content"  style="float:left">
+        <div id="content">
             {% block content %}
             {% endblock %}
         </div>
