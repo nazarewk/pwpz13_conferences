@@ -14,11 +14,9 @@ body {
 }
 
 /* Links ---------------------- */
-a { color: #000; text-decoration: none; line-height: inherit; }
-a:hover { color: #999900; }
-a:focus { color: #999900; outline: none; }
+a { color: #000; line-height: inherit; }
+a:hover { color: #999900 !important; }
 a:visited { color: #000; }
-p a, p a:visited { line-height: inherit; }
 
 /* Base Type Styles Using Modular Scale ---------------------- */
 body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, p, blockquote, th, td { margin: 0; padding: 0; font-size: 14px; }
@@ -34,7 +32,6 @@ ul, ol { font-size: 14px; line-height: 1; margin: 0; list-style-position: inside
 	margin-top:30px;
 	float:left;
 	padding-right:20px;
-	height:100%;
 }
 .leftNav li {
 	list-style-type: none;
@@ -42,8 +39,55 @@ ul, ol { font-size: 14px; line-height: 1; margin: 0; list-style-position: inside
 
 .listContainer{
 	min-height:100px;
+	padding-top:10px;
+	padding-bottom:40px;
+}
+
+.listContainer ul li{
+	margin-top:10px;
+}
+
+#wrapper
+{
+	min-height: 100%;
+	height: auto !important;
+	height:100%;
+	margin: 0 auto -32px;
+}
+
+#header{
+	padding:10px;
+}
+
+#header h1{
+	font-size:30px;
+	display:inline-block;
+}
+
+#header .userInfo{
+	float:right;
+	display:inline-block;
 }
 
 #content {
+	overflow:auto;
 }
-	
+
+#footer, .push
+{
+    height: 32px;
+}
+
+#footer{
+	background-color:#C0C0C0;
+}
+
+.footer_block {
+    display: block;
+    width: auto;
+    margin-top: 10px;
+	margin-left: 10px;
+	margin-right: 10px;
+    float: left;
+}
+

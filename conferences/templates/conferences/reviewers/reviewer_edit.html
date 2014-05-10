@@ -4,10 +4,6 @@
 <form method="post">
 	{% csrf_token %}
 	{{ form.as_p }}
-	<p>
-		<label for="availability">Dostępność:</label>
-		<input id="id_availability" maxlength="10" name="availability" type="text">
-	</p>
 	<input type="submit" value="Zapisz" />
 </form>
 <script>

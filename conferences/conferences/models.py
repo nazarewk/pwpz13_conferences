@@ -284,7 +284,7 @@ class Payment(models.Model):
 class ReviewerForm(ModelForm):
     class Meta:
         model=Reviewer
-        fields = ['user_account','first_name','last_name','email','title','contact_phone']
+        fields = ['user_account','first_name','last_name','email','title','contact_phone','availability']
 
 
 class SessionForm(ModelForm):

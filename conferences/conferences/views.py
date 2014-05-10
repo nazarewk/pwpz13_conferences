@@ -47,11 +47,12 @@ def reviewer_create(request):
 def reviewer_edit(request,pk):
     reviewer = get_object_or_404(Reviewer,pk=pk)
     if request.method=='POST':
-		availability = request.POST.get('id_availability')
+		availability = request.POST.get('availability','')
 		form=ReviewerForm(request.POST, instance=reviewer)
-		form.title=availability
 		if form.is_valid():
-			form.save()
+			#form.save()
+			reviewer.availability=availability
+			reviewer.save()
 			return redirect('/reviewers/')
     else:
 		if(reviewer.user_account):
@@ -59,7 +60,7 @@ def reviewer_edit(request,pk):
 			reviewer.last_name=reviewer.user_account.last_name
 			reviewer.email=reviewer.user_account.email
 		form = ReviewerForm(instance=reviewer)
-    return render(request,"conferences/reviewers/reviewer_edit.html", {'form':form, 'aa':reviewer._meta.get_field('availability').verbose_name })
+    return render(request,"conferences/reviewers/reviewer_edit.html", {'form':form, 'reviewer':reviewer})
 
 def RetireReviewer(request,pk):
     reviewer=Reviewer.objects.get(pk=pk)
