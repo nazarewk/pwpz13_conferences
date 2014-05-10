@@ -256,6 +256,8 @@ class Lecture(models.Model):
         TimePeriod, related_name='lectures_dates')
 
 
+
+
 class Balance(models.Model):
     user = models.ForeignKey(User)
     is_student = models.BooleanField(default=False)

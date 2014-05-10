@@ -52,3 +52,13 @@ urlpatterns += patterns("conferences.views",
     url(r'^sessions/timeperiod/$', "add_timeperiod"),
 
 )
+
+urlpatterns += patterns("conferences.views",
+    url(r'^lectures/(?P<pk>\d+)/$', "lecture"),
+    #url(r'^sessions/add/$', "add_session"),
+    url(r'^lectures/$', "lecture_list"),
+    #url(r'^sessions/edit/(?P<pk>\d+)/$', "edit_session"),
+    #url(r'^sessions/delete/(?P<pk>\d+)/$', "remove_session"),
+    #url(r'^sessions/timeperiod/$', "add_timeperiod"),
+
+)
