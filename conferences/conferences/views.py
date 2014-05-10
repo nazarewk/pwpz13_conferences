@@ -13,7 +13,7 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.template import RequestContext
 
-from .models import ReviewerForm, SessionForm, TimePeriodForm
+from .models import ReviewerForm, SessionForm, TimePeriodForm, LectureForm
 from .models import Reviewer, Session, TimePeriod, Lecture
 
 
@@ -160,7 +160,7 @@ def add_timeperiod(request):
     else:
         form = TimePeriodForm()
 
-    return render_to_response('conferences/sessions/add_timeperiod.html', { 'form':form }, context)
+    return render_to_response('conferences/misc/add_timeperiod.html', { 'form':form }, context)
 
 
 def lecture(request, pk):
@@ -184,3 +184,21 @@ def lecture_list(request):
     context_dict['lectures'] = lectures_list
 
     return render_to_response('conferences/lectures/lecture_list.html', context_dict, context)
+
+
+def add_lecture(request):
+    context = RequestContext(request)
+
+    if request.method == 'POST':
+        form = LectureForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+            return home(request)
+        else:
+            print form.errors
+    else:
+        form = LectureForm()
+
+    return render_to_response('conferences/lectures/add_lecture.html', {'form': form}, context)

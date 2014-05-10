@@ -310,3 +310,9 @@ class TimePeriodForm(ModelForm):
         super(TimePeriodForm, self).__init__(*args, **kwargs)
         self.fields['start'].widget = widgets.AdminSplitDateTime()
         self.fields['end'].widget = widgets.AdminSplitDateTime()
+
+
+class LectureForm(ModelForm):
+
+    class Meta:
+        model = Lecture

@@ -1,0 +1,15 @@
+{% extends "conferences/base.html" %}
+{% block content %}
+	<h1>Add a lecture</h1>
+    <form id="lecture_form" method="post">
+        {% csrf_token %}
+        {% for field in form.visible_fields %}
+            <br>
+            <b>{{ field.errors }}</b>
+            {{ field.name }} - {{ field }}
+            <br>
+        {% endfor %}
+        <input class="createBtn" type="button" value="Add time period" onclick='window.location.href="/lectures/timeperiod/"'>
+        <input type="submit" name="submit" value="Create Lecture">
+    </form>
+{% endblock %}
