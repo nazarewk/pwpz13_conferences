@@ -17,6 +17,17 @@ urlpatterns = patterns(
     ),
 )
 
+# admin datetimepicker urls section
+js_info_dict = {
+    'packages': ('cui.translations',),
+}
+
+urlpatterns += patterns('',
+    url(r'^jsi18n/$', 'django.views.i18n.javascript_catalog',
+js_info_dict),
+    )
+
+
 #reviewers urls section
 
 urlpatterns += patterns(

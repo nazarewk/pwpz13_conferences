@@ -5,8 +5,7 @@
         {% for field in form.visible_fields %}
             <br>
             {{ field.errors }}
-            {{ field.help_text }}
-            {{ field }}
+            {{ field.name }} - {{ field }}
             <br>
         {% endfor %}
         <input class="createBtn" type="button" value="Add time period" onclick='window.location.href="/sessions/timeperiod/"'>

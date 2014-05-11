@@ -40,7 +40,7 @@ class TimePeriod(models.Model):
     # 'reviewer_unavailability' = MM(Reviewer)
 
     def __str__(self):
-        return '%s %s' %(self.start.strftime('%Y-%m-%d %H:%M'), self.end.strftime('%Y-%m-%d %H:%M'))
+        return '%s - %s' %(self.start.strftime('%Y-%m-%d %H:%M:%S'), self.end.strftime('%Y-%m-%d %H:%M:%S'))
 
     def get_duration(self):
         '''
@@ -300,8 +300,8 @@ class SessionForm(ModelForm):
 
 class TimePeriodForm(ModelForm):
     description = forms.CharField(max_length=128, help_text="Please enter the description of the Time Period")
-    start = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M'])
-    end = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M'])
+    start = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'])
+    end = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'])
 
     class Meta:
         model = TimePeriod
