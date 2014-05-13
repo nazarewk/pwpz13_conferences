@@ -316,3 +316,4 @@ class LectureForm(ModelForm):
 
     class Meta:
         model = Lecture
+        fields = ['session','referents','summary','duration']

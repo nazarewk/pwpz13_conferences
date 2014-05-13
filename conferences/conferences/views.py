@@ -76,7 +76,9 @@ def session(request, pk):
 
     try:
         session = Session.objects.get(pk=pk)
+        lectures = Lecture.objects.filter(session=session)
         context_dict['session'] = session
+        context_dict['lectures'] = lectures
     except Session.DoesNotExist:
         pass
 

@@ -8,5 +8,15 @@
 		{% for admin in session.admins.all %}
 			<li> Admin: {{ admin }}</li>
 		{% endfor %}
+        <h2>Referaty należące do sesji:</h2>
+        {% if lectures %}
+        <ul>
+            {% for lecture in lectures %}
+				<li><a href="/lectures/{{ lecture.id }}">{{ lecture.id }}</a></li>
+            {% endfor %}
+		</ul>
+	    {% else %}
+		<p>Nie został utworzony jeszcze żaden referat</p>
+	    {% endif %}
 	</ul>
 {% endblock %}
