@@ -10,6 +10,7 @@
 <script type="text/javascript" src="{{ STATIC_URL }}admin/js/actions.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}admin/js/calendar.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}admin/js/admin/DateTimeShortcuts.js"></script>
+<script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{{ STATIC_URL }}/admin/{% endfilter %}";</script>
 
 {% endblock %}
 
