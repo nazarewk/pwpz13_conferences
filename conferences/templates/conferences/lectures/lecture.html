@@ -2,12 +2,16 @@
 {% block content %}
 	<h1>Referat:<br></h1>
 	<ul>
-		<li>Sesja: {{ lecture.session.name }}</li>
+        <li> Autor: {{ lecture.summary.author }}</li>
+        <li> Status: {{ lecture.summary.get_status_display }}</li>
+        <li> Dodatkowe informacje: {{ lecture.summary.extra_info }}</li><br>
+		<li> Sesja: {{ lecture.session.name }}</li>
 		<li> Czas trwania: {{ lecture.duration.start }} - {{ lecture.duration.end }} </li>
 		<li> Konferencja: {{ lecture.summary.conference}}</li>
 		{% for referents in lecture.referents.all %}
 			<li> Referent: {{ referents }}</li>
 		{% endfor %}
+
 
 	</ul>
 
