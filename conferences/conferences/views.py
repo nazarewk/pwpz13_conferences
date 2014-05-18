@@ -31,11 +31,13 @@ def home(request):
                 login(request, user)
                 return render(request, "conferences/home.html")
             else:
-                # tu gdy zablokowany
-                return render(request, "conferences/home.html")
+                text = u"Użytkownik nie został aktywowany. Sprawdź pocztę, a następnie kliknij w link z aktywacją."
+                context = {'message': text}
+                return render(request, 'conferences/users/login.html', context)
         else:
-            # tu gdy nie ma uzytkownika
-            return render(request, "conferences/home.html")
+            text = u"Nazwa użytkownika lub hasło jest niepoprawne."
+            context = {'message': text}
+            return render(request, 'conferences/users/login.html', context)
     else:
         return render(request, "conferences/home.html")
 
@@ -270,13 +272,15 @@ def registration(request):
             profile = UserProfile.create(user, activation_key)
             current_site = Site.objects.get_current()
             site_url = current_site.domain + "/users/confirm/" + user.username + "/" + activation_key
-            title = "Potwierdzenie rejestracji"
-            content = "Aby dokończyć rejestrację kliknij w link aktywacyjny " + site_url
+            title = u"Potwierdzenie rejestracji"
+            content = u"Aby dokończyć rejestrację kliknij w link aktywacyjny " + site_url
             # Nie wiem jak wysłać maila, czy to poleci na podstawie ustawien z django, czy mailem admina, czy jeszcze jak
             # dlatego send_mail zakomentowane, trzeba poprawic adres a reszta powinna byc ok
 	        # send_mail(title, content, jakis_adres, [user.email], fail_silently=False)
             profile.save()
-            return redirect('/')
+            text = u"Na podany adres został wysłany link aktywacyjny."
+            context = {'message': text}
+            return render(request, 'conferences/users/confirm.html', context)
         else:
             print user_form.errors
     else:
@@ -298,7 +302,7 @@ def user_confirm(request, username, key):
             user.is_active = True
             user.save()
             profile.save()
-            text = "Konto aktywowane. Teraz możesz się zalogować."
+            text = u"Konto aktywowane. Teraz możesz się zalogować."
             context = {'message': text}
             return render(request, 'conferences/users/confirm.html', context)
         else:
