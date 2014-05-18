@@ -106,9 +106,19 @@ urlpatterns += patterns(
     ),
 )
 
-urlpatterns += patterns("conferences.views",
-    url(r'^users/registration/$', "registration"),
-    url(r'^users/logout/$', "user_logout"),
-    url(r'^users/confirm/(?P<username>\w+)/(?P<key>\w+)/$', "user_confirm"),
+urlpatterns += patterns(
+    '',
+    url(r'^users/login$',
+        views.login,
+        name='user-login'),
+    url(r'^users/registration$',
+        views.registration,
+        name='user-registration'),
+    url(r'^users/logout$',
+        views.user_logout,
+        name='user-logout'),
+    url(r'^users/confirm/(?P<key>\w+)/$',
+        views.user_confirm,
+        name='user-confirm'),
 
 )

@@ -304,12 +304,25 @@ class Payment(models.Model):
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, null=True, blank=True)
-    activation_key = models.CharField(max_length=40)
+    user = models.OneToOneField(User)
+    activation_key = models.CharField(
+        max_length=40,
+        unique=True,
+        blank=True)
 
-    @classmethod
-    def create(cls, user, key):
-        return cls(user=user, activation_key=key)
+    def save(self, *args, **kwargs):
+        if not self.id and not self.activation_key:
+            key = ''
+            while True:
+                key = ''.join([
+                    random.choice(string.ascii_letters + string.digits)
+                    for i in range(self._meta.get_field_by_name(
+                        'activation_key')[0].max_length)
+                ])
+                if not UserProfile.objects.filter(activation_key=key).exists():
+                    break
+            self.activation_key = key
+        super(UserProfile, self).save(*args, **kwargs)
 
     def name(self):
         return self.user.username

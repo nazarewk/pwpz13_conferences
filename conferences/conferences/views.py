@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
 
 from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm
 from .models import Reviewer, Session, Lecture, UserProfile, User, Site
@@ -239,11 +241,11 @@ def login(request):
                 login(request, user)
                 return redirect('home')
             else:
-                text = u"Użytkownik nie został aktywowany. Sprawdź pocztę, a następnie kliknij w link z aktywacją."
+                text = "Użytkownik nie został aktywowany. Sprawdź pocztę, a następnie kliknij w link z aktywacją."
                 context = {'message': text}
                 return render(request, 'conferences/users/login.html', context)
         else:
-            text = u"Nazwa użytkownika lub hasło jest niepoprawne."
+            text = "Nazwa użytkownika lub hasło jest niepoprawne."
             context = {'message': text}
             return render(request, 'conferences/users/login.html', context)
 
@@ -255,20 +257,17 @@ def registration(request):
             user.set_password(user.password)
             user.is_active = False
             user.save()
-            activation_key = hashlib.md5(user.username).hexdigest()
-            activation_key += ''.join(random.choice(
-                string.ascii_uppercase + string.ascii_lowercase + string.digits)
-                                      for i in range(8))
-            profile = UserProfile.create(user, activation_key)
-            current_site = Site.objects.get_current()
-            site_url = current_site.domain + "/users/confirm/" + user.username + "/" + activation_key
-            title = u"Potwierdzenie rejestracji"
-            content = u"Aby dokończyć rejestrację kliknij w link aktywacyjny " + site_url
+            profile = UserProfile(user)
+            profile.save()
+            activation_url = reverse('user-confirm', kwargs={
+                'key': profile.activation_key
+            })
+            title = "Potwierdzenie rejestracji"
+            content = "Aby dokończyć rejestrację kliknij w link aktywacyjny " + activation_url
             # Nie wiem jak wysłać maila, czy to poleci na podstawie ustawien z django, czy mailem admina, czy jeszcze jak
             # dlatego send_mail zakomentowane, trzeba poprawic adres a reszta powinna byc ok
             # send_mail(title, content, jakis_adres, [user.email], fail_silently=False)
-            profile.save()
-            text = u"Na podany adres został wysłany link aktywacyjny."
+            text = "Na podany adres został wysłany link aktywacyjny."
             context = {'message': text}
             return render(request, 'conferences/users/confirm.html', context)
         else:
@@ -282,26 +281,27 @@ def registration(request):
 @login_required
 def user_logout(request):
     logout(request)
-    return render(request, "conferences/home.html")
+    return redirect('home')
 
 
-def user_confirm(request, username, key):
+def user_confirm(request, key):
     try:
-        user = User.objects.get(username=username)
-        profile = UserProfile.objects.get(user=user)
+        profile = get_object_or_404(UserProfile, activation_key=key)
+        user = profile.user
         if profile.activation_key == key:
             user.is_active = True
             user.save()
+            profile.activation_key = None
             profile.save()
-            text = u"Konto aktywowane. Teraz możesz się zalogować."
+            text = "Konto aktywowane. Teraz możesz się zalogować."
             context = {'message': text}
             return render(request, 'conferences/users/confirm.html', context)
         else:
-            text = u'Niepoprawny klucz aktywacyjny.'
+            text = 'Niepoprawny klucz aktywacyjny.'
             context = {'message': text}
             return render(request, 'conferences/users/confirm.html', context)
     except (User.DoesNotExist, UserProfile.DoesNotExist) as e:
-        text = u'Niepoprawny klucz aktywacyjny.'
+        text = 'Niepoprawny klucz aktywacyjny.'
         context = {'message': text}
         return render(request, 'conferences/users/confirm.html', context)
 
