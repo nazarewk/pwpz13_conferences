@@ -21,13 +21,6 @@ Installing PIP
 Follow instructions http://www.pip-installer.org/en/latest/installing.html
 
 
-Installing Django CMS 3 beta
-----------------------------
-
-        git clone https://github.com/divio/django-cms.git
-        python django-cms/setup.py install
-        
-        
 Installing requirements.txt
 ---------------------------
 
