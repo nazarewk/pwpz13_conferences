@@ -40,7 +40,7 @@ class TimePeriod(models.Model):
     # 'reviewer_unavailability' = MM(Reviewer)
 
     def __str__(self):
-        return '%s - %s' %(self.start.strftime('%Y-%m-%d %H:%M:%S'), self.end.strftime('%Y-%m-%d %H:%M:%S'))
+        return '%s - %s' % (self.start.strftime('%Y-%m-%d %H:%M:%S'), self.end.strftime('%Y-%m-%d %H:%M:%S'))
 
     def get_duration(self):
         '''
@@ -97,7 +97,7 @@ class ConferencesFile(models.Model):
     file = FilerFileField()
     status = models.CharField(max_length=2, choices=(
         ('PR', _('Processing')),
-        ('RD', _('Ready')), # Ready for admin's decision to accept or reject
+        ('RD', _('Ready')),  # Ready for admin's decision to accept or reject
         ('OK', _('Accepted')),
         ('NO', _('Rejected')),
         ('ER', _('Spam')),
@@ -124,19 +124,20 @@ class Reviewer(models.Model):
     Represents both out-of-system and in-system reviewers including
         availability information
     '''
-    user_account = models.ForeignKey(User, null=True, blank=True,verbose_name=u"Konto użytkownika")
-    title = models.CharField(null=True, blank=True,max_length=64,verbose_name=u"Tytuł")
-    first_name = models.CharField(null=True, blank=True,max_length=64,verbose_name=u"Imię")
-    last_name = models.CharField(null=True, blank=True,max_length=64,verbose_name=u"Nazwisko")
-    email = models.EmailField(null=True, blank=True,max_length=254,verbose_name=u"Email") # RFC3696/5321-compliant length
-    contact_phone = models.CharField(null=True, blank=True,max_length=64,verbose_name=u"Telefon")
+    user_account = models.ForeignKey(User, null=True, blank=True, verbose_name=u"Konto użytkownika")
+    title = models.CharField(null=True, blank=True, max_length=64, verbose_name=u"Tytuł")
+    first_name = models.CharField(null=True, blank=True, max_length=64, verbose_name=u"Imię")
+    last_name = models.CharField(null=True, blank=True, max_length=64, verbose_name=u"Nazwisko")
+    email = models.EmailField(null=True, blank=True, max_length=254,
+                              verbose_name=u"Email")  # RFC3696/5321-compliant length
+    contact_phone = models.CharField(null=True, blank=True, max_length=64, verbose_name=u"Telefon")
 
-    is_active = models.BooleanField(default=True,verbose_name=u"Aktywny")
+    is_active = models.BooleanField(default=True, verbose_name=u"Aktywny")
 
     availability = models.ManyToManyField(
-        TimePeriod, related_name='reviewer_availability',verbose_name=u"Dostępność")
+        TimePeriod, related_name='reviewer_availability', verbose_name=u"Dostępność")
     unavailability = models.ManyToManyField(
-        TimePeriod, related_name='reviewer_unavailability',verbose_name=u"Niedostępność")
+        TimePeriod, related_name='reviewer_unavailability', verbose_name=u"Niedostępność")
 
     def is_available(self, from_date=timezone.now(), for_days=0):
         '''
@@ -160,7 +161,8 @@ class Reviewer(models.Model):
     def clean(self):
         error_messages = []
         from django.core.exceptions import ValidationError
-        if(self.user_account):
+
+        if (self.user_account):
             return
         if not self.title:
             error_messages.append(ValidationError('Tytuł jest wymagany!'))
@@ -170,17 +172,18 @@ class Reviewer(models.Model):
             error_messages.append(ValidationError('Nazwisko jest wymagane!'))
         if not self.email:
             error_messages.append(ValidationError('Email jest wymagany!'))
-        if( len(error_messages)>0):
+        if ( len(error_messages) > 0):
             raise ValidationError(error_messages)
 
     def name(self):
-        if(self.user_account):
-			if(self.user_account.first_name or self.user_account.last_name):
-				return "%s %s" % (self.user_account.first_name, self.user_account.last_name)
-			else:
-				return self.user_account.username
+        if (self.user_account):
+            if (self.user_account.first_name or self.user_account.last_name):
+                return "%s %s" % (self.user_account.first_name, self.user_account.last_name)
+            else:
+                return self.user_account.username
         else:
             return "%s %s" % (self.first_name, self.last_name)
+
 
 class Review(models.Model):
     '''
@@ -225,6 +228,7 @@ class Topic(models.Model):
     def __str__(self):
         return self.name
 
+
 class Session(models.Model):
     '''
     Represents sessions assigned to given root/sub topics,
@@ -259,8 +263,6 @@ class Lecture(models.Model):
         TimePeriod, related_name='lectures_dates')
 
 
-
-
 class Balance(models.Model):
     user = models.ForeignKey(User)
     is_student = models.BooleanField(default=False)
@@ -283,20 +285,21 @@ class Payment(models.Model):
 
 class ReviewerForm(ModelForm):
     class Meta:
-        model=Reviewer
-        fields = ['user_account','first_name','last_name','email','title','contact_phone','availability']
+        model = Reviewer
+        fields = ['user_account', 'first_name', 'last_name', 'email', 'title', 'contact_phone', 'availability']
 
 
 class SessionForm(ModelForm):
     name = forms.CharField(max_length=128, help_text="Please enter the session name")
     duration = forms.ModelChoiceField(queryset=TimePeriod.objects.all(), help_text="Please choose duration of session")
     conference = forms.ModelChoiceField(queryset=Conference.objects.all(), help_text="Please choose conference")
-    topic = forms.ModelChoiceField (queryset=Topic.objects.all(), help_text="Please choose session topic")
-    admins = forms.ModelMultipleChoiceField (queryset=User.objects.all())
+    topic = forms.ModelChoiceField(queryset=Topic.objects.all(), help_text="Please choose session topic")
+    admins = forms.ModelMultipleChoiceField(queryset=User.objects.all())
     admins.help_text = 'Please choose Admin'
 
     class Meta:
         model = Session
+
 
 class TimePeriodForm(ModelForm):
     description = forms.CharField(max_length=128, help_text="Please enter the description of the Time Period")
@@ -313,7 +316,43 @@ class TimePeriodForm(ModelForm):
 
 
 class LectureForm(ModelForm):
-
     class Meta:
         model = Lecture
-        fields = ['session','referents','summary','duration']
+        fields = ['session', 'referents', 'summary', 'duration']
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, null=True, blank=True)
+    activation_key = models.CharField(max_length=40)
+
+    @classmethod
+    def create(cls, user, key):
+        return cls(user=user, activation_key=key)
+
+    def name(self):
+        return self.user.username
+
+    def __str__(self):
+        return self.user.username
+
+
+class UserForm(ModelForm):
+    email_errors = {
+        'required': 'To pole jest wymagane.',
+        'invalid': 'Adres e-mail jest niepoprawny',
+    }
+    username = forms.CharField(label=u'Nazwa użytkownika')
+    first_name = forms.CharField(required=True, label=u'Imię')
+    last_name = forms.CharField(required=True, label=u'Nazwisko')
+    email = forms.CharField(required=True, label=u'E-mail', error_messages=email_errors)
+    password = forms.CharField(widget=forms.PasswordInput(), label=u'Hasło', min_length=8)
+
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        if User.objects.exclude(pk=self.instance.pk).filter(username=username).exists():
+            raise forms.ValidationError(u'Nazwa użytkownika "%s" jest już w użyciu.' % username)
+        return username
+
+    class Meta:
+        model = User
+        fields = ('username', 'password', 'first_name', 'last_name', 'email')
