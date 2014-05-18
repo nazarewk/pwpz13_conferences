@@ -7,12 +7,9 @@ from datetime import datetime, timedelta, MAXYEAR, MINYEAR
 from django.db.models import Q
 from django.utils.translation import ugettext as _
 from django.db import models
-from django.forms import ModelForm
-from django.contrib.admin import widgets
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.utils import timezone
-from django import forms
 from filer.fields.file import FilerFileField
 
 
@@ -39,12 +36,8 @@ class TimePeriod(models.Model):
     # 'reviewer_unavailability' = MM(Reviewer)
 
     def __str__(self):
-<<<<<<< HEAD
         return '%s - %s' % (self.start.strftime('%Y-%m-%d %H:%M:%S'),
                             self.end.strftime('%Y-%m-%d %H:%M:%S'))
-=======
-        return '%s - %s' % (self.start.strftime('%Y-%m-%d %H:%M:%S'), self.end.strftime('%Y-%m-%d %H:%M:%S'))
->>>>>>> origin/siwekm
 
     def get_duration(self):
         '''
@@ -101,7 +94,7 @@ class ConferencesFile(models.Model):
     file = FilerFileField()
     status = models.CharField(max_length=2, choices=(
         ('PR', _('Processing')),
-        ('RD', _('Ready')),  # Ready for admin's decision to accept or reject
+        ('RD', _('Ready')), # Ready for admin's decision to accept or reject
         ('OK', _('Accepted')),
         ('NO', _('Rejected')),
         ('ER', _('Spam')),
@@ -128,43 +121,41 @@ class Reviewer(models.Model):
     Represents both out-of-system and in-system reviewers including
         availability information
     '''
-<<<<<<< HEAD
-    user_account = models.ForeignKey(User, null=True, blank=True,
-                                     verbose_name=u"Konto użytkownika")
-    title = models.CharField(null=True, blank=True, max_length=64,
-                             verbose_name=u"Tytuł")
-    first_name = models.CharField(null=True, blank=True, max_length=64,
-                                  verbose_name=u"Imię")
-    last_name = models.CharField(null=True, blank=True, max_length=64,
-                                 verbose_name=u"Nazwisko")
-    email = models.EmailField(null=True, blank=True, max_length=254,
-                              verbose_name=u"Email") # RFC3696/5321-compliant length
-    contact_phone = models.CharField(null=True, blank=True, max_length=64,
-                                     verbose_name=u"Telefon")
-=======
-    user_account = models.ForeignKey(User, null=True, blank=True, verbose_name=u"Konto użytkownika")
-    title = models.CharField(null=True, blank=True, max_length=64, verbose_name=u"Tytuł")
-    first_name = models.CharField(null=True, blank=True, max_length=64, verbose_name=u"Imię")
-    last_name = models.CharField(null=True, blank=True, max_length=64, verbose_name=u"Nazwisko")
-    email = models.EmailField(null=True, blank=True, max_length=254,
-                              verbose_name=u"Email")  # RFC3696/5321-compliant length
-    contact_phone = models.CharField(null=True, blank=True, max_length=64, verbose_name=u"Telefon")
->>>>>>> origin/siwekm
+    user_account = models.ForeignKey(
+        User,
+        null=True, blank=True,
+        verbose_name=_('Konto użytkownika'))
+    title = models.CharField(
+        null=True, blank=True,
+        max_length=64,
+        verbose_name=_('Tytuł'))
+    first_name = models.CharField(
+        null=True, blank=True,
+        max_length=64,
+        verbose_name=_('Imię'))
+    last_name = models.CharField(
+        null=True, blank=True,
+        max_length=64,
+        verbose_name=_('Nazwisko'))
+    email = models.EmailField(
+        null=True, blank=True,
+        max_length=254,
+        verbose_name=_('Email')) # RFC3696/5321-compliant length
+    contact_phone = models.CharField(
+        null=True, blank=True,
+        max_length=64,
+        verbose_name=_('Telefon'))
 
-    is_active = models.BooleanField(default=True, verbose_name=u"Aktywny")
+    is_active = models.BooleanField(default=True, verbose_name=_('Aktywny'))
 
     availability = models.ManyToManyField(
-<<<<<<< HEAD
-        TimePeriod, related_name='reviewer_availability',
-        verbose_name=u"Dostępność")
+        TimePeriod,
+        related_name='reviewer_availability',
+        verbose_name=_('Dostępność'))
     unavailability = models.ManyToManyField(
-        TimePeriod, related_name='reviewer_unavailability',
-        verbose_name=u"Niedostępność")
-=======
-        TimePeriod, related_name='reviewer_availability', verbose_name=u"Dostępność")
-    unavailability = models.ManyToManyField(
-        TimePeriod, related_name='reviewer_unavailability', verbose_name=u"Niedostępność")
->>>>>>> origin/siwekm
+        TimePeriod,
+        related_name='reviewer_unavailability',
+        verbose_name=_('Niedostępność'))
 
     def is_available(self, from_date=timezone.now(), for_days=0):
         '''
@@ -205,16 +196,12 @@ class Reviewer(models.Model):
     def name(self):
         if (self.user_account):
             if (self.user_account.first_name or self.user_account.last_name):
-<<<<<<< HEAD
-                return "%s %s" % (
+                return '%s %s' % (
                     self.user_account.first_name, self.user_account.last_name)
-=======
-                return "%s %s" % (self.user_account.first_name, self.user_account.last_name)
->>>>>>> origin/siwekm
             else:
                 return self.user_account.username
         else:
-            return "%s %s" % (self.first_name, self.last_name)
+            return '%s %s' % (self.first_name, self.last_name)
 
 
 class Review(models.Model):
@@ -254,8 +241,10 @@ class Topic(models.Model):
     '''
     conference = models.ForeignKey(Conference)
     name = models.CharField(max_length=256)
-    super_topic = models.ForeignKey('self', null=True, blank=True,
-                                    related_name='sub_topics')
+    super_topic = models.ForeignKey(
+        'self',
+        null=True, blank=True,
+        related_name='sub_topics')
 
     def __str__(self):
         return self.name
@@ -266,8 +255,7 @@ class Session(models.Model):
     Represents sessions assigned to given root/sub topics,
      admin of super-topic session should be also admin of all sub-sessions
     '''
-    conference = models.ForeignKey(Conference,
-                                   related_name='sessions')
+    conference = models.ForeignKey(Conference, related_name='sessions')
     admins = models.ManyToManyField(User)
     topic = models.OneToOneField(Topic)
 
@@ -309,68 +297,10 @@ class Payment(models.Model):
         TimePeriod, related_name='payments')
 
     currency = models.CharField(max_length=3, choices=(
-        ('PLN', 'Złote polskie'),
+        ('PLN', _('Złote polskie')),
     ))
     amount = models.DecimalField(max_digits=10, decimal_places=3)
     paid = models.DecimalField(max_digits=10, decimal_places=3)
-
-
-class ReviewerForm(ModelForm):
-    class Meta:
-        model = Reviewer
-<<<<<<< HEAD
-        fields = ['user_account', 'first_name', 'last_name', 'email', 'title',
-                  'contact_phone', 'availability']
-
-
-class SessionForm(ModelForm):
-    name = forms.CharField(max_length=128,
-                           help_text="Please enter the session name")
-    duration = forms.ModelChoiceField(queryset=TimePeriod.objects.all(),
-                                      help_text="Please choose duration of session")
-    conference = forms.ModelChoiceField(queryset=Conference.objects.all(),
-                                        help_text="Please choose conference")
-    topic = forms.ModelChoiceField(queryset=Topic.objects.all(),
-                                   help_text="Please choose session topic")
-=======
-        fields = ['user_account', 'first_name', 'last_name', 'email', 'title', 'contact_phone', 'availability']
-
-
-class SessionForm(ModelForm):
-    name = forms.CharField(max_length=128, help_text="Please enter the session name")
-    duration = forms.ModelChoiceField(queryset=TimePeriod.objects.all(), help_text="Please choose duration of session")
-    conference = forms.ModelChoiceField(queryset=Conference.objects.all(), help_text="Please choose conference")
-    topic = forms.ModelChoiceField(queryset=Topic.objects.all(), help_text="Please choose session topic")
->>>>>>> origin/siwekm
-    admins = forms.ModelMultipleChoiceField(queryset=User.objects.all())
-    admins.help_text = 'Please choose Admin'
-
-    class Meta:
-        model = Session
-
-
-class TimePeriodForm(ModelForm):
-    description = forms.CharField(max_length=128,
-                                  help_text="Please enter the description of the Time Period")
-    start = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'])
-    end = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'])
-
-    class Meta:
-        model = TimePeriod
-
-    def __init__(self, *args, **kwargs):
-        super(TimePeriodForm, self).__init__(*args, **kwargs)
-        self.fields['start'].widget = widgets.AdminSplitDateTime()
-        self.fields['end'].widget = widgets.AdminSplitDateTime()
-
-
-class LectureForm(ModelForm):
-    class Meta:
-        model = Lecture
-<<<<<<< HEAD
-        fields = ['session', 'referents', 'summary', 'duration']
-=======
-        fields = ['session', 'referents', 'summary', 'duration']
 
 
 class UserProfile(models.Model):
@@ -386,26 +316,3 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
-
-
-class UserForm(ModelForm):
-    email_errors = {
-        'required': 'To pole jest wymagane.',
-        'invalid': 'Adres e-mail jest niepoprawny',
-    }
-    username = forms.CharField(label=u'Nazwa użytkownika')
-    first_name = forms.CharField(required=True, label=u'Imię')
-    last_name = forms.CharField(required=True, label=u'Nazwisko')
-    email = forms.CharField(required=True, label=u'E-mail', error_messages=email_errors)
-    password = forms.CharField(widget=forms.PasswordInput(), label=u'Hasło', min_length=8)
-
-    def clean_username(self):
-        username = self.cleaned_data['username']
-        if User.objects.exclude(pk=self.instance.pk).filter(username=username).exists():
-            raise forms.ValidationError(u'Nazwa użytkownika "%s" jest już w użyciu.' % username)
-        return username
-
-    class Meta:
-        model = User
-        fields = ('username', 'password', 'first_name', 'last_name', 'email')
->>>>>>> origin/siwekm
