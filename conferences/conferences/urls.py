@@ -105,3 +105,10 @@ urlpatterns += patterns(
         name='lecture-timeperiod-add'
     ),
 )
+
+urlpatterns += patterns("conferences.views",
+    url(r'^users/registration/$', "registration"),
+    url(r'^users/logout/$', "user_logout"),
+    url(r'^users/confirm/(?P<username>\w+)/(?P<key>\w+)/$', "user_confirm"),
+
+)

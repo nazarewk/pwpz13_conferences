@@ -1,22 +1,19 @@
+# -*- coding: utf-8 -*-
 from django.shortcuts import render
-
-# Create your views here.
-
-# testView
-
 from django.shortcuts import render_to_response
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
-from django.template import RequestContext
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
-from .models import ReviewerForm, SessionForm, TimePeriodForm, LectureForm
-from .models import Reviewer, Session, Lecture
+from .models import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm
+from .models import Reviewer, Session, Lecture, UserProfile, User, Site
+import hashlib, string, random
 
 
 def home(request):
     return render(request, "conferences/home.html")
 
-#reviewers views section
 
 def reviewer_list(request):
     reviewers = Reviewer.objects.filter(is_active=True)
@@ -145,7 +142,6 @@ def session_delete(request, pk):
 
 
 def timeperiod_add(request):
-
     if request.method == 'POST':
         form = TimePeriodForm(request.POST)
 
@@ -230,5 +226,82 @@ def lecture_delete(request, pk):
     lecture_del = lecture.delete()
     context_dict['lecture_del'] = lecture_del
 
-    return render_to_response('conferences/lectures/remove_lecture.html',
+    return render_to_response('conferences/lectures/lecture_delete.html',
                               context_dict)
+
+def login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user:
+            if user.is_active:
+                login(request, user)
+                return redirect('home')
+            else:
+                text = u"Użytkownik nie został aktywowany. Sprawdź pocztę, a następnie kliknij w link z aktywacją."
+                context = {'message': text}
+                return render(request, 'conferences/users/login.html', context)
+        else:
+            text = u"Nazwa użytkownika lub hasło jest niepoprawne."
+            context = {'message': text}
+            return render(request, 'conferences/users/login.html', context)
+
+def registration(request):
+    if request.method == 'POST':
+        user_form = UserForm(data=request.POST)
+        if user_form.is_valid():
+            user = user_form.save()
+            user.set_password(user.password)
+            user.is_active = False
+            user.save()
+            activation_key = hashlib.md5(user.username).hexdigest()
+            activation_key += ''.join(random.choice(
+                string.ascii_uppercase + string.ascii_lowercase + string.digits)
+                                      for i in range(8))
+            profile = UserProfile.create(user, activation_key)
+            current_site = Site.objects.get_current()
+            site_url = current_site.domain + "/users/confirm/" + user.username + "/" + activation_key
+            title = u"Potwierdzenie rejestracji"
+            content = u"Aby dokończyć rejestrację kliknij w link aktywacyjny " + site_url
+            # Nie wiem jak wysłać maila, czy to poleci na podstawie ustawien z django, czy mailem admina, czy jeszcze jak
+            # dlatego send_mail zakomentowane, trzeba poprawic adres a reszta powinna byc ok
+            # send_mail(title, content, jakis_adres, [user.email], fail_silently=False)
+            profile.save()
+            text = u"Na podany adres został wysłany link aktywacyjny."
+            context = {'message': text}
+            return render(request, 'conferences/users/confirm.html', context)
+        else:
+            print user_form.errors
+    else:
+        user_form = UserForm()
+    return render(request, "conferences/users/registration.html",
+                  {'form': user_form})
+
+
+@login_required
+def user_logout(request):
+    logout(request)
+    return render(request, "conferences/home.html")
+
+
+def user_confirm(request, username, key):
+    try:
+        user = User.objects.get(username=username)
+        profile = UserProfile.objects.get(user=user)
+        if profile.activation_key == key:
+            user.is_active = True
+            user.save()
+            profile.save()
+            text = u"Konto aktywowane. Teraz możesz się zalogować."
+            context = {'message': text}
+            return render(request, 'conferences/users/confirm.html', context)
+        else:
+            text = u'Niepoprawny klucz aktywacyjny.'
+            context = {'message': text}
+            return render(request, 'conferences/users/confirm.html', context)
+    except (User.DoesNotExist, UserProfile.DoesNotExist) as e:
+        text = u'Niepoprawny klucz aktywacyjny.'
+        context = {'message': text}
+        return render(request, 'conferences/users/confirm.html', context)
+
