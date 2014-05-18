@@ -1,6 +1,7 @@
 Django==1.6.5
 Pillow==2.4.0
 South==0.8.4
+Werkzeug==0.9.4
 cmsplugin-filer==0.9.5
 django-classy-tags==0.5.1
 django-cms==3.0.1

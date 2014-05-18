@@ -6,7 +6,7 @@ from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
-from .models import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm
+from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm
 from .models import Reviewer, Session, Lecture, UserProfile, User, Site
 import hashlib, string, random
 
