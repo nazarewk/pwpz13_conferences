@@ -1,4 +1,5 @@
 import os
+
 _ = lambda s: s
 
 INSTALLED_APPS = []
@@ -9,7 +10,7 @@ TEMPLATE_DIRS = []
 SITE_ID = 1
 SITE_URL = ''
 SITE_DIR = os.path.dirname(__file__)
-PROJ_DIR = os.path.dirname(SITE_DIR)
+BASE_DIR = os.path.dirname(SITE_DIR)
 
 INTERNAL_IPS = ('127.0.0.1',)
 
@@ -58,7 +59,7 @@ WSGI_APPLICATION = 'conferences_site.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(PROJ_DIR, 'db.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -82,7 +83,7 @@ USE_L10N = False
 USE_TZ = True
 
 LOCALE_PATHS = (
-    os.path.join(PROJ_DIR, 'locale')
+    os.path.join(BASE_DIR, 'locale')
 )
 
 DATE_FORMAT = 'd-m-y'
@@ -98,14 +99,13 @@ THOUSAND_SEPARATOR = ' '
 #   Static files    #
 #####################
 
-MEDIA_ROOT = os.path.join(PROJ_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = SITE_URL + '/media/'
-STATIC_ROOT = os.path.join(PROJ_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = SITE_URL + '/static/'
 
-STATICFILES_DIRS = (
-    # os.path.join(PROJ_DIR, 'static'),
-)
+STATICFILES_DIRS = [
+]
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -131,7 +131,7 @@ TEMPLATE_CONTEXT_PROCESSORS += [
 ]
 
 TEMPLATE_DIRS += [
-    os.path.join(PROJ_DIR, 'templates'),
+    os.path.join(BASE_DIR, 'templates'),
 ]
 
 #############

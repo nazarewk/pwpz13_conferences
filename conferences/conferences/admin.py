@@ -1,5 +1,4 @@
 from django.contrib.admin.sites import AlreadyRegistered
-from django.utils.translation import ugettext as _
 from django.contrib import admin
 from django.db.models import get_models, get_app
 

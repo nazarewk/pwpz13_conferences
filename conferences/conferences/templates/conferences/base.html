@@ -1,0 +1,53 @@
+{% load staticfiles %}
+<html>
+<head>
+    <title>Konferencje naukowe!</title>
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <link href="{% static 'conferences/css/style.css' %}" type="text/css"
+          rel="stylesheet"/>
+</head>
+<body>
+<div id="wrapper">
+    <div id="header">
+        <h1>Konferencje django !</h1>
+
+        <div class="userInfo">Jestes zalogowany jako <b>user</b> <a href="#">wyloguj</a>
+        </div>
+    </div>
+    <div class="leftNav">
+        <ul>
+            <li><a href="/">
+                <img src="{% static 'conferences/img/home.png' %}"
+                     class="icon"/>
+                Strona główna
+            </a></li>
+            <li><a href="{% url 'reviewer-list' %}">
+                <img src="{% static 'conferences/img/home.png' %}"
+                     class="icon"/>
+                Recenzenci
+            </a></li>
+            <li><a href="{% url 'session-list' %}">
+                <img src="{% static 'conferences/img/home.png' %}"
+                     class="icon"/>
+                Sesje
+            </a></li>
+            <li><a href="{% url 'lecture-list' %}">
+                <img src="{% static 'conferences/img/home.png' %}"
+                     class="icon"/>
+                Referaty
+            </a></li>
+        </ul>
+    </div>
+    <div id="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+    <div class="push"></div>
+</div>
+<div id="footer">
+    <div class="footer_block">Tu będzie jakaś stopka np. W celu usprawnienia
+        systemu prosimy kierować uwagi na <a href="mailto:kontakt">kontakt@konferencje.pl</a>
+    </div>
+</div>
+</body>
+</html>

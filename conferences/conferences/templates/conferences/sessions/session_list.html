@@ -1,0 +1,34 @@
+{% extends "conferences/base.html" %}
+{% load staticfiles %}
+{% block content %}
+    <h1>Sesje</h1>
+    <div class="listContainer">
+        {% if sessions %}
+            <ul>
+                {% for session in sessions %}
+                    <li>
+                        <a href="{% url 'session-details' session.id %}">
+                            {{ session.name }}
+                        </a>
+                        <a href="{% url 'session-edit' session.id %}"
+                           title="Edytuj">
+                            <img src="{% static 'conferences/img/editicon.png' %}"
+                                 class="icon-small"/>
+                        </a>
+                        <a href="{% url 'session-delete' session.id %}"
+                           onclick="return confirm('Usunąć sesje?');"
+                           title="Usuń">
+                            <img src="{% static 'conferences/img/deleteicon.png' %}"
+                                 class="icon-small"/>
+                        </a>
+                    </li>
+
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Nie została utworzona jeszcze żadna sesja.</p>
+        {% endif %}
+    </div>
+    <input class="createBtn" type="button" value="Dodaj sesję"
+           onclick='window.location.href="{% url 'session-add' %}"'>
+{% endblock %}

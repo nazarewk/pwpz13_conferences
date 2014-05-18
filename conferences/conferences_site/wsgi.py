@@ -13,9 +13,9 @@ import sys
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "conferences_site.settings")
 
 SITE_DIR = os.path.abspath(os.path.dirname(__file__))
-PROJ_DIR = os.path.dirname(SITE_DIR)
+BASE_DIR = os.path.dirname(SITE_DIR)
 
-sys.path.insert(0, PROJ_DIR)
+sys.path.insert(0, BASE_DIR)
 
 from django.core.wsgi import get_wsgi_application
 

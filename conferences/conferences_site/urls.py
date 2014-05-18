@@ -29,3 +29,12 @@ if 'session_security' in settings.INSTALLED_APPS:
         '',
         url(r'session_security/', include('session_security.urls')),
     )
+
+if settings.DEBUG:
+    urlpatterns = patterns(
+        '',
+        url(r'^media/(?P<path>.*)$', 'django.views.static.serve',
+            {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
+        url(r'^static/(?P<path>.*)$', 'django.views.static.serve',
+            {'document_root': settings.STATIC_ROOT, 'show_indexes': True}),
+    ) + urlpatterns

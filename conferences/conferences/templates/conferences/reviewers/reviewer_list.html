@@ -1,0 +1,32 @@
+{% extends "conferences/base.html" %}
+{% load staticfiles %}
+{% block content %}
+    <h1>Recenzenci</h1>
+    <div class="listContainer">
+        {% if reviewers %}
+            <ul>
+                {% for r in reviewers %}
+                    <li>
+                        <a href="{% url 'reviewer-details' r.pk %}">
+                            {{ r.name }}
+                        </a>
+                        <a href="{% url 'reviewer-edit' r.pk %}" title="Edytuj">
+                            <img src="{% static 'conferences/img/editicon.png' %}"
+                                 class="icon-small"/>
+                        </a>
+                        <a href="{% url 'reviewer-delete' r.pk %}"
+                           onclick="return confirm('Usunąć recenzenta?');"
+                           title="Usuń">
+                            <img src="{% static 'conferences/img/deleteicon.png' %}"
+                                 class="icon-small"/>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Żaden recenzent nie został jeszcze utworzony.</p>
+        {% endif %}
+    </div>
+    <input class="createBtn" type="button" value="Dodaj recenzenta"
+           onclick='window.location.href="{% url 'reviewer-add' %}"'>
+{% endblock %}

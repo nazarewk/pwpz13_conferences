@@ -1,21 +1,20 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import random
+import string
+from datetime import datetime, timedelta, MAXYEAR, MINYEAR
+
 from django.db.models import Q
 from django.utils.translation import ugettext as _
 from django.db import models
 from django.forms import ModelForm
 from django.contrib.admin import widgets
-from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
-from django.conf import settings
 from django.utils import timezone
 from django import forms
-from datetime import datetime, timedelta, MAXYEAR, MINYEAR
 from filer.fields.file import FilerFileField
 
-import random
-import string
 
 User = get_user_model()
 
@@ -40,7 +39,8 @@ class TimePeriod(models.Model):
     # 'reviewer_unavailability' = MM(Reviewer)
 
     def __str__(self):
-        return '%s - %s' %(self.start.strftime('%Y-%m-%d %H:%M:%S'), self.end.strftime('%Y-%m-%d %H:%M:%S'))
+        return '%s - %s' % (self.start.strftime('%Y-%m-%d %H:%M:%S'),
+                            self.end.strftime('%Y-%m-%d %H:%M:%S'))
 
     def get_duration(self):
         '''
@@ -124,19 +124,27 @@ class Reviewer(models.Model):
     Represents both out-of-system and in-system reviewers including
         availability information
     '''
-    user_account = models.ForeignKey(User, null=True, blank=True,verbose_name=u"Konto użytkownika")
-    title = models.CharField(null=True, blank=True,max_length=64,verbose_name=u"Tytuł")
-    first_name = models.CharField(null=True, blank=True,max_length=64,verbose_name=u"Imię")
-    last_name = models.CharField(null=True, blank=True,max_length=64,verbose_name=u"Nazwisko")
-    email = models.EmailField(null=True, blank=True,max_length=254,verbose_name=u"Email") # RFC3696/5321-compliant length
-    contact_phone = models.CharField(null=True, blank=True,max_length=64,verbose_name=u"Telefon")
+    user_account = models.ForeignKey(User, null=True, blank=True,
+                                     verbose_name=u"Konto użytkownika")
+    title = models.CharField(null=True, blank=True, max_length=64,
+                             verbose_name=u"Tytuł")
+    first_name = models.CharField(null=True, blank=True, max_length=64,
+                                  verbose_name=u"Imię")
+    last_name = models.CharField(null=True, blank=True, max_length=64,
+                                 verbose_name=u"Nazwisko")
+    email = models.EmailField(null=True, blank=True, max_length=254,
+                              verbose_name=u"Email") # RFC3696/5321-compliant length
+    contact_phone = models.CharField(null=True, blank=True, max_length=64,
+                                     verbose_name=u"Telefon")
 
-    is_active = models.BooleanField(default=True,verbose_name=u"Aktywny")
+    is_active = models.BooleanField(default=True, verbose_name=u"Aktywny")
 
     availability = models.ManyToManyField(
-        TimePeriod, related_name='reviewer_availability',verbose_name=u"Dostępność")
+        TimePeriod, related_name='reviewer_availability',
+        verbose_name=u"Dostępność")
     unavailability = models.ManyToManyField(
-        TimePeriod, related_name='reviewer_unavailability',verbose_name=u"Niedostępność")
+        TimePeriod, related_name='reviewer_unavailability',
+        verbose_name=u"Niedostępność")
 
     def is_available(self, from_date=timezone.now(), for_days=0):
         '''
@@ -160,7 +168,8 @@ class Reviewer(models.Model):
     def clean(self):
         error_messages = []
         from django.core.exceptions import ValidationError
-        if(self.user_account):
+
+        if (self.user_account):
             return
         if not self.title:
             error_messages.append(ValidationError('Tytuł jest wymagany!'))
@@ -170,17 +179,19 @@ class Reviewer(models.Model):
             error_messages.append(ValidationError('Nazwisko jest wymagane!'))
         if not self.email:
             error_messages.append(ValidationError('Email jest wymagany!'))
-        if( len(error_messages)>0):
+        if ( len(error_messages) > 0):
             raise ValidationError(error_messages)
 
     def name(self):
-        if(self.user_account):
-			if(self.user_account.first_name or self.user_account.last_name):
-				return "%s %s" % (self.user_account.first_name, self.user_account.last_name)
-			else:
-				return self.user_account.username
+        if (self.user_account):
+            if (self.user_account.first_name or self.user_account.last_name):
+                return "%s %s" % (
+                    self.user_account.first_name, self.user_account.last_name)
+            else:
+                return self.user_account.username
         else:
             return "%s %s" % (self.first_name, self.last_name)
+
 
 class Review(models.Model):
     '''
@@ -225,6 +236,7 @@ class Topic(models.Model):
     def __str__(self):
         return self.name
 
+
 class Session(models.Model):
     '''
     Represents sessions assigned to given root/sub topics,
@@ -259,8 +271,6 @@ class Lecture(models.Model):
         TimePeriod, related_name='lectures_dates')
 
 
-
-
 class Balance(models.Model):
     user = models.ForeignKey(User)
     is_student = models.BooleanField(default=False)
@@ -283,23 +293,30 @@ class Payment(models.Model):
 
 class ReviewerForm(ModelForm):
     class Meta:
-        model=Reviewer
-        fields = ['user_account','first_name','last_name','email','title','contact_phone','availability']
+        model = Reviewer
+        fields = ['user_account', 'first_name', 'last_name', 'email', 'title',
+                  'contact_phone', 'availability']
 
 
 class SessionForm(ModelForm):
-    name = forms.CharField(max_length=128, help_text="Please enter the session name")
-    duration = forms.ModelChoiceField(queryset=TimePeriod.objects.all(), help_text="Please choose duration of session")
-    conference = forms.ModelChoiceField(queryset=Conference.objects.all(), help_text="Please choose conference")
-    topic = forms.ModelChoiceField (queryset=Topic.objects.all(), help_text="Please choose session topic")
-    admins = forms.ModelMultipleChoiceField (queryset=User.objects.all())
+    name = forms.CharField(max_length=128,
+                           help_text="Please enter the session name")
+    duration = forms.ModelChoiceField(queryset=TimePeriod.objects.all(),
+                                      help_text="Please choose duration of session")
+    conference = forms.ModelChoiceField(queryset=Conference.objects.all(),
+                                        help_text="Please choose conference")
+    topic = forms.ModelChoiceField(queryset=Topic.objects.all(),
+                                   help_text="Please choose session topic")
+    admins = forms.ModelMultipleChoiceField(queryset=User.objects.all())
     admins.help_text = 'Please choose Admin'
 
     class Meta:
         model = Session
 
+
 class TimePeriodForm(ModelForm):
-    description = forms.CharField(max_length=128, help_text="Please enter the description of the Time Period")
+    description = forms.CharField(max_length=128,
+                                  help_text="Please enter the description of the Time Period")
     start = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'])
     end = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'])
 
@@ -313,7 +330,6 @@ class TimePeriodForm(ModelForm):
 
 
 class LectureForm(ModelForm):
-
     class Meta:
         model = Lecture
-        fields = ['session','referents','summary','duration']
+        fields = ['session', 'referents', 'summary', 'duration']

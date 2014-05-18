@@ -1,6 +1,6 @@
 {% extends "conferences/base.html" %}
 {% block content %}
-	<form id="lecture_form" method="post">
+    <form id="lecture_form" method="post">
         {% csrf_token %}
         {% for field in form.visible_fields %}
             <br>
@@ -8,7 +8,8 @@
             {{ field.name }} - {{ field }}
             <br>
         {% endfor %}
-        <input class="createBtn" type="button" value="Add time period" onclick='window.location.href="/sessions/timeperiod/"'>
-        <input type="submit" name="submit" value="Edit Lecture" />
+        <input class="createBtn" type="button" value="Add time period"
+               onclick='window.location.href="{% url 'session-timeperiod-add' %}"'>
+        <input type="submit" name="submit" value="Edit Lecture"/>
     </form>
 {% endblock %}

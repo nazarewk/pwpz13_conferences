@@ -10,3 +10,7 @@ local_settings.py
 # IntelliJ IDEA project files
 *.iml
 .idea
+
+Thumbs.db
+media/*
+static/*

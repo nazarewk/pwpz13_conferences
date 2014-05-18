@@ -12,7 +12,7 @@
         {% if lectures %}
         <ul>
             {% for lecture in lectures %}
-				<li><a href="/lectures/{{ lecture.id }}">{{ lecture.id }}</a></li>
+				<li><a href="{% url 'lecture-details' lecture.id %}">{{ lecture.id }}</a></li>
             {% endfor %}
 		</ul>
 	    {% else %}

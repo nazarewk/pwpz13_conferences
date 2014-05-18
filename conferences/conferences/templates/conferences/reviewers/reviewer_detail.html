@@ -1,0 +1,42 @@
+{% extends "conferences/base.html" %}
+{% block content %}
+    <h1>{{ reviewer.title }}</h1>
+    <ul>
+        <li>Konto: {{ reviewer.user_account }}</li>
+        <li>Imię: {{ reviewer.first_name }}</li>
+        <li>Nazwisko: {{ reviewer.last_name }}</li>
+        <li>Email: {{ reviewer.email }}</li>
+        <li>Numer telefonu: {{ reviewer.contact_phone }}</li>
+        <li>
+            Aktywny:
+            {% if object.is_retired %}
+                Nie
+            {% else %}
+                Tak
+            {% endif %}
+        </li>
+        <li>Dostępność
+            <ul>
+                {% for date in object.availability.all %}
+                    <li>
+                        {{ date.description }}
+                        od: {{ date.start }}
+                        do: {{ date.end }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </li>
+        <li>Niedostępność
+            <ul>
+                {% for date in object.unavailability.all %}
+                    <li>
+                        {{ date.description }}
+                        od: {{ date.start }}
+                        do: {{ date.end }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </li>
+
+    </ul>
+{% endblock %}
