@@ -8,14 +8,26 @@
 		<div id="wrapper">
 			<div id="header">
 			  <h1>Konferencje django !</h1>
-			  <div class="userInfo">Jestes zalogowany jako <b>user</b> <a href="#">wyloguj</a></div>
-			</div>
+                {% if not user.is_authenticated %}
+                <div class="userInfo">
+                    <form id="login_form" method="post" action="/">
+                        {% csrf_token %}
+                        <input type="text" name="username" value="" placeholder="Login"/>&nbsp;&nbsp;
+                        <input type="password" name="password" value="" placeholder="Hasło"/><br/>
+                        <input type="submit" value="Zaloguj się">&nbsp;Nie masz konta? <a href="/users/registration">Zarejestruj się</a>
+                    </form>
+                </div>
+			    {% else %}
+                <div class="userInfo">Jestes zalogowany jako <b>{{ user.username }}</b>. <a href="/users/logout">Wyloguj</a></div>
+                {% endif %}
+            </div>
 			<div class="leftNav">
 				<ul>
 					<li><a href="/"><img src="{{ MEDIA_URL }}home.png" width="30" height="30" align="middle" />Strona główna</a></li>
 					<li><a href="/reviewers"><img src="{{ MEDIA_URL }}home.png" width="30" height="30" align="middle" />Recenzenci</a></li>
 					<li><a href="/sessions/"><img src="{{ MEDIA_URL }}home.png" width="30" height="30" align="middle" />Sesje</a></li>
 					<li><a href="/lectures/"><img src="{{ MEDIA_URL }}home.png" width="30" height="30" align="middle" />Referaty</a></li>
+                	<li><a href="/users/registration/"><img src="{{ MEDIA_URL }}home.png" width="30" height="30" align="middle" />Zarejestruj się</a></li>
 				</ul>
 			</div>
 			<div id="content">
