@@ -1,4 +1,5 @@
 {% extends "conferences/base.html" %}
+{% load i18n %}
 {% block content %}
     <h1>Add a lecture</h1>
     <form id="lecture_form" method="post">
@@ -9,8 +10,8 @@
             {{ field.name }} - {{ field }}
             <br>
         {% endfor %}
-        <input class="createBtn" type="button" value="Add time period"
+        <input class="createBtn" type="button" value="{% trans 'Dodaj odcinek czasu' %}"
                onclick='window.location.href="{% url 'lecture-timeperiod-add' %}"'>
-        <input type="submit" name="submit" value="Create Lecture">
+        <input type="submit" name="submit" value="{% trans 'Stwórz referat' %}">
     </form>
 {% endblock %}

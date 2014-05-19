@@ -1,5 +1,5 @@
 {% extends "conferences/base.html" %}
-{% load staticfiles %}
+{% load staticfiles i18n %}
 {% block content %}
     <h1>Referaty</h1>
     <div class="listContainer">
@@ -16,7 +16,7 @@
                                  class="icon-small"/>
                         </a>
                         <a href="{% url 'lecture-delete' lecture.id %}"
-                           onclick="return confirm('Usunąć referat?');"
+                           onclick="return confirm({% trans 'Usunąć referat?' %});"
                            title="Usuń">
                             <img src="{% static 'conferences/img/deleteicon.png' %}"
                                  class="icon-small"/>
@@ -25,9 +25,9 @@
                 {% endfor %}
             </ul>
         {% else %}
-            <p>Nie został utworzony jeszcze żaden referat</p>
+            <p>{% trans 'Nie został utworzony jeszcze żaden referat.' %}</p>
         {% endif %}
     </div>
-    <input class="createBtn" type="button" value="Dodaj referat"
+    <input class="createBtn" type="button" value="{% trans 'Dodaj referat' %}"
            onclick='window.location.href="{% url 'lecture-add' %}"'>
 {% endblock %}

@@ -93,10 +93,10 @@ class ConferencesFile(models.Model):
     author = models.ForeignKey(User)
     file = FilerFileField()
     status = models.CharField(max_length=2, choices=(
-        ('PR', _('Processing')),
-        ('RD', _('Ready')), # Ready for admin's decision to accept or reject
-        ('OK', _('Accepted')),
-        ('NO', _('Rejected')),
+        ('PR', _('Oczekuje')),
+        ('RD', _('Gotowy')), # Ready for admin's decision to accept or reject
+        ('OK', _('Akceptowany')),
+        ('NO', _('Odrzucony')),
         ('ER', _('Spam')),
     ))
     extra_info = models.CharField(max_length=128)
@@ -183,13 +183,13 @@ class Reviewer(models.Model):
         if (self.user_account):
             return
         if not self.title:
-            error_messages.append(ValidationError('Tytuł jest wymagany!'))
+            error_messages.append(ValidationError(_('Tytuł jest wymagany!')))
         if not self.first_name:
-            error_messages.append(ValidationError('Imię jest wymagane!'))
+            error_messages.append(ValidationError(_('Imię jest wymagane!')))
         if not self.last_name:
-            error_messages.append(ValidationError('Nazwisko jest wymagane!'))
+            error_messages.append(ValidationError(_('Nazwisko jest wymagane!')))
         if not self.email:
-            error_messages.append(ValidationError('Email jest wymagany!'))
+            error_messages.append(ValidationError(_('Email jest wymagany!')))
         if ( len(error_messages) > 0):
             raise ValidationError(error_messages)
 

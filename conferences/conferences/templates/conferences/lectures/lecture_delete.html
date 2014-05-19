@@ -1,6 +1,7 @@
 {% extends "conferences/base.html" %}
+{% load i18n %}
 {% block content %}
 	<meta http-equiv="refresh" content="1; URL={% url 'lecture-list' %}">
-    <strong>Lecture has removed!</strong>
+    <strong>{% trans 'Usunięto referat.' %}</strong>
 {% endblock %}
 

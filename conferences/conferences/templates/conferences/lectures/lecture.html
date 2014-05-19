@@ -1,17 +1,18 @@
 {% extends "conferences/base.html" %}
+{% load i18n %}
 {% block content %}
-    <h1>Referat:<br></h1>
+    <h1>{% trans 'Referat' %}:<br></h1>
     <ul>
-        <li> Autor: {{ lecture.summary.author }}</li>
-        <li> Status: {{ lecture.summary.get_status_display }}</li>
-        <li> Dodatkowe informacje: {{ lecture.summary.extra_info }}</li>
+        <li> {% trans 'Autor' %}: {{ lecture.summary.author }}</li>
+        <li> {% trans 'Status' %}: {{ lecture.summary.get_status_display }}</li>
+        <li> {% trans 'Dodatkowe informacje' %}: {{ lecture.summary.extra_info }}</li>
         <br>
-        <li> Sesja: {{ lecture.session.name }}</li>
-        <li> Czas trwania: {{ lecture.duration.start }} -
+        <li> {% trans 'Sesja' %}: {{ lecture.session.name }}</li>
+        <li> {% trans 'Czas trwania' %}: {{ lecture.duration.start }} -
             {{ lecture.duration.end }} </li>
-        <li> Konferencja: {{ lecture.summary.conference }}</li>
+        <li> {% trans 'Konferencja' %}: {{ lecture.summary.conference }}</li>
         {% for referents in lecture.referents.all %}
-            <li> Referent: {{ referents }}</li>
+            <li> {% trans 'Referent' %}: {{ referents }}</li>
         {% endfor %}
 
 
