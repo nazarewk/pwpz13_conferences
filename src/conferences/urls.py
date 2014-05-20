@@ -109,7 +109,7 @@ urlpatterns += patterns(
 urlpatterns += patterns(
     '',
     url(r'^users/login$',
-        views.login,
+        views.user_login,
         name='user-login'
     ),
     url(r'^users/registration$',

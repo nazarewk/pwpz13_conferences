@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
+from django.utils.translation import ugettext as _
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
@@ -232,7 +233,7 @@ def lecture_delete(request, pk):
                               context_dict)
 
 
-def login(request):
+def user_login(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -264,7 +265,7 @@ def registration(request):
             activation_url = reverse('user-confirm', kwargs={
                 'key': profile.activation_key
             })
-            title = "Potwierdzenie rejestracji"
+            title = _('Potwierdzenie rejestracji')
             content = "Aby dokończyć rejestrację kliknij w link aktywacyjny " + activation_url
             # Nie wiem jak wysłać maila, czy to poleci na podstawie ustawien z django, czy mailem admina, czy jeszcze jak
             # dlatego send_mail zakomentowane, trzeba poprawic adres a reszta powinna byc ok
