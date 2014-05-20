@@ -307,7 +307,8 @@ class UserProfile(models.Model):
     activation_key = models.CharField(
         max_length=40,
         unique=True,
-        blank=True)
+        blank=True,
+        null=True)
 
     def save(self, *args, **kwargs):
         if not self.id and not self.activation_key:
