@@ -1,6 +1,7 @@
 {% extends "conferences/base.html" %}
+{% load i18n %}
 {% block content %}
 	<meta http-equiv="refresh" content="1; URL={% url 'session-list' %}">
-    <strong>Session {{ session.name }} has removed!</strong>
+    <strong>{% blocktrans %}Sesja '{{ session.name }}' została usunięta.{% endblocktrans %}</strong>
 {% endblock %}
 

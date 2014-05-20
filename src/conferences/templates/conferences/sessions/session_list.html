@@ -1,7 +1,7 @@
 {% extends "conferences/base.html" %}
-{% load staticfiles %}
+{% load staticfiles i18n %}
 {% block content %}
-    <h1>Sesje</h1>
+    <h1>{% trans 'Sesje' %}</h1>
     <div class="listContainer">
         {% if sessions %}
             <ul>
@@ -11,13 +11,13 @@
                             {{ session.name }}
                         </a>
                         <a href="{% url 'session-edit' session.id %}"
-                           title="Edytuj">
+                           title="{% trans 'Edytuj' %}">
                             <img src="{% static 'conferences/img/editicon.png' %}"
                                  class="icon-small"/>
                         </a>
                         <a href="{% url 'session-delete' session.id %}"
-                           onclick="return confirm('Usunąć sesje?');"
-                           title="Usuń">
+                           onclick="return confirm('{% trans 'Usunąć sesje?' %}');"
+                           title="{% trans 'Usuń' %}">
                             <img src="{% static 'conferences/img/deleteicon.png' %}"
                                  class="icon-small"/>
                         </a>
@@ -26,9 +26,9 @@
                 {% endfor %}
             </ul>
         {% else %}
-            <p>Nie została utworzona jeszcze żadna sesja.</p>
+            <p>{% trans 'Nie została utworzona jeszcze żadna sesja.' %}</p>
         {% endif %}
     </div>
-    <input class="createBtn" type="button" value="Dodaj sesję"
+    <input class="createBtn" type="button" value="{% trans 'Dodaj sesję' %}"
            onclick='window.location.href="{% url 'session-add' %}"'>
 {% endblock %}

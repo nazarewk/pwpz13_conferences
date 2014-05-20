@@ -4,36 +4,36 @@
     <h1>{{ reviewer.title }}</h1>
     <ul>
         <li>{% trans 'Konto' %}: {{ reviewer.user_account }}</li>
-        <li>Imię: {{ reviewer.first_name }}</li>
-        <li>Nazwisko: {{ reviewer.last_name }}</li>
-        <li>Email: {{ reviewer.email }}</li>
-        <li>Numer telefonu: {{ reviewer.contact_phone }}</li>
+        <li>{% trans 'Imię' %}: {{ reviewer.first_name }}</li>
+        <li>{% trans 'Nazwisko' %}: {{ reviewer.last_name }}</li>
+        <li>{% trans 'Email' %}: {{ reviewer.email }}</li>
+        <li>{% trans 'Numer telefonu' %}: {{ reviewer.contact_phone }}</li>
         <li>
-            Aktywny:
+            {% trans 'Aktywny' %}:
             {% if object.is_retired %}
-                Nie
+                {% trans 'Nie' %}
             {% else %}
-                Tak
+                {% trans 'Tak' %}
             {% endif %}
         </li>
-        <li>Dostępność
+        <li>{% trans 'Dostępność' %}
             <ul>
                 {% for date in object.availability.all %}
                     <li>
                         {{ date.description }}
-                        od: {{ date.start }}
-                        do: {{ date.end }}
+                        {% trans 'od' %}: {{ date.start }}
+                        {% trans 'do' %}: {{ date.end }}
                     </li>
                 {% endfor %}
             </ul>
         </li>
-        <li>Niedostępność
+        <li>{% trans 'Niedostępność' %}
             <ul>
                 {% for date in object.unavailability.all %}
                     <li>
                         {{ date.description }}
-                        od: {{ date.start }}
-                        do: {{ date.end }}
+                        {% trans 'od' %}: {{ date.start }}
+                        {% trans 'do' %}: {{ date.end }}
                     </li>
                 {% endfor %}
             </ul>

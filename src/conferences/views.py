@@ -52,7 +52,7 @@ def reviewer_edit(request, pk):
         availability = request.POST.get('availability', '')
         form = ReviewerForm(request.POST, instance=reviewer)
         if form.is_valid():
-            #form.save()
+            # form.save()
             reviewer.availability = availability
             reviewer.save()
             return redirect('reviewer-list')
@@ -243,11 +243,11 @@ def user_login(request):
                 login(request, user)
                 return redirect('home')
             else:
-                text = "Użytkownik nie został aktywowany. Sprawdź pocztę, a następnie kliknij w link z aktywacją."
+                text = _("Użytkownik nie został aktywowany. Sprawdź pocztę, a następnie kliknij w link z aktywacją.")
                 context = {'message': text}
                 return render(request, 'conferences/users/login.html', context)
         else:
-            text = "Nazwa użytkownika lub hasło jest niepoprawne."
+            text = _("Nazwa użytkownika lub hasło jest niepoprawne.")
             context = {'message': text}
             return render(request, 'conferences/users/login.html', context)
 
@@ -266,11 +266,11 @@ def registration(request):
                 'key': profile.activation_key
             })
             title = _('Potwierdzenie rejestracji')
-            content = "Aby dokończyć rejestrację kliknij w link aktywacyjny " + activation_url
+            content = _("Aby dokończyć rejestrację kliknij w link aktywacyjny %(url)s .") % {'url': activation_url}
             # Nie wiem jak wysłać maila, czy to poleci na podstawie ustawien z django, czy mailem admina, czy jeszcze jak
             # dlatego send_mail zakomentowane, trzeba poprawic adres a reszta powinna byc ok
             # send_mail(title, content, jakis_adres, [user.email], fail_silently=False)
-            text = "Na podany adres został wysłany link aktywacyjny."
+            text = _("Na podany adres został wysłany link aktywacyjny.")
             ctx = {
                 'message': text
             }
@@ -306,15 +306,15 @@ def user_confirm(request, key):
             user.save()
             profile.activation_key = None
             profile.save()
-            text = "Konto aktywowane. Teraz możesz się zalogować."
+            text = _("Konto aktywowane. Teraz możesz się zalogować.")
             context = {'message': text}
             return render(request, 'conferences/users/confirm.html', context)
         else:
-            text = 'Niepoprawny klucz aktywacyjny.'
+            text = _('Niepoprawny klucz aktywacyjny.')
             context = {'message': text}
             return render(request, 'conferences/users/confirm.html', context)
     except (get_user_model().DoesNotExist, UserProfile.DoesNotExist) as e:
-        text = 'Niepoprawny klucz aktywacyjny.'
+        text = _('Niepoprawny klucz aktywacyjny.')
         context = {'message': text}
         return render(request, 'conferences/users/confirm.html', context)
 

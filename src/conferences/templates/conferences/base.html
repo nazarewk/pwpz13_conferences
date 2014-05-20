@@ -1,4 +1,4 @@
-{% load staticfiles %}
+{% load staticfiles i18n %}
 <html>
 <head>
     <title>Konferencje naukowe!</title>
@@ -9,19 +9,22 @@
 <body>
 <div id="wrapper">
     <div id="header">
-        <h1>Konferencje django !</h1>
+        <h1>{% trans 'Konferencje django!' %}</h1>
 
         {% if not user.is_authenticated %}
             <div class="userInfo">
                 <form id="login_form" method="post" action="/">
                     {% csrf_token %}
-                    <input type="text" name="username" value="" placeholder="Login"/>&nbsp;&nbsp;
-                    <input type="password" name="password" value="" placeholder="Hasło"/><br/>
-                    <input type="submit" value="Zaloguj się">&nbsp;Nie masz konta? <a href="/users/registration">Zarejestruj się</a>
+                    <input type="text" name="username" value="" placeholder="{% trans 'Login' %}"/>&nbsp;&nbsp;
+                    <input type="password" name="password" value="" placeholder="{% trans 'Hasło' %}"/><br/>
+                    <input type="submit" value="{% trans 'Zaloguj się' %}">&nbsp;
+                    {% trans 'Nie masz konta?' %}
+                    <a href="{% url 'user-registration' %}">{% trans 'Zarejestruj się' %}</a>
                 </form>
             </div>
         {% else %}
-            <div class="userInfo">Jestes zalogowany jako <b>{{ user.username }}</b>. <a href="/users/logout">Wyloguj</a></div>
+            <div class="userInfo">{% trans 'Jestes zalogowany jako' %} <b>{{ user.username }}</b>. <a
+                    href="{% url 'user-logout' %}">{% trans 'Wyloguj' %}</a></div>
         {% endif %}
     </div>
     <div class="leftNav">

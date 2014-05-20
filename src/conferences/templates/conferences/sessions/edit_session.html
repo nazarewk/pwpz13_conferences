@@ -1,4 +1,5 @@
 {% extends "conferences/base.html" %}
+{% load i18n %}
 {% block content %}
     <form id="session_form" method="post">
         {% csrf_token %}
@@ -9,8 +10,8 @@
             {{ field }}
             <br>
         {% endfor %}
-        <input class="createBtn" type="button" value="Add time period"
+        <input class="createBtn" type="button" value="{% trans 'Dodaj czas trwania' %}"
                onclick='window.location.href="{% url 'session-timeperiod-add' %}"'>
-        <input type="submit" name="submit" value="Edit Session"/>
+        <input type="submit" name="submit" value="{% trans 'Edytuj sesję' %}"/>
     </form>
 {% endblock %}
