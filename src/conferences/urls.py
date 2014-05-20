@@ -110,15 +110,18 @@ urlpatterns += patterns(
     '',
     url(r'^users/login$',
         views.login,
-        name='user-login'),
+        name='user-login'
+    ),
     url(r'^users/registration$',
         views.registration,
-        name='user-registration'),
+        name='user-registration'
+    ),
     url(r'^users/logout$',
         views.user_logout,
-        name='user-logout'),
+        name='user-logout'
+    ),
     url(r'^users/confirm/(?P<key>\w+)/$',
         views.user_confirm,
-        name='user-confirm'),
-
+        name='user-confirm'
+    ),
 )

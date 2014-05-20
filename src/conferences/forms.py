@@ -28,7 +28,7 @@ class SessionForm(forms.ModelForm):
         queryset=models.Topic.objects.all(),
         help_text="Please choose session topic")
     admins = forms.ModelMultipleChoiceField(
-        queryset=models.User.objects.all())
+        queryset=get_user_model().objects.all())
     admins.help_text = 'Please choose Admin'
 
     class Meta:

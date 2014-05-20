@@ -4,6 +4,7 @@ import random
 import string
 from datetime import datetime, timedelta, MAXYEAR, MINYEAR
 
+from django.conf import settings
 from django.db.models import Q
 from django.utils.translation import ugettext as _
 from django.db import models
@@ -13,14 +14,13 @@ from django.utils import timezone
 from filer.fields.file import FilerFileField
 
 
-User = get_user_model()
 
 
 class TimePeriod(models.Model):
-    '''
+    """
     Class representing time periods with description, start date and either
      end date or length
-    '''
+    """
     description = models.CharField(max_length=128, blank=True)
     start = models.DateTimeField()
     end = models.DateTimeField()
@@ -40,9 +40,9 @@ class TimePeriod(models.Model):
                             self.end.strftime('%Y-%m-%d %H:%M:%S'))
 
     def get_duration(self):
-        '''
+        """
         Returns datetime.timedelta representing duration
-        '''
+        """
         return self.end - self.start
 
     @staticmethod
@@ -64,7 +64,7 @@ class TimePeriod(models.Model):
 
 class Conference(models.Model):
     site = models.OneToOneField(Site)
-    admins = models.ManyToManyField(User)
+    admins = models.ManyToManyField(settings.AUTH_USER_MODEL)
 
     name = models.CharField(max_length=256)
 
@@ -84,13 +84,13 @@ class Conference(models.Model):
 
 
 class ConferencesFile(models.Model):
-    '''
+    """
     Multi-table inheritance base model
 
     https://docs.djangoproject.com/en/1.6/topics/db/models/#multi-table-inheritance
-    '''
+    """
 
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL)
     file = FilerFileField()
     status = models.CharField(max_length=2, choices=(
         ('PR', _('Oczekuje')),
@@ -103,26 +103,26 @@ class ConferencesFile(models.Model):
 
 
 class Summary(ConferencesFile):
-    '''
+    """
     Represents summaries to accept for further lectures during conferences
-    '''
+    """
     conference = models.ForeignKey(Conference, related_name='summaries')
 
 
 class Publication(ConferencesFile):
-    '''
+    """
     Represents post-conferences publications related to given lectures
-    '''
+    """
     lecture = models.ForeignKey('Lecture', related_name='publications')
 
 
 class Reviewer(models.Model):
-    '''
+    """
     Represents both out-of-system and in-system reviewers including
         availability information
-    '''
+    """
     user_account = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         null=True, blank=True,
         verbose_name=_('Konto użytkownika'))
     title = models.CharField(
@@ -158,11 +158,11 @@ class Reviewer(models.Model):
         verbose_name=_('Niedostępność'))
 
     def is_available(self, from_date=timezone.now(), for_days=0):
-        '''
+        """
         Returns true if reviewer is available for given number of days starting
          with specified date.
         By default returns true if reviewer is available right now
-        '''
+        """
         to_date = from_date + timedelta(days=for_days)
         # Q object info:
         # https://docs.djangoproject.com/en/1.6/topics/db/queries/#complex-lookups-with-q-objects
@@ -205,9 +205,9 @@ class Reviewer(models.Model):
 
 
 class Review(models.Model):
-    '''
+    """
     Represents review of lecture summaries and publications
-    '''
+    """
     reviewer = models.ForeignKey(Reviewer)
     file_reviewed = models.ForeignKey(ConferencesFile)
 
@@ -235,10 +235,10 @@ class Review(models.Model):
 
 
 class Topic(models.Model):
-    '''
+    """
     Class represents topics structure of the conferences,
      topics without super_topic are the most general
-    '''
+    """
     conference = models.ForeignKey(Conference)
     name = models.CharField(max_length=256)
     super_topic = models.ForeignKey(
@@ -251,12 +251,12 @@ class Topic(models.Model):
 
 
 class Session(models.Model):
-    '''
+    """
     Represents sessions assigned to given root/sub topics,
      admin of super-topic session should be also admin of all sub-sessions
-    '''
+    """
     conference = models.ForeignKey(Conference, related_name='sessions')
-    admins = models.ManyToManyField(User)
+    admins = models.ManyToManyField(settings.AUTH_USER_MODEL)
     topic = models.OneToOneField(Topic)
 
     name = models.CharField(max_length=256)
@@ -269,13 +269,13 @@ class Session(models.Model):
 
 
 class Lecture(models.Model):
-    '''
+    """
     Represents single speech during the session,
      Lectures are based upon reviewed and accepted summaries
      Lectures can have post-conferences publications
-    '''
+    """
     session = models.ForeignKey(Session, related_name='lectures')
-    referents = models.ManyToManyField(User)
+    referents = models.ManyToManyField(settings.AUTH_USER_MODEL)
     summary = models.OneToOneField(Summary)
     # 'publications' = FK(Publication)
 
@@ -284,7 +284,7 @@ class Lecture(models.Model):
 
 
 class Balance(models.Model):
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
     is_student = models.BooleanField(default=False)
 
 
@@ -304,7 +304,7 @@ class Payment(models.Model):
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL)
     activation_key = models.CharField(
         max_length=40,
         unique=True,

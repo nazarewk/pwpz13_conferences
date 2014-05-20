@@ -7,10 +7,10 @@ from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
+from django.template import RequestContext
 
 from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm
-from .models import Reviewer, Session, Lecture, UserProfile, User, Site
-import hashlib, string, random
+from .models import Reviewer, Session, Lecture, UserProfile
 
 
 def home(request):
@@ -231,6 +231,7 @@ def lecture_delete(request, pk):
     return render_to_response('conferences/lectures/lecture_delete.html',
                               context_dict)
 
+
 def login(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -249,6 +250,7 @@ def login(request):
             context = {'message': text}
             return render(request, 'conferences/users/login.html', context)
 
+
 def registration(request):
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
@@ -257,7 +259,7 @@ def registration(request):
             user.set_password(user.password)
             user.is_active = False
             user.save()
-            profile = UserProfile(user)
+            profile = UserProfile(user=user)
             profile.save()
             activation_url = reverse('user-confirm', kwargs={
                 'key': profile.activation_key
@@ -268,14 +270,24 @@ def registration(request):
             # dlatego send_mail zakomentowane, trzeba poprawic adres a reszta powinna byc ok
             # send_mail(title, content, jakis_adres, [user.email], fail_silently=False)
             text = "Na podany adres został wysłany link aktywacyjny."
-            context = {'message': text}
-            return render(request, 'conferences/users/confirm.html', context)
+            ctx = {
+                'message': text
+            }
+            return render(
+                request,
+                'conferences/users/confirm.html',
+                ctx)
         else:
             print user_form.errors
     else:
         user_form = UserForm()
-    return render(request, "conferences/users/registration.html",
-                  {'form': user_form})
+    ctx = {
+        'form': user_form
+    }
+    return render(
+        request,
+        "conferences/users/registration.html",
+        context_instance=RequestContext(request, ctx))
 
 
 @login_required
@@ -300,7 +312,7 @@ def user_confirm(request, key):
             text = 'Niepoprawny klucz aktywacyjny.'
             context = {'message': text}
             return render(request, 'conferences/users/confirm.html', context)
-    except (User.DoesNotExist, UserProfile.DoesNotExist) as e:
+    except (get_user_model().DoesNotExist, UserProfile.DoesNotExist) as e:
         text = 'Niepoprawny klucz aktywacyjny.'
         context = {'message': text}
         return render(request, 'conferences/users/confirm.html', context)
