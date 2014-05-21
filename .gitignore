@@ -14,3 +14,6 @@ local_settings.py
 Thumbs.db
 media/*
 static/*
+src/conferences/management/commands/conferences_populate.py
+src/conferences/management/__init__.py
+src/conferences/management/commands/__init__.py
