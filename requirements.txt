@@ -14,8 +14,11 @@ django-reversion==1.8.0
 django-sekizai==0.7
 django-session-security==2.2.0
 djangocms-admin-style==0.2.2
+djangocms-text-ckeditor==2.1.4
 easy-thumbnails==2.0.1
 html5lib==0.999
+ipython==2.0.0
+pyreadline==2.0
 six==1.6.1
 sqlparse==0.1.11
 wsgiref==0.1.2

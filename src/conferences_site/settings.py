@@ -2,7 +2,6 @@ import os
 
 _ = lambda s: s
 
-INSTALLED_APPS = []
 TEMPLATE_CONTEXT_PROCESSORS = []
 MIDDLEWARE_CLASSES = []
 TEMPLATE_DIRS = []
@@ -30,13 +29,41 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-INSTALLED_APPS += [
-    'django.contrib.admin',
+INSTALLED_APPS = [
+    # CMS
+    'filer',
+    'cmsplugin_filer_file',
+    'cmsplugin_filer_folder',
+    'cmsplugin_filer_image',
+    'cmsplugin_filer_teaser',
+    'cmsplugin_filer_video',
+    'djangocms_text_ckeditor',  # note this needs to be above the 'cms' entry
+    'cms',  # django CMS itself
+    'mptt',  # utilities for implementing a modified pre-order traversal tree
+    'menus',  # helper for model independent hierarchical website
+    'sekizai',  # for javascript and css management
+    'djangocms_admin_style',
+    # for the admin skin. You **must** add 'djangocms_admin_style' in the list before 'django.contrib.admin'.
+    'django.contrib.messages',  # to enable messages framework (see :ref:`Enable messages <enable-messages>`)
+    'reversion',
+
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.admin',
+    'django.contrib.admindocs',
+    'django.contrib.flatpages',
+    'sekizai',
+    'easy_thumbnails',
+    'conferences',
+
+    'django_extensions',
+    'debug_toolbar',
+    'session_security',
+    'south',  # intelligent schema and data migrations
 ]
 
 MIDDLEWARE_CLASSES += [
@@ -67,14 +94,14 @@ DATABASES = {
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
 
-###################################
-#   Locale/Internationalization   #
+# ##################################
+# Locale/Internationalization   #
 ###################################
 TIME_ZONE = 'Europe/Warsaw'
 
 LANGUAGES = (
-    ('en', _(u'Angielski')),
     ('pl', _(u'Polski')),
+    ('en', _(u'Angielski')),
 )
 LANGUAGE_CODE = 'pl'
 
@@ -128,12 +155,12 @@ TEMPLATE_CONTEXT_PROCESSORS += [
     'django.core.context_processors.request',
     'django.core.context_processors.media',
     'django.core.context_processors.static',
+    'sekizai.context_processors.sekizai',
 ]
 
 TEMPLATE_DIRS += [
     os.path.join(BASE_DIR, 'templates'),
 ]
-
 #############
 #   Apps    #
 #############
@@ -149,30 +176,35 @@ MIDDLEWARE_CLASSES += [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-INSTALLED_APPS += [
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.admin',
-    'django.contrib.admindocs',
-    'django.contrib.flatpages',
-    'django_extensions',
-    'sekizai',
-    'filer',
-    'easy_thumbnails',
-    'conferences',
+SOUTH_MIGRATION_MODULES = {
+    'easy_thumbnails': 'easy_thumbnails.south_migrations',
+}
+
+#############
+#    CMS    #
+#############
+
+MIDDLEWARE_CLASSES += {
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'cms.middleware.page.CurrentPageMiddleware',
+    'cms.middleware.user.CurrentUserMiddleware',
+    'cms.middleware.toolbar.ToolbarMiddleware',
+    'cms.middleware.language.LanguageCookieMiddleware',
+}
+
+TEMPLATE_CONTEXT_PROCESSORS += [
+    'django.contrib.messages.context_processors.messages',
+    'cms.context_processors.cms_settings',
 ]
+
+CMS_TEMPLATES = (
+    ('conferences/cms/base.html', 'Basic template'),
+)
 
 #########################
 #   Session Security    #
 #########################
 
-INSTALLED_APPS += [
-    'session_security',
-]
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_SECURITY_EXPIRE_AFTER = 900
 SESSION_SECURITY_WARN_AFTER = 840
@@ -183,16 +215,13 @@ MIDDLEWARE_CLASSES += [
 #####################
 #   Debug Toolbar   #
 #####################
-INSTALLED_APPS += [
-    'debug_toolbar',
-]
 
 MIDDLEWARE_CLASSES += [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 DEBUG_TOOLBAR_CONFIG = {
-    # 'INTERCEPT_REDIRECTS': False,
+
 }
 
 
@@ -210,6 +239,6 @@ except ImportError:
     pass
 
 TEMPLATE_DIRS = uniquify(TEMPLATE_DIRS)
-INSTALLED_APPS = uniquify(INSTALLED_APPS)
+# INSTALLED_APPS = uniquify(INSTALLED_APPS)
 TEMPLATE_CONTEXT_PROCESSORS = uniquify(TEMPLATE_CONTEXT_PROCESSORS)
 MIDDLEWARE_CLASSES = uniquify(MIDDLEWARE_CLASSES)

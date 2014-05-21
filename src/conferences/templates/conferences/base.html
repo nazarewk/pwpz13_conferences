@@ -1,19 +1,21 @@
-{% load staticfiles i18n %}
+{% load staticfiles i18n cms_tags sekizai_tags %}
 <html>
 <head>
     <title>Konferencje naukowe!</title>
     <script src="//code.jquery.com/jquery-1.10.2.js"></script>
     <link href="{% static 'conferences/css/style.css' %}" type="text/css"
           rel="stylesheet"/>
+    {% render_block "css" %}
 </head>
 <body>
+{% cms_toolbar %}
 <div id="wrapper">
     <div id="header">
         <h1>{% trans 'Konferencje django!' %}</h1>
 
         {% if not user.is_authenticated %}
             <div class="userInfo">
-                <form id="login_form" method="post" action="/users/login">
+                <form id="login_form" method="post" action="{% url 'user-login' %}">
                     {% csrf_token %}
                     <input type="text" name="username" value="" placeholder="{% trans 'Login' %}"/>&nbsp;&nbsp;
                     <input type="password" name="password" value="" placeholder="{% trans 'Hasło' %}"/><br/>
@@ -53,6 +55,7 @@
     </div>
     <div id="content">
         {% block content %}
+            {% placeholder content %}
         {% endblock %}
     </div>
     <div class="push"></div>
@@ -62,5 +65,6 @@
         systemu prosimy kierować uwagi na <a href="mailto:kontakt">kontakt@konferencje.pl</a>
     </div>
 </div>
+{% render_block "js" %}
 </body>
 </html>

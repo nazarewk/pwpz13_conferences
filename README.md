@@ -31,10 +31,11 @@ Local settings
 ----------------
 For local development settings create 'local_settings.py' in same folder as 'settings.py' and put modifications there.
 
-Synchronizing database
+Synchronizing database & executing South migrations
 ----------------------
 
-        manage.py syncdb
+        manage.py syncdb --all
+		manage.py migrate --fake
 
 Starting development server
 ------------------------

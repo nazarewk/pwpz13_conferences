@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.shortcuts import render
-from django.shortcuts import render_to_response
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.utils.translation import ugettext as _
@@ -11,7 +10,7 @@ from django.core.urlresolvers import reverse
 from django.template import RequestContext
 
 from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm
-from .models import Reviewer, Session, Lecture, UserProfile,Review
+from .models import Reviewer, Session, Lecture, UserProfile, Review
 
 
 def home(request):
@@ -72,10 +71,12 @@ def reviewer_delete(request, pk):
     reviewer.save()
     return redirect('reviewer-list')
 
+
 def reviews_list(request):
     reviews = Review.objects.filter(reviewer=request.user)
     return render(request, "conferences/reviews/reviews_list.html",
                   {'reviews': reviews})
+
 
 def session_details(request, pk):
     context_dict = {}
@@ -88,8 +89,8 @@ def session_details(request, pk):
     except Session.DoesNotExist:
         pass
 
-    return render_to_response('conferences/sessions/session.html',
-                              context_dict)
+    return render(request, 'conferences/sessions/session.html',
+                  context_dict)
 
 
 def session_list(request):
@@ -97,8 +98,8 @@ def session_list(request):
     sessions_list = Session.objects.all()
     context_dict['sessions'] = sessions_list
 
-    return render_to_response('conferences/sessions/session_list.html',
-                              context_dict)
+    return render(request, 'conferences/sessions/session_list.html',
+                  context_dict)
 
 
 def session_add(request):
@@ -114,8 +115,8 @@ def session_add(request):
     else:
         form = SessionForm()
 
-    return render_to_response('conferences/sessions/add_session.html',
-                              {'form': form})
+    return render(request, 'conferences/sessions/add_session.html',
+                  {'form': form})
 
 
 def session_edit(request, pk):
@@ -133,8 +134,8 @@ def session_edit(request, pk):
     else:
         form = SessionForm(instance=session)
 
-    return render_to_response('conferences/sessions/edit_session.html',
-                              {'form': form})
+    return render(request, 'conferences/sessions/edit_session.html',
+                  {'form': form})
 
 
 def session_delete(request, pk):
@@ -144,8 +145,8 @@ def session_delete(request, pk):
     session_del = session.delete()
     context_dict['sessions_del'] = session_del
 
-    return render_to_response('conferences/sessions/remove_session.html',
-                              context_dict)
+    return render(request, 'conferences/sessions/remove_session.html',
+                  context_dict)
 
 
 def timeperiod_add(request):
@@ -164,8 +165,8 @@ def timeperiod_add(request):
     else:
         form = TimePeriodForm()
 
-    return render_to_response('conferences/misc/add_timeperiod.html',
-                              {'form': form})
+    return render(request, 'conferences/misc/add_timeperiod.html',
+                  {'form': form})
 
 
 def lecture_details(request, pk):
@@ -177,8 +178,8 @@ def lecture_details(request, pk):
     except Session.DoesNotExist:
         pass
 
-    return render_to_response('conferences/lectures/lecture.html',
-                              context_dict)
+    return render(request, 'conferences/lectures/lecture.html',
+                  context_dict)
 
 
 def lecture_list(request):
@@ -186,8 +187,8 @@ def lecture_list(request):
     lectures_list = Lecture.objects.all()
     context_dict['lectures'] = lectures_list
 
-    return render_to_response('conferences/lectures/lecture_list.html',
-                              context_dict)
+    return render(request, 'conferences/lectures/lecture_list.html',
+                  context_dict)
 
 
 def lecture_add(request):
@@ -203,8 +204,8 @@ def lecture_add(request):
     else:
         form = LectureForm()
 
-    return render_to_response('conferences/lectures/add_lecture.html',
-                              {'form': form})
+    return render(request, 'conferences/lectures/add_lecture.html',
+                  {'form': form})
 
 
 def lecture_edit(request, pk):
@@ -222,8 +223,8 @@ def lecture_edit(request, pk):
     else:
         form = LectureForm(instance=lecture)
 
-    return render_to_response('conferences/lectures/edit_lecture.html',
-                              {'form': form})
+    return render(request, 'conferences/lectures/edit_lecture.html',
+                  {'form': form})
 
 
 def lecture_delete(request, pk):
@@ -233,8 +234,8 @@ def lecture_delete(request, pk):
     lecture_del = lecture.delete()
     context_dict['lecture_del'] = lecture_del
 
-    return render_to_response('conferences/lectures/lecture_delete.html',
-                              context_dict)
+    return render(request, 'conferences/lectures/lecture_delete.html',
+                  context_dict)
 
 
 def user_login(request):
@@ -292,7 +293,7 @@ def registration(request):
     return render(
         request,
         "conferences/users/registration.html",
-        context_instance=RequestContext(request, ctx))
+        ctx)
 
 
 @login_required

@@ -229,7 +229,7 @@ class Review(models.Model):
             rnd_str = ''.join(
                 random.choice(string.ascii_letters + string.digits)
                 for x in range(Review.unguessable_id_length))
-            if not Review.objects.exists(unguessable_id=rnd_str):
+            if not Review.objects.filter(unguessable_id=rnd_str).exists():
                 return rnd_str
 
 

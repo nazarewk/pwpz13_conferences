@@ -99,6 +99,7 @@ ul, ol {
 
 #content {
     overflow: auto;
+    min-height: 400px;
 }
 
 #footer, .push {
