@@ -61,9 +61,9 @@ INSTALLED_APPS = [
     'conferences',
 
     'django_extensions',
-    'debug_toolbar',
     'session_security',
     'south',  # intelligent schema and data migrations
+    'debug_toolbar',
 ]
 
 MIDDLEWARE_CLASSES += [
@@ -215,6 +215,8 @@ MIDDLEWARE_CLASSES += [
 #####################
 #   Debug Toolbar   #
 #####################
+
+DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
 MIDDLEWARE_CLASSES += [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
