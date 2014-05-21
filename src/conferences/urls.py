@@ -51,6 +51,14 @@ urlpatterns += patterns(
 
 urlpatterns += patterns(
     '',
+    url(r'^reviews/$',
+        views.reviews_list,
+        name='reviews-list'
+    ),
+)
+
+urlpatterns += patterns(
+    '',
     url(r'^sessions/(?P<pk>\d+)/$',
         views.session_details,
         name='session-details'

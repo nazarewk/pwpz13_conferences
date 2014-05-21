@@ -1,0 +1,33 @@
+{% extends "conferences/base.html" %}
+{% load staticfiles i18n %}
+{% block content %}
+    <h1>{% trans 'Recenzenje' %}</h1>
+    <div class="listContainer">
+        {% if reviewers %}
+            <ul>
+                {% for r in reviews %}
+                    <li>
+                        {{ r.comment }}
+                    <!--    <a href="{% url 'reviewer-details' r.pk %}">
+                            {{ r.name }}
+                        </a>
+                        <a href="{% url 'reviewer-edit' r.pk %}" title="{% trans 'Edytuj' %}">
+                            <img src="{% static 'conferences/img/editicon.png' %}"
+                                 class="icon-small"/>
+                        </a>
+                        <a href="{% url 'reviewer-delete' r.pk %}"
+                           onclick="return confirm('{% trans 'Usunąć recenzenta?' %}');"
+                           title="{% trans 'Usuń' %}">
+                            <img src="{% static 'conferences/img/deleteicon.png' %}"
+                                 class="icon-small"/>
+                        </a> --->
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>{% trans 'Żaden recenzent nie został jeszcze utworzony.' %}</p>
+        {% endif %}
+    </div>
+    <input class="createBtn" type="button" value="{% trans 'Dodaj recenzenta' %}"
+           onclick='window.location.href="{% url 'reviewer-add' %}"'>
+{% endblock %}

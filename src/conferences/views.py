@@ -11,7 +11,7 @@ from django.core.urlresolvers import reverse
 from django.template import RequestContext
 
 from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm
-from .models import Reviewer, Session, Lecture, UserProfile
+from .models import Reviewer, Session, Lecture, UserProfile,Review
 
 
 def home(request):
@@ -72,6 +72,10 @@ def reviewer_delete(request, pk):
     reviewer.save()
     return redirect('reviewer-list')
 
+def reviews_list(request):
+    reviews = Review.objects.filter(reviewer=request.user)
+    return render(request, "conferences/reviews/reviews_list.html",
+                  {'reviews': reviews})
 
 def session_details(request, pk):
     context_dict = {}
