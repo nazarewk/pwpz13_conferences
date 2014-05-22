@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.core.mail import send_mail
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.utils.translation import ugettext as _
-from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.template import RequestContext
+from django.conf import settings
 
-from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm
+from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm, SummaryForm
 from .models import Reviewer, Session, Lecture, UserProfile, Review
 
 
@@ -267,14 +268,14 @@ def registration(request):
             user.save()
             profile = UserProfile(user=user)
             profile.save()
-            activation_url = reverse('user-confirm', kwargs={
+            activation_url = request.build_absolute_uri(reverse('user-confirm', kwargs={
                 'key': profile.activation_key
-            })
+            }))
             title = _('Potwierdzenie rejestracji')
-            content = _("Aby dokończyć rejestrację kliknij w link aktywacyjny %(url)s .") % {'url': activation_url}
-            # Nie wiem jak wysłać maila, czy to poleci na podstawie ustawien z django, czy mailem admina, czy jeszcze jak
-            # dlatego send_mail zakomentowane, trzeba poprawic adres a reszta powinna byc ok
-            # send_mail(title, content, jakis_adres, [user.email], fail_silently=False)
+            content = _("Witaj %(name)s,\nAby dokończyć rejestrację kliknij w link aktywacyjny %(url)s.") % {
+                'url': activation_url,
+                'name': user.username}
+            send_mail(title, content, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)
             text = _("Na podany adres został wysłany link aktywacyjny.")
             ctx = {
                 'message': text
@@ -303,23 +304,40 @@ def user_logout(request):
 
 
 def user_confirm(request, key):
-    try:
-        profile = get_object_or_404(UserProfile, activation_key=key)
-        user = profile.user
-        if profile.activation_key == key:
-            user.is_active = True
-            user.save()
-            profile.activation_key = None
-            profile.save()
-            text = _("Konto aktywowane. Teraz możesz się zalogować.")
-            context = {'message': text}
-            return render(request, 'conferences/users/confirm.html', context)
-        else:
-            text = _('Niepoprawny klucz aktywacyjny.')
-            context = {'message': text}
-            return render(request, 'conferences/users/confirm.html', context)
-    except (get_user_model().DoesNotExist, UserProfile.DoesNotExist) as e:
+    profile = get_object_or_404(UserProfile, activation_key=key)
+    user = profile.user
+    if profile.activation_key == key:
+        user.is_active = True
+        user.save()
+        profile.activation_key = None
+        profile.save()
+        text = _("Konto aktywowane. Teraz możesz się zalogować.")
+        context = {'message': text}
+        return render(request, 'conferences/users/confirm.html', context)
+    else:
         text = _('Niepoprawny klucz aktywacyjny.')
         context = {'message': text}
         return render(request, 'conferences/users/confirm.html', context)
 
+
+def summary_add(request):
+    user = request.user
+    if user.is_authenticated():
+        if request.method == 'POST':
+            summary_form = SummaryForm(data=request.POST)
+            if summary_form.is_valid():
+                return render(
+                    request,
+                    'conferences/summary/add_summary.html')
+            else:
+                print summary_form.errors
+        else:
+            summary_form = SummaryForm()
+        return render(
+            request,
+            'conferences/summary/add_summary.html',
+            {'form': summary_form})
+    else:
+        text = _('Musisz być zalogowany, aby przesłać streszczenie')
+        context = {'message': text}
+        return render(request, 'conferences/summary/add_summary.html', context)

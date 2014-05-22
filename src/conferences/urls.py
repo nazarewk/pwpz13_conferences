@@ -129,3 +129,11 @@ urlpatterns += patterns(
         name='user-confirm'
     ),
 )
+
+urlpatterns += patterns(
+    '',
+    url(r'^summary/add$',
+        views.summary_add,
+        name='summary-add'
+    ),
+)

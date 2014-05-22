@@ -1,0 +1,13 @@
+{% extends "conferences/base.html" %}
+{% load i18n %}
+{% block content %}
+{% if not user.is_authenticated %}
+<p>{{ message }}</p>
+{% else %}
+<form method="post">
+	{% csrf_token %}
+	{{ form.as_p }}
+	<input type="submit" value="{% trans 'Dodaj streszczenie' %}" />
+</form>
+{% endif %}
+{% endblock %}

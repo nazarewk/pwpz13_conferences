@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from cProfile import label
 import random
 import string
 from datetime import datetime, timedelta, MAXYEAR, MINYEAR
@@ -88,7 +89,6 @@ class ConferencesFile(models.Model):
 
     https://docs.djangoproject.com/en/1.6/topics/db/models/#multi-table-inheritance
     """
-
     author = models.ForeignKey(settings.AUTH_USER_MODEL)
     file = FilerFileField()
     status = models.CharField(max_length=2, choices=(
@@ -307,7 +307,8 @@ class UserProfile(models.Model):
     activation_key = models.CharField(
         max_length=40,
         unique=True,
-        blank=True)
+        blank=True,
+        null=True)
 
     def save(self, *args, **kwargs):
         if not self.id and not self.activation_key:
