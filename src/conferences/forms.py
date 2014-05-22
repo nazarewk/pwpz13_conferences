@@ -81,3 +81,10 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = get_user_model()
         fields = ('username', 'password', 'first_name', 'last_name', 'email')
+
+
+class SummaryForm(forms.ModelForm):
+
+    class Meta:
+        model = models.Summary
+        fields = ['conference', 'file', 'extra_info']
