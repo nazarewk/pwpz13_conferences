@@ -1,13 +1,13 @@
 {% extends "conferences/base.html" %}
 {% load i18n %}
 {% block content %}
-    <h1>Add a lecture</h1>
+    <h1>{% trans 'Dodaj referat' %}</h1>
     <form id="lecture_form" method="post">
         {% csrf_token %}
         {% for field in form.visible_fields %}
             <br>
             <b>{{ field.errors }}</b>
-            {{ field.name }} - {{ field }}
+            {{ field.label_tag }} - {{ field }}
             <br>
         {% endfor %}
         <input class="createBtn" type="button" value="{% trans 'Dodaj odcinek czasu' %}"

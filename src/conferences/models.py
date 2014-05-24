@@ -21,9 +21,9 @@ class TimePeriod(models.Model):
     Class representing time periods with description, start date and either
      end date or length
     """
-    description = models.CharField(max_length=128, blank=True)
-    start = models.DateTimeField()
-    end = models.DateTimeField()
+    description = models.CharField(max_length=128, blank=True, verbose_name=_('Opis'))
+    start = models.DateTimeField(verbose_name=_('Początek'))
+    end = models.DateTimeField(verbose_name=_('Koniec'))
 
     # 'conference_durations' = FK(Conference)
     # 'summaries_submissions' = FK(Conference)
@@ -254,18 +254,17 @@ class Session(models.Model):
     Represents sessions assigned to given root/sub topics,
      admin of super-topic session should be also admin of all sub-sessions
     """
-    conference = models.ForeignKey(Conference, related_name='sessions')
-    admins = models.ManyToManyField(settings.AUTH_USER_MODEL)
-    topic = models.OneToOneField(Topic)
+    conference = models.ForeignKey(Conference, related_name='sessions',verbose_name=_('Konferencja'))
+    admins = models.ManyToManyField(settings.AUTH_USER_MODEL,verbose_name=_('Admini'))
+    topic = models.OneToOneField(Topic,verbose_name=_('Temat'))
 
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=256,verbose_name=_('Nazwa'))
 
     duration = models.ForeignKey(
-        TimePeriod, related_name='sessions_dates')
+        TimePeriod, related_name='sessions_dates', verbose_name=_('Czas trwania'))
 
     def __str__(self):
         return self.name
-
 
 class Lecture(models.Model):
     """
@@ -273,13 +272,13 @@ class Lecture(models.Model):
      Lectures are based upon reviewed and accepted summaries
      Lectures can have post-conferences publications
     """
-    session = models.ForeignKey(Session, related_name='lectures')
-    referents = models.ManyToManyField(settings.AUTH_USER_MODEL)
-    summary = models.OneToOneField(Summary)
+    session = models.ForeignKey(Session, related_name='lectures', verbose_name=_('Sesja'))
+    referents = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=_('Referenci'))
+    summary = models.OneToOneField(Summary, verbose_name=_('Streszczenie'))
     # 'publications' = FK(Publication)
 
     duration = models.ForeignKey(
-        TimePeriod, related_name='lectures_dates')
+        TimePeriod, related_name='lectures_dates', verbose_name=_('Czas trwania'))
 
 
 class Balance(models.Model):

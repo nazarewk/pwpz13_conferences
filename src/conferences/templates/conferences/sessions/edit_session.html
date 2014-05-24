@@ -5,9 +5,8 @@
         {% csrf_token %}
         {% for field in form.visible_fields %}
             <br>
-            {{ field.errors }}
-            {{ field.help_text }}
-            {{ field }}
+            <b>{{ field.errors }}</b>
+            {{ field.label_tag }} - {{ field }}
             <br>
         {% endfor %}
         <input class="createBtn" type="button" value="{% trans 'Dodaj czas trwania' %}"

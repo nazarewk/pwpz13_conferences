@@ -160,8 +160,7 @@ def timeperiod_add(request):
             return redirect('home')
 
         else:
-            # TODO: Tu chyba cos powinno byc??
-            form.errors
+            print form.errors
 
     else:
         form = TimePeriodForm()

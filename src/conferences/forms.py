@@ -3,8 +3,10 @@ from __future__ import unicode_literals
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.admin import widgets
+from django.utils.translation import ugettext as _
 
-from conferences import models
+
+from . import models
 
 
 class ReviewerForm(forms.ModelForm):
@@ -15,35 +17,22 @@ class ReviewerForm(forms.ModelForm):
 
 
 class SessionForm(forms.ModelForm):
-    name = forms.CharField(
-        max_length=128,
-        help_text="Please enter the session name")
-    duration = forms.ModelChoiceField(
-        queryset=models.TimePeriod.objects.all(),
-        help_text="Please choose duration of session")
-    conference = forms.ModelChoiceField(
-        queryset=models.Conference.objects.all(),
-        help_text="Please choose conference")
-    topic = forms.ModelChoiceField(
-        queryset=models.Topic.objects.all(),
-        help_text="Please choose session topic")
     admins = forms.ModelMultipleChoiceField(
         queryset=get_user_model().objects.all())
-    admins.help_text = 'Please choose Admin'
+    admins.help_text = ''
 
     class Meta:
         model = models.Session
+        fields = ['name', 'duration', 'conference', 'topic', 'admins']
 
 
 class TimePeriodForm(forms.ModelForm):
-    description = forms.CharField(
-        max_length=128,
-        help_text="Please enter the description of the Time Period")
     start = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'])
     end = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'])
 
     class Meta:
         model = models.TimePeriod
+        fields = ['description', 'start', 'end',]
 
     def __init__(self, *args, **kwargs):
         super(TimePeriodForm, self).__init__(*args, **kwargs)
