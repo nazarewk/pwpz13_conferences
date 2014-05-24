@@ -1,6 +1,9 @@
 {% extends "conferences/base.html" %}
 {% load staticfiles i18n %}
 {% block content %}
+{% if not user.is_authenticated %}
+    <p>{{ message }}</p>
+{% else %}
     <h1>{% trans 'Sesje' %}</h1>
     <div class="listContainer">
         {% if sessions %}
@@ -31,4 +34,5 @@
     </div>
     <input class="createBtn" type="button" value="{% trans 'Dodaj sesję' %}"
            onclick='window.location.href="{% url 'session-add' %}"'>
+{% endif %}
 {% endblock %}

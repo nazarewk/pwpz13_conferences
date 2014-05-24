@@ -95,13 +95,18 @@ def session_details(request, pk):
 
 
 def session_list(request):
-    context_dict = {}
-    sessions_list = Session.objects.all()
-    context_dict['sessions'] = sessions_list
+    user = request.user
+    if user.is_authenticated():
+        context_dict = {}
+        sessions_list = Session.objects.all()
+        context_dict['sessions'] = sessions_list
 
-    return render(request, 'conferences/sessions/session_list.html',
+        return render(request, 'conferences/sessions/session_list.html',
                   context_dict)
-
+    else:
+        text = _('Musisz być zalogowany.')
+        context = {'message': text}
+        return render(request, 'conferences/sessions/session_list.html', context)
 
 def session_add(request):
     if request.method == 'POST':
@@ -183,12 +188,18 @@ def lecture_details(request, pk):
 
 
 def lecture_list(request):
-    context_dict = {}
-    lectures_list = Lecture.objects.all()
-    context_dict['lectures'] = lectures_list
+    user = request.user
+    if user.is_authenticated():
+        context_dict = {}
+        lectures_list = Lecture.objects.all()
+        context_dict['lectures'] = lectures_list
 
-    return render(request, 'conferences/lectures/lecture_list.html',
+        return render(request, 'conferences/lectures/lecture_list.html',
                   context_dict)
+    else:
+        text = _('Musisz być zalogowany.')
+        context = {'message': text}
+        return render(request, 'conferences/lectures/lecture_list.html', context)
 
 
 def lecture_add(request):
