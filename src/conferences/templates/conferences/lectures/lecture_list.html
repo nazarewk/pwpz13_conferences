@@ -11,7 +11,7 @@
                 {% for lecture in lectures %}
                     <li>
                         <a href="{% url 'lecture-details' lecture.id %}">
-                            {{ lecture.id }}
+                            {{ lecture.title }}
                         </a>
                         <a href="{% url 'lecture-edit' lecture.id %}"
                            title="Edytuj">

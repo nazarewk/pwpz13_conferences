@@ -13,7 +13,7 @@
         {% if lectures %}
         <ul>
             {% for lecture in lectures %}
-				<li><a href="{% url 'lecture-details' lecture.id %}">{{ lecture.id }}</a></li>
+				<li><a href="{% url 'lecture-details' lecture.id %}">{{ lecture.title }}</a></li>
             {% endfor %}
 		</ul>
 	    {% else %}

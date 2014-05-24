@@ -43,7 +43,7 @@ class TimePeriodForm(forms.ModelForm):
 class LectureForm(forms.ModelForm):
     class Meta:
         model = models.Lecture
-        fields = ['session', 'referents', 'summary', 'duration']
+        fields = ['session', 'title', 'referents', 'summary', 'duration']
 
 
 class UserForm(forms.ModelForm):

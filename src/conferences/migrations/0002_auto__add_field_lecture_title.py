@@ -8,244 +8,15 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'TimePeriod'
-        db.create_table(u'conferences_timeperiod', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('description', self.gf('django.db.models.fields.CharField')(max_length=128, blank=True)),
-            ('start', self.gf('django.db.models.fields.DateTimeField')()),
-            ('end', self.gf('django.db.models.fields.DateTimeField')()),
-        ))
-        db.send_create_signal(u'conferences', ['TimePeriod'])
-
-        # Adding model 'Conference'
-        db.create_table(u'conferences_conference', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('site', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['sites.Site'], unique=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=256)),
-            ('duration', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'conference_durations', to=orm['conferences.TimePeriod'])),
-            ('summaries_submission_period', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'summaries_submissions', to=orm['conferences.TimePeriod'])),
-            ('publications_submission_period', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'publications_submissions', to=orm['conferences.TimePeriod'])),
-        ))
-        db.send_create_signal(u'conferences', ['Conference'])
-
-        # Adding M2M table for field admins on 'Conference'
-        m2m_table_name = db.shorten_name(u'conferences_conference_admins')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('conference', models.ForeignKey(orm[u'conferences.conference'], null=False)),
-            ('user', models.ForeignKey(orm[u'auth.user'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['conference_id', 'user_id'])
-
-        # Adding M2M table for field registration_periods on 'Conference'
-        m2m_table_name = db.shorten_name(u'conferences_conference_registration_periods')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('conference', models.ForeignKey(orm[u'conferences.conference'], null=False)),
-            ('timeperiod', models.ForeignKey(orm[u'conferences.timeperiod'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['conference_id', 'timeperiod_id'])
-
-        # Adding model 'ConferencesFile'
-        db.create_table(u'conferences_conferencesfile', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('author', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('file', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['filer.File'])),
-            ('status', self.gf('django.db.models.fields.CharField')(max_length=2)),
-            ('extra_info', self.gf('django.db.models.fields.CharField')(max_length=128)),
-        ))
-        db.send_create_signal(u'conferences', ['ConferencesFile'])
-
-        # Adding model 'Summary'
-        db.create_table(u'conferences_summary', (
-            (u'conferencesfile_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['conferences.ConferencesFile'], unique=True, primary_key=True)),
-            ('conference', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'summaries', to=orm['conferences.Conference'])),
-        ))
-        db.send_create_signal(u'conferences', ['Summary'])
-
-        # Adding model 'Publication'
-        db.create_table(u'conferences_publication', (
-            (u'conferencesfile_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['conferences.ConferencesFile'], unique=True, primary_key=True)),
-            ('lecture', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'publications', to=orm['conferences.Lecture'])),
-        ))
-        db.send_create_signal(u'conferences', ['Publication'])
-
-        # Adding model 'Reviewer'
-        db.create_table(u'conferences_reviewer', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user_account', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, blank=True)),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=64, null=True, blank=True)),
-            ('first_name', self.gf('django.db.models.fields.CharField')(max_length=64, null=True, blank=True)),
-            ('last_name', self.gf('django.db.models.fields.CharField')(max_length=64, null=True, blank=True)),
-            ('email', self.gf('django.db.models.fields.EmailField')(max_length=254, null=True, blank=True)),
-            ('contact_phone', self.gf('django.db.models.fields.CharField')(max_length=64, null=True, blank=True)),
-            ('is_active', self.gf('django.db.models.fields.BooleanField')(default=True)),
-        ))
-        db.send_create_signal(u'conferences', ['Reviewer'])
-
-        # Adding M2M table for field availability on 'Reviewer'
-        m2m_table_name = db.shorten_name(u'conferences_reviewer_availability')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('reviewer', models.ForeignKey(orm[u'conferences.reviewer'], null=False)),
-            ('timeperiod', models.ForeignKey(orm[u'conferences.timeperiod'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['reviewer_id', 'timeperiod_id'])
-
-        # Adding M2M table for field unavailability on 'Reviewer'
-        m2m_table_name = db.shorten_name(u'conferences_reviewer_unavailability')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('reviewer', models.ForeignKey(orm[u'conferences.reviewer'], null=False)),
-            ('timeperiod', models.ForeignKey(orm[u'conferences.timeperiod'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['reviewer_id', 'timeperiod_id'])
-
-        # Adding model 'Review'
-        db.create_table(u'conferences_review', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('reviewer', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['conferences.Reviewer'])),
-            ('file_reviewed', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['conferences.ConferencesFile'])),
-            ('unguessable_id', self.gf('django.db.models.fields.CharField')(default=u'BKc3LNizePHibqlpRUh1VgqMEGaTCwnK', unique=True, max_length=32)),
-            ('accepted', self.gf('django.db.models.fields.BooleanField')()),
-            ('comment', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('editable', self.gf('django.db.models.fields.BooleanField')(default=True)),
-        ))
-        db.send_create_signal(u'conferences', ['Review'])
-
-        # Adding model 'Topic'
-        db.create_table(u'conferences_topic', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('conference', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['conferences.Conference'])),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=256)),
-            ('super_topic', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name=u'sub_topics', null=True, to=orm['conferences.Topic'])),
-        ))
-        db.send_create_signal(u'conferences', ['Topic'])
-
-        # Adding model 'Session'
-        db.create_table(u'conferences_session', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('conference', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'sessions', to=orm['conferences.Conference'])),
-            ('topic', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['conferences.Topic'], unique=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=256)),
-            ('duration', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'sessions_dates', to=orm['conferences.TimePeriod'])),
-        ))
-        db.send_create_signal(u'conferences', ['Session'])
-
-        # Adding M2M table for field admins on 'Session'
-        m2m_table_name = db.shorten_name(u'conferences_session_admins')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('session', models.ForeignKey(orm[u'conferences.session'], null=False)),
-            ('user', models.ForeignKey(orm[u'auth.user'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['session_id', 'user_id'])
-
-        # Adding model 'Lecture'
-        db.create_table(u'conferences_lecture', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('session', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'lectures', to=orm['conferences.Session'])),
-            ('summary', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['conferences.Summary'], unique=True)),
-            ('duration', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'lectures_dates', to=orm['conferences.TimePeriod'])),
-        ))
-        db.send_create_signal(u'conferences', ['Lecture'])
-
-        # Adding M2M table for field referents on 'Lecture'
-        m2m_table_name = db.shorten_name(u'conferences_lecture_referents')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('lecture', models.ForeignKey(orm[u'conferences.lecture'], null=False)),
-            ('user', models.ForeignKey(orm[u'auth.user'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['lecture_id', 'user_id'])
-
-        # Adding model 'Balance'
-        db.create_table(u'conferences_balance', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('is_student', self.gf('django.db.models.fields.BooleanField')(default=False)),
-        ))
-        db.send_create_signal(u'conferences', ['Balance'])
-
-        # Adding model 'Payment'
-        db.create_table(u'conferences_payment', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('balance', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['conferences.Balance'])),
-            ('short_description', self.gf('django.db.models.fields.CharField')(max_length=128)),
-            ('full_description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('time_to_pay', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'payments', to=orm['conferences.TimePeriod'])),
-            ('currency', self.gf('django.db.models.fields.CharField')(max_length=3)),
-            ('amount', self.gf('django.db.models.fields.DecimalField')(max_digits=10, decimal_places=3)),
-            ('paid', self.gf('django.db.models.fields.DecimalField')(max_digits=10, decimal_places=3)),
-        ))
-        db.send_create_signal(u'conferences', ['Payment'])
-
-        # Adding model 'UserProfile'
-        db.create_table(u'conferences_userprofile', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True)),
-            ('activation_key', self.gf('django.db.models.fields.CharField')(max_length=40, unique=True, null=True, blank=True)),
-        ))
-        db.send_create_signal(u'conferences', ['UserProfile'])
+        # Adding field 'Lecture.title'
+        db.add_column(u'conferences_lecture', 'title',
+                      self.gf('django.db.models.fields.CharField')(default=0, max_length=256),
+                      keep_default=False)
 
 
     def backwards(self, orm):
-        # Deleting model 'TimePeriod'
-        db.delete_table(u'conferences_timeperiod')
-
-        # Deleting model 'Conference'
-        db.delete_table(u'conferences_conference')
-
-        # Removing M2M table for field admins on 'Conference'
-        db.delete_table(db.shorten_name(u'conferences_conference_admins'))
-
-        # Removing M2M table for field registration_periods on 'Conference'
-        db.delete_table(db.shorten_name(u'conferences_conference_registration_periods'))
-
-        # Deleting model 'ConferencesFile'
-        db.delete_table(u'conferences_conferencesfile')
-
-        # Deleting model 'Summary'
-        db.delete_table(u'conferences_summary')
-
-        # Deleting model 'Publication'
-        db.delete_table(u'conferences_publication')
-
-        # Deleting model 'Reviewer'
-        db.delete_table(u'conferences_reviewer')
-
-        # Removing M2M table for field availability on 'Reviewer'
-        db.delete_table(db.shorten_name(u'conferences_reviewer_availability'))
-
-        # Removing M2M table for field unavailability on 'Reviewer'
-        db.delete_table(db.shorten_name(u'conferences_reviewer_unavailability'))
-
-        # Deleting model 'Review'
-        db.delete_table(u'conferences_review')
-
-        # Deleting model 'Topic'
-        db.delete_table(u'conferences_topic')
-
-        # Deleting model 'Session'
-        db.delete_table(u'conferences_session')
-
-        # Removing M2M table for field admins on 'Session'
-        db.delete_table(db.shorten_name(u'conferences_session_admins'))
-
-        # Deleting model 'Lecture'
-        db.delete_table(u'conferences_lecture')
-
-        # Removing M2M table for field referents on 'Lecture'
-        db.delete_table(db.shorten_name(u'conferences_lecture_referents'))
-
-        # Deleting model 'Balance'
-        db.delete_table(u'conferences_balance')
-
-        # Deleting model 'Payment'
-        db.delete_table(u'conferences_payment')
-
-        # Deleting model 'UserProfile'
-        db.delete_table(u'conferences_userprofile')
+        # Deleting field 'Lecture.title'
+        db.delete_column(u'conferences_lecture', 'title')
 
 
     models = {
@@ -309,7 +80,8 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'referents': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.User']", 'symmetrical': 'False'}),
             'session': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'lectures'", 'to': u"orm['conferences.Session']"}),
-            'summary': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['conferences.Summary']", 'unique': 'True'})
+            'summary': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['conferences.Summary']", 'unique': 'True'}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '256'})
         },
         u'conferences.payment': {
             'Meta': {'object_name': 'Payment'},
@@ -335,7 +107,7 @@ class Migration(SchemaMigration):
             'file_reviewed': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['conferences.ConferencesFile']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'reviewer': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['conferences.Reviewer']"}),
-            'unguessable_id': ('django.db.models.fields.CharField', [], {'default': "u'SBXKjdncIiTGJqTU7B7ucUpXjqSeeGBt'", 'unique': 'True', 'max_length': '32'})
+            'unguessable_id': ('django.db.models.fields.CharField', [], {'default': "u'M5sas8dLdbzfOujzcsx1mJYgZlBg8TeC'", 'unique': 'True', 'max_length': '32'})
         },
         u'conferences.reviewer': {
             'Meta': {'object_name': 'Reviewer'},

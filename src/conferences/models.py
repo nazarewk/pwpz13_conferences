@@ -272,6 +272,7 @@ class Lecture(models.Model):
      Lectures are based upon reviewed and accepted summaries
      Lectures can have post-conferences publications
     """
+    title = models.CharField(max_length=256, verbose_name=_('Tytuł'))
     session = models.ForeignKey(Session, related_name='lectures', verbose_name=_('Sesja'))
     referents = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=_('Referenci'))
     summary = models.OneToOneField(Summary, verbose_name=_('Streszczenie'))
@@ -279,6 +280,9 @@ class Lecture(models.Model):
 
     duration = models.ForeignKey(
         TimePeriod, related_name='lectures_dates', verbose_name=_('Czas trwania'))
+
+    def __str__(self):
+        return self.title
 
 
 class Balance(models.Model):

@@ -1,7 +1,7 @@
 {% extends "conferences/base.html" %}
 {% load i18n %}
 {% block content %}
-    <h1>{% trans 'Referat' %}:<br></h1>
+    <h1>{% trans 'Tytuł referatu:' %} {{ lecture.title }}<br></h1>
     <ul>
         <li> {% trans 'Autor' %}: {{ lecture.summary.author }}</li>
         <li> {% trans 'Status' %}: {{ lecture.summary.get_status_display }}</li>
