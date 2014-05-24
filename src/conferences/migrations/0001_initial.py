@@ -106,7 +106,7 @@ class Migration(SchemaMigration):
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('reviewer', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['conferences.Reviewer'])),
             ('file_reviewed', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['conferences.ConferencesFile'])),
-            ('unguessable_id', self.gf('django.db.models.fields.CharField')(default=u'BKc3LNizePHibqlpRUh1VgqMEGaTCwnK', unique=True, max_length=32)),
+            ('unguessable_id', self.gf('django.db.models.fields.CharField')(default=u'vBoVMnteOUb1KXMVBtZ9cU8FVU1lldOJ', unique=True, max_length=32)),
             ('accepted', self.gf('django.db.models.fields.BooleanField')()),
             ('comment', self.gf('django.db.models.fields.TextField')(blank=True)),
             ('editable', self.gf('django.db.models.fields.BooleanField')(default=True)),
@@ -184,7 +184,7 @@ class Migration(SchemaMigration):
         db.create_table(u'conferences_userprofile', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True)),
-            ('activation_key', self.gf('django.db.models.fields.CharField')(max_length=40, unique=True, null=True, blank=True)),
+            ('activation_key', self.gf('django.db.models.fields.CharField')(unique=True, max_length=40, blank=True)),
         ))
         db.send_create_signal(u'conferences', ['UserProfile'])
 
@@ -335,7 +335,7 @@ class Migration(SchemaMigration):
             'file_reviewed': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['conferences.ConferencesFile']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'reviewer': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['conferences.Reviewer']"}),
-            'unguessable_id': ('django.db.models.fields.CharField', [], {'default': "u'SBXKjdncIiTGJqTU7B7ucUpXjqSeeGBt'", 'unique': 'True', 'max_length': '32'})
+            'unguessable_id': ('django.db.models.fields.CharField', [], {'default': "u'9UjrSPA8uLKlLBHb8JogVvpVwxOzRL4s'", 'unique': 'True', 'max_length': '32'})
         },
         u'conferences.reviewer': {
             'Meta': {'object_name': 'Reviewer'},
@@ -380,7 +380,7 @@ class Migration(SchemaMigration):
         },
         u'conferences.userprofile': {
             'Meta': {'object_name': 'UserProfile'},
-            'activation_key': ('django.db.models.fields.CharField', [], {'max_length': '40', 'unique': 'True', 'null': 'True', 'blank': 'True'}),
+            'activation_key': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '40', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'user': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['auth.User']", 'unique': 'True'})
         },

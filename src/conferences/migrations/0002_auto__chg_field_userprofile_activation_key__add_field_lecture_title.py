@@ -8,6 +8,9 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+
+        # Changing field 'UserProfile.activation_key'
+        db.alter_column(u'conferences_userprofile', 'activation_key', self.gf('django.db.models.fields.CharField')(max_length=40, unique=True, null=True))
         # Adding field 'Lecture.title'
         db.add_column(u'conferences_lecture', 'title',
                       self.gf('django.db.models.fields.CharField')(default=0, max_length=256),
@@ -15,6 +18,9 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
+
+        # Changing field 'UserProfile.activation_key'
+        db.alter_column(u'conferences_userprofile', 'activation_key', self.gf('django.db.models.fields.CharField')(default='', max_length=40, unique=True))
         # Deleting field 'Lecture.title'
         db.delete_column(u'conferences_lecture', 'title')
 
@@ -107,7 +113,7 @@ class Migration(SchemaMigration):
             'file_reviewed': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['conferences.ConferencesFile']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'reviewer': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['conferences.Reviewer']"}),
-            'unguessable_id': ('django.db.models.fields.CharField', [], {'default': "u'M5sas8dLdbzfOujzcsx1mJYgZlBg8TeC'", 'unique': 'True', 'max_length': '32'})
+            'unguessable_id': ('django.db.models.fields.CharField', [], {'default': "u'5XUmiGEBQHlvrzUT6YA0svGOkyVvyoWq'", 'unique': 'True', 'max_length': '32'})
         },
         u'conferences.reviewer': {
             'Meta': {'object_name': 'Reviewer'},
