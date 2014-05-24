@@ -18,7 +18,7 @@ class ReviewerForm(forms.ModelForm):
 
 class SessionForm(forms.ModelForm):
     admins = forms.ModelMultipleChoiceField(
-        queryset=get_user_model().objects.all())
+        queryset=get_user_model().objects.all(), label='Admini')
     admins.help_text = ''
 
     class Meta:
@@ -27,8 +27,8 @@ class SessionForm(forms.ModelForm):
 
 
 class TimePeriodForm(forms.ModelForm):
-    start = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'])
-    end = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'])
+    start = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'], label='Początek')
+    end = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'], label='Koniec')
 
     class Meta:
         model = models.TimePeriod
