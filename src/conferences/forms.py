@@ -5,7 +5,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.admin import widgets
 from django.utils.translation import ugettext as _
 
-
 from . import models
 
 
@@ -32,7 +31,7 @@ class TimePeriodForm(forms.ModelForm):
 
     class Meta:
         model = models.TimePeriod
-        fields = ['description', 'start', 'end',]
+        fields = ['description', 'start', 'end', ]
 
     def __init__(self, *args, **kwargs):
         super(TimePeriodForm, self).__init__(*args, **kwargs)
@@ -73,7 +72,12 @@ class UserForm(forms.ModelForm):
 
 
 class SummaryForm(forms.ModelForm):
+    file = forms.FileField()
 
     class Meta:
         model = models.Summary
-        fields = ['conference', 'file', 'extra_info']
+        fields = ['conference', 'description']
+
+
+class FilerUploadForm(forms.Form):
+    file = forms.FileField()

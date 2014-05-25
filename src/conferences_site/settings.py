@@ -120,6 +120,12 @@ FIRST_DAY_OF_WEEK = 1
 NUMBER_GROUPING = 1
 USE_THOUSAND_SEPARATOR = True
 THOUSAND_SEPARATOR = ' '
+######################
+#   Authentication   #
+######################
+
+LOGIN_URL = 'user-login'
+LOGOUT_URL = 'user-logout'
 
 
 #####################
@@ -139,6 +145,8 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
+
+FILER_ENABLE_PERMISSIONS = True
 
 #################
 #   Templates   #

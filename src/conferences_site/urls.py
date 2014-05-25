@@ -10,7 +10,7 @@ admin.autodiscover()
 urlpatterns = i18n_patterns(
     '',
     # Examples:
-    # url(r'^$', 'conferences_site.views.home', name='home'),
+    # url(r'^$', 'conferences_site.views.home', name='pages-root'),
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
@@ -43,8 +43,4 @@ if settings.DEBUG:
 urlpatterns += i18n_patterns(
     '',
     url(r'^', include('cms.urls')),
-    url(r'^$',
-        'conferences.views.home',
-        name='home'
-    ),
 )

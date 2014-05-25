@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from django.core.mail import send_mail
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
@@ -8,10 +9,12 @@ from django.utils.translation import ugettext as _
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
+from django.core.files.base import ContentFile
 from django.conf import settings
+import tempfile
 
-from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm, SummaryForm
-from .models import Reviewer, Session, Lecture, UserProfile, Review
+from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm, SummaryForm, FilerUploadForm
+from .models import Reviewer, Session, Lecture, UserProfile, Review, ConferencesFile, Summary
 
 
 def home(request):
@@ -124,11 +127,12 @@ def session_list(request):
         context_dict['sessions'] = sessions_list
 
         return render(request, 'conferences/sessions/session_list.html',
-                  context_dict)
+                      context_dict)
     else:
         text = _('Musisz być zalogowany.')
         context = {'message': text}
         return render(request, 'conferences/sessions/session_list.html', context)
+
 
 def session_add(request):
     if request.method == 'POST':
@@ -137,7 +141,7 @@ def session_add(request):
         if form.is_valid():
             form.save()
 
-            return redirect('home')
+            return redirect('pages-root')
         else:
             print form.errors
     else:
@@ -156,7 +160,7 @@ def session_edit(request, pk):
         if form.is_valid():
             form.save(commit=True)
 
-            return redirect('home')
+            return redirect('pages-root')
         else:
             print form.errors
     else:
@@ -184,7 +188,7 @@ def timeperiod_add(request):
         if form.is_valid():
             form.save()
 
-            return redirect('home')
+            return redirect('pages-root')
 
         else:
             print form.errors
@@ -217,7 +221,7 @@ def lecture_list(request):
         context_dict['lectures'] = lectures_list
 
         return render(request, 'conferences/lectures/lecture_list.html',
-                  context_dict)
+                      context_dict)
     else:
         text = _('Musisz być zalogowany.')
         context = {'message': text}
@@ -231,7 +235,7 @@ def lecture_add(request):
         if form.is_valid():
             form.save()
 
-            return redirect('home')
+            return redirect('pages-root')
         else:
             print form.errors
     else:
@@ -250,7 +254,7 @@ def lecture_edit(request, pk):
         if form.is_valid():
             form.save(commit=True)
 
-            return redirect('home')
+            return redirect('pages-root')
         else:
             print form.errors
     else:
@@ -279,7 +283,7 @@ def user_login(request):
         if user:
             if user.is_active:
                 login(request, user)
-                return redirect('home')
+                return redirect('pages-root')
             else:
                 text = _("Użytkownik nie został aktywowany. Sprawdź pocztę, a następnie kliknij w link z aktywacją.")
                 context = {'message': text}
@@ -288,6 +292,10 @@ def user_login(request):
             text = _("Nazwa użytkownika lub hasło jest niepoprawne.")
             context = {'message': text}
             return render(request, 'conferences/users/login.html', context)
+
+    return render(request, 'conferences/base.html', {
+        'content': _('Zaloguj się.')
+    })
 
 
 def registration(request):
@@ -332,7 +340,7 @@ def registration(request):
 @login_required
 def user_logout(request):
     logout(request)
-    return redirect('home')
+    return redirect('pages-root')
 
 
 def user_confirm(request, key):
@@ -356,11 +364,25 @@ def summary_add(request):
     user = request.user
     if user.is_authenticated():
         if request.method == 'POST':
-            summary_form = SummaryForm(data=request.POST)
+            summary_form = SummaryForm(request.POST, request.FILES)
             if summary_form.is_valid():
-                return render(
-                    request,
-                    'conferences/summary/add_summary.html')
+                # Handle uploaded file
+                f = request.FILES['file']
+                file_data = ContentFile(f.read())
+                file_data.name = f.name
+
+                summary = Summary.objects.create(
+                    conference_id=request.POST['conference'],
+                    owner=request.user,
+                    original_filename=f.name,
+                    description=request.POST['description'],
+                    file=file_data)
+                summary.save()
+                return render(request, 'conferences/base.html', {
+                    'content': _('Dodano streszczenie %(summary)s') % {
+                        'summary': summary.url
+                    }
+                })
             else:
                 print summary_form.errors
         else:
@@ -373,3 +395,14 @@ def summary_add(request):
         text = _('Musisz być zalogowany, aby przesłać streszczenie')
         context = {'message': text}
         return render(request, 'conferences/summary/add_summary.html', context)
+
+
+'''
+    def create_file(self, folder, filename=None):
+        filename = filename or 'test_file.dat'
+        file_data = django.core.files.base.ContentFile('some data')
+        file_data.name = filename
+        file_obj = File.objects.create(owner=self.superuser, original_filename=filename, file=file_data, folder=folder)
+        file_obj.save()
+        return file_obj
+'''

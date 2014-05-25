@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
 
-from .import views
+from . import views
 
 urlpatterns = patterns(
     '',
@@ -19,7 +19,7 @@ urlpatterns += patterns(
 )
 
 
-#reviewers urls section
+# reviewers urls section
 
 urlpatterns += patterns(
     '',
@@ -135,5 +135,9 @@ urlpatterns += patterns(
     url(r'^summary/add$',
         views.summary_add,
         name='summary-add'
+    ),
+    url(r'filer_test',
+        views.filer_upload,
+        name='filer-test'
     ),
 )

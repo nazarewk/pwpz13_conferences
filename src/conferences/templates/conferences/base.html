@@ -60,7 +60,7 @@
     </div>
     <div id="content">
         {% block content %}
-            {% placeholder content %}
+            {{ content|safe }}
         {% endblock %}
     </div>
     <div class="push"></div>

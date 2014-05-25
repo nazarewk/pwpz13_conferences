@@ -1,20 +1,19 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from cProfile import label
 import random
+import os
 import string
 from datetime import datetime, timedelta, MAXYEAR, MINYEAR
 
 from django.contrib.auth.models import User, Group
 from django.conf import settings
+from django.contrib.sites.managers import CurrentSiteManager
 from django.db.models import Q
 from django.utils.translation import ugettext as _
 from django.db import models
 from django.contrib.sites.models import Site
 from django.utils import timezone
-from filer.fields.file import FilerFileField
-
-
+from filer.models import File, Folder
 
 
 class TimePeriod(models.Model):
@@ -80,32 +79,76 @@ class Conference(models.Model):
     registration_periods = models.ManyToManyField(
         TimePeriod, related_name='registration_periods')
 
+    on_site = CurrentSiteManager()
+
     def __str__(self):
         return self.name
 
+    @classmethod
+    def get_current(cls):
+        return cls.on_site.first()
 
-class ConferencesFile(models.Model):
+    def is_admin(self, user):
+        return self.admins.filter(user=user).exists()
+
+
+class ConferencesFile(File):
     """
     Multi-table inheritance base model
 
     https://docs.djangoproject.com/en/1.6/topics/db/models/#multi-table-inheritance
     """
-    author = models.ForeignKey(settings.AUTH_USER_MODEL)
-    file = FilerFileField()
+    filename_extensions = []
+    folder_path = ['conferences', 'files']
+
     status = models.CharField(max_length=2, choices=(
         ('PR', _('Oczekuje')),
-        ('RD', _('Gotowy')), # Ready for admin's decision to accept or reject
+        ('RD', _('Gotowy')),  # Ready for admin's decision to accept or reject
         ('OK', _('Akceptowany')),
         ('NO', _('Odrzucony')),
         ('ER', _('Spam')),
     ))
-    extra_info = models.CharField(max_length=128)
+
+    def save(self, *args, **kwargs):
+        # self.folder = Folder.objects.create(name="root folder", parent=None)
+        if not self.folder:
+            folder = None
+            for name in self.folder_path:
+                folder, _ = Folder.objects.get_or_create(
+                    name=name,
+                    parent=folder)
+            self.folder = folder
+        super(ConferencesFile, self).save(*args, **kwargs)
+
+    # Properties for backwards compatibility
+    @property
+    def author(self):
+        return self.owner
+
+    @author.setter
+    def author(self, value):
+        self.owner = value
+
+    @property
+    def extra_info(self):
+        return self.description
+
+    @extra_info.setter
+    def extra_info(self, value):
+        self.description = value
+
+    @classmethod
+    def matches_file_type(cls, iname, ifile, request):
+        ext = os.path.splitext(iname)[1].lower()
+        return ext in cls.filename_extensions if cls.filename_extensions else True
 
 
 class Summary(ConferencesFile):
     """
     Represents summaries to accept for further lectures during conferences
     """
+    filename_extensions = ['.pdf', '.txt']
+    folder_path = ['conferences', 'summaries']
     conference = models.ForeignKey(Conference, related_name='summaries')
 
 
@@ -113,6 +156,8 @@ class Publication(ConferencesFile):
     """
     Represents post-conferences publications related to given lectures
     """
+    filename_extensions = ['.pdf', '.txt']
+    folder_path = ['conferences', 'publications']
     lecture = models.ForeignKey('Lecture', related_name='publications')
 
 
@@ -140,7 +185,7 @@ class Reviewer(models.Model):
     email = models.EmailField(
         null=True, blank=True,
         max_length=254,
-        verbose_name=_('Email')) # RFC3696/5321-compliant length
+        verbose_name=_('Email'))  # RFC3696/5321-compliant length
     contact_phone = models.CharField(
         null=True, blank=True,
         max_length=64,
@@ -255,17 +300,21 @@ class Session(models.Model):
     Represents sessions assigned to given root/sub topics,
      admin of super-topic session should be also admin of all sub-sessions
     """
-    conference = models.ForeignKey(Conference, related_name='sessions',verbose_name=_('Konferencja'))
-    admins = models.ManyToManyField(settings.AUTH_USER_MODEL,verbose_name=_('Admini'))
-    topic = models.OneToOneField(Topic,verbose_name=_('Temat'))
+    conference = models.ForeignKey(Conference, related_name='sessions', verbose_name=_('Konferencja'))
+    admins = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=_('Admini'))
+    topic = models.OneToOneField(Topic, verbose_name=_('Temat'))
 
-    name = models.CharField(max_length=256,verbose_name=_('Nazwa'))
+    name = models.CharField(max_length=256, verbose_name=_('Nazwa'))
 
     duration = models.ForeignKey(
         TimePeriod, related_name='sessions_dates', verbose_name=_('Czas trwania'))
 
     def __str__(self):
         return self.name
+
+    def is_admin(self, user):
+        return self.admins.filter(user=user).exists()
+
 
 class Lecture(models.Model):
     """

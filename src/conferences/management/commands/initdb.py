@@ -4,9 +4,10 @@ from django.contrib.sites.models import Site
 import traceback
 from datetime import datetime
 
-
 from filer.fields.file import FilerFileField
-from conferences.models import Reviewer, Session, Lecture, UserProfile, Review, Conference, TimePeriod, Topic, Summary, ConferencesFile
+from conferences.models import (Reviewer, Session, Lecture, UserProfile, Review, Conference, TimePeriod, Topic, Summary,
+                                ConferencesFile)
+
 
 class Command(BaseCommand):
     args = ''
@@ -14,60 +15,62 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            #usuwanie danych
+            # usuwanie danych
             Site.objects.all().delete()
             TimePeriod.objects.all().delete()
             Conference.objects.all().delete()
             Group.objects.all().delete()
             ConferencesFile.objects.all().delete()
             User.objects.filter(is_superuser=False).delete()
-            #odcinki czasu
-            tp=TimePeriod(start=datetime.strptime('2014-06-28', '%Y-%m-%d'),end=datetime.strptime('2014-09-28', '%Y-%m-%d'))
+            # odcinki czasu
+            tp = TimePeriod(start=datetime.strptime('2014-06-28', '%Y-%m-%d'),
+                            end=datetime.strptime('2014-09-28', '%Y-%m-%d'))
             tp.save()
-            #site
-            site=Site.objects.create(pk=1, domain='mdev.5buckchuck.com', name='5buckchuck.com')
+            # site
+            site = Site.objects.create(pk=1, domain='127.0.0.1:8000', name='5buckchuck.com')
             #konferencje
-            c=Conference(name='konferencja',duration=tp,summaries_submission_period=tp,publications_submission_period=tp,site=site)
+            c = Conference(name='konferencja', duration=tp, summaries_submission_period=tp,
+                           publications_submission_period=tp, site=site)
             # c.registration_periods.add(tp)
             c.save()
 
-            #administratorzy
-            u=User(username="administrator",password="admin",email="administrator@poczta.pl")
-            u.save()
-
 
             #tematy
-            t=Topic(conference=c,name="Temat 1")
+            t = Topic(conference=c, name="Temat 1")
             t.save()
-            t2=Topic(conference=c,name="Temat 2",super_topic=t)
+            t2 = Topic(conference=c, name="Temat 2", super_topic=t)
             t2.save()
 
-            #administratorzy sesji
-            g=Group(name="administatorzy sesji")
-            g.save()
-            u=User(username="administrator_sesji",password="admin",email="administratorSesji@poczta.pl")
+            #sesje
+            s = Session(conference=c, topic=t, duration=tp)
+            s.name = "Sesja 1"
+            s.save()
+
+            #wystapienie
+            l = Lecture(title='Tytul wystapienia', session=s)
+
+            password = 'qwe'
+
+            #administratorzy
+            u = User(username="administrator_konferencji", email="administrator@poczta.pl")
+            u.set_password(password)
             u.save()
-            u.groups.add(g)
+            c.admins.add(u)
+
+            #administratorzy sesji
+            u = User(username="administrator_sesji", email="administratorSesji@poczta.pl")
+            u.set_password(password)
+            u.save()
+            s.admins.add(u)
 
             #referujacy
-            g=Group(name="referujacy")
-            g.save()
-            u=User(username="referujacy1",password="admin",email="referujacy1@poczta.pl")
+            u = User(username="referujacy1", email="referujacy1@poczta.pl")
+            u.set_password(password)
             u.save()
-            u.groups.add(g)
-            u=User(username="referujacy2",password="admin",email="referujacy2@poczta.pl")
+            u = User(username="referujacy2", email="referujacy2@poczta.pl")
+            u.set_password(password)
             u.save()
-            u.groups.add(g)
 
-            #sesje
-            s=Session()
-            s.conference=c
-            s.topic=t
-            s.name="Sesja 1"
-            s.duration=tp
-            s.save()
-            s.admins.add(u)
-            s.save()
 
             #plik
             #cf = ConferencesFile()
@@ -86,5 +89,5 @@ class Command(BaseCommand):
             #l.save()
             #l.referetns.add(User.objects.get(username='referujacy1'))
 
-        except Exception,args:
+        except Exception, args:
             self.stdout.write('Cos poszlo nie tak %s ' % traceback.format_exc())
