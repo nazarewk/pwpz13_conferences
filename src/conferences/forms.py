@@ -77,7 +77,3 @@ class SummaryForm(forms.ModelForm):
     class Meta:
         model = models.Summary
         fields = ['conference', 'description']
-
-
-class FilerUploadForm(forms.Form):
-    file = forms.FileField()
