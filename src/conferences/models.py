@@ -5,6 +5,7 @@ import random
 import string
 from datetime import datetime, timedelta, MAXYEAR, MINYEAR
 
+from django.contrib.auth.models import User, Group
 from django.conf import settings
 from django.db.models import Q
 from django.utils.translation import ugettext as _
@@ -332,3 +333,31 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+    def is_admin(self):
+        allowed_group = set(['admin'])
+        groups = [ x.name for x in self.user.groups.all()]
+        if allowed_group.intersection(set(groups)):
+           return True
+        return False
+
+    def is_session_admin(self):
+        allowed_group = set(['session_admin'])
+        groups = [ x.name for x in self.user.groups.all()]
+        if allowed_group.intersection(set(groups)):
+           return True
+        return False
+
+    def is_reviewer(self):
+        allowed_group = set(['reviewer'])
+        groups = [ x.name for x in self.user.groups.all()]
+        if allowed_group.intersection(set(groups)):
+           return True
+        return False
+
+    def is_lecturer(self):
+        allowed_group = set(['lecturer'])
+        groups = [ x.name for x in self.user.groups.all()]
+        if allowed_group.intersection(set(groups)):
+           return True
+        return False

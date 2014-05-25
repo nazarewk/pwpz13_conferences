@@ -19,9 +19,19 @@ def home(request):
 
 
 def reviewer_list(request):
-    reviewers = Reviewer.objects.filter(is_active=True)
-    return render(request, "conferences/reviewers/reviewer_list.html",
-                  {'reviewers': reviewers})
+    try:
+        user = request.user
+        profile = UserProfile.objects.get(user=user)
+        if profile.is_admin():
+            reviewers = Reviewer.objects.filter(is_active=True)
+            return render(request, "conferences/reviewers/reviewer_list.html",
+                          {'reviewers': reviewers})
+    except:
+        pass
+    text = _('Musisz być zalogowany jako admin żeby mieć dostęp do tej sekcji.')
+    context = {'message': text}
+    return render(request, 'conferences/misc/no_rights.html', context)
+
 
 
 def reviewer_details(request, pk):
@@ -74,9 +84,21 @@ def reviewer_delete(request, pk):
 
 
 def reviews_list(request):
-    reviews = Review.objects.filter(reviewer=request.user)
-    return render(request, "conferences/reviews/reviews_list.html",
+    try:
+        user = request.user
+        profile = UserProfile.objects.get(user=user)
+        if profile.is_reviewer():
+            reviewer=Reviewer.objects.get(user_account=user)
+            reviews = Review.objects.filter(reviewer=reviewer)
+            return render(request, "conferences/reviews/reviews_list.html",
                   {'reviews': reviews})
+    except:
+        pass
+    text = _('Musisz być zalogowany jako recenzent żeby mieć dostęp do tej sekcji.')
+    context = {'message': text}
+    return render(request, 'conferences/misc/no_rights.html', context)
+
+
 
 
 def session_details(request, pk):
