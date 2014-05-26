@@ -13,6 +13,8 @@ from django.core.files.base import ContentFile
 from django.conf import settings
 import tempfile
 
+from .context_processors import is_conference_admin
+
 from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm, SummaryForm, PublicationForm, ReviewForm, TopicForm
 from .models import Reviewer, Session, Lecture, UserProfile, Review, ConferencesFile, Summary, Publication, Topic
 
@@ -462,7 +464,18 @@ def summary_add(request):
     else:
         text = _('Musisz być zalogowany, aby przesłać streszczenie')
         context = {'message': text}
-        return render(request, 'conferences/summary/add_summary.html', context)
+        return render(request, 'conferences/misc/no_rights.html', context)
+
+def summary_list(request):
+    user = request.user
+    if is_conference_admin:
+        summaries=Summary.objects.all()
+        return render(request, 'conferences/summary/summary_list.html',
+                      { 'summaries':summaries})
+    else:
+        text = _('Musisz być zalogowany, aby przesłać streszczenie')
+        context = {'message': text}
+        return render(request, 'conferences/misc/no_rights.html', context)
 
 def publication_add(request):
     user = request.user

@@ -164,7 +164,10 @@ urlpatterns += patterns(
         views.summary_add,
         name='summary-add'
     ),
-
+    url(r'^summaries/$',
+        views.summary_list,
+        name='summary-list'
+    ),
     url(r'^publication/add$',
         views.publication_add,
         name='publication-add'
