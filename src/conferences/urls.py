@@ -136,8 +136,9 @@ urlpatterns += patterns(
         views.summary_add,
         name='summary-add'
     ),
-    url(r'filer_test',
-        views.filer_upload,
-        name='filer-test'
+
+    url(r'^publication/add$',
+        views.publication_add,
+        name='publication-add'
     ),
 )

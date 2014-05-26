@@ -13,8 +13,8 @@ from django.core.files.base import ContentFile
 from django.conf import settings
 import tempfile
 
-from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm, SummaryForm, FilerUploadForm
-from .models import Reviewer, Session, Lecture, UserProfile, Review, ConferencesFile, Summary
+from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm, SummaryForm, PublicationForm
+from .models import Reviewer, Session, Lecture, UserProfile, Review, ConferencesFile, Summary, Publication
 
 
 def home(request):
@@ -87,19 +87,17 @@ def reviewer_delete(request, pk):
 
 
 def reviews_list(request):
-    try:
-        user = request.user
-        profile = UserProfile.objects.get(user=user)
-        if profile.is_reviewer():
-            reviewer=Reviewer.objects.get(user_account=user)
-            reviews = Review.objects.filter(reviewer=reviewer)
-            return render(request, "conferences/reviews/reviews_list.html",
+    user = request.user
+    profile = UserProfile.objects.get(user=user)
+    if profile.is_reviewer():
+        reviewer=Reviewer.objects.filter(user_account=user)
+        reviews = Review.objects.filter(reviewer=reviewer)
+        return render(request, "conferences/reviews/reviews_list.html",
                   {'reviews': reviews})
-    except:
-        pass
-    text = _('Musisz być zalogowany jako recenzent żeby mieć dostęp do tej sekcji.')
-    context = {'message': text}
-    return render(request, 'conferences/misc/no_rights.html', context)
+    else:
+        text = _('Musisz być zalogowany jako recenzent żeby mieć dostęp do tej sekcji.')
+        context = {'message': text}
+        return render(request, 'conferences/misc/no_rights.html', context)
 
 
 
@@ -395,6 +393,42 @@ def summary_add(request):
         text = _('Musisz być zalogowany, aby przesłać streszczenie')
         context = {'message': text}
         return render(request, 'conferences/summary/add_summary.html', context)
+
+def publication_add(request):
+    user = request.user
+    if user.is_authenticated():
+        if request.method == 'POST':
+            publication_form = PublicationForm(request.POST, request.FILES)
+            if publication_form.is_valid():
+                # Handle uploaded file
+                f = request.FILES['file']
+                file_data = ContentFile(f.read())
+                file_data.name = f.name
+
+                publication = Publication.objects.create(
+                    conference_id=request.POST['conference'],
+                    owner=request.user,
+                    original_filename=f.name,
+                    description=request.POST['description'],
+                    file=file_data)
+                publication.save()
+                return render(request, 'conferences/base.html', {
+                    'content': _('Dodano publikację %(summary)s') % {
+                        'publication': publication.url
+                    }
+                })
+            else:
+                print publication_form.errors
+        else:
+            publication_form = PublicationForm()
+        return render(
+            request,
+            'conferences/publication/add_publication.html',
+            {'form': PublicationForm})
+    else:
+        text = _('Musisz być zalogowany, aby przesłać streszczenie')
+        context = {'message': text}
+        return render(request, 'conferences/misc/no_rights.html', context)
 
 
 '''

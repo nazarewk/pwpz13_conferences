@@ -151,16 +151,6 @@ class Summary(ConferencesFile):
     folder_path = ['conferences', 'summaries']
     conference = models.ForeignKey(Conference, related_name='summaries')
 
-
-class Publication(ConferencesFile):
-    """
-    Represents post-conferences publications related to given lectures
-    """
-    filename_extensions = ['.pdf', '.txt']
-    folder_path = ['conferences', 'publications']
-    lecture = models.ForeignKey('Lecture', related_name='publications')
-
-
 class Reviewer(models.Model):
     """
     Represents both out-of-system and in-system reviewers including
@@ -334,6 +324,14 @@ class Lecture(models.Model):
     def __str__(self):
         return self.title
 
+
+class Publication(ConferencesFile):
+    """
+    Represents post-conferences publications related to given lectures
+    """
+    filename_extensions = ['.pdf', '.txt']
+    folder_path = ['conferences', 'publications']
+    lecture = models.ForeignKey(Lecture, related_name='publications')
 
 class Balance(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)

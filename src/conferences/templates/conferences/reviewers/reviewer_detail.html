@@ -1,9 +1,9 @@
 {% extends "conferences/base.html" %}
 {% load i18n %}
 {% block content %}
-    <h1>{{ reviewer.title }}</h1>
     <ul>
         <li>{% trans 'Konto' %}: {{ reviewer.user_account }}</li>
+        <li>{% trans 'Tytuł' %}: {{ reviewer.title }}</li>
         <li>{% trans 'Imię' %}: {{ reviewer.first_name }}</li>
         <li>{% trans 'Nazwisko' %}: {{ reviewer.last_name }}</li>
         <li>{% trans 'Email' %}: {{ reviewer.email }}</li>
@@ -16,7 +16,7 @@
                 {% trans 'Tak' %}
             {% endif %}
         </li>
-        <li>{% trans 'Dostępność' %}
+        <!--<li>{% trans 'Dostępność' %}
             <ul>
                 {% for date in object.availability.all %}
                     <li>
@@ -37,7 +37,7 @@
                     </li>
                 {% endfor %}
             </ul>
-        </li>
+        </li>-->
 
     </ul>
 {% endblock %}

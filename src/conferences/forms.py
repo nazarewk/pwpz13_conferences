@@ -77,3 +77,10 @@ class SummaryForm(forms.ModelForm):
     class Meta:
         model = models.Summary
         fields = ['conference', 'description']
+
+class PublicationForm(forms.ModelForm):
+    file = forms.FileField()
+
+    class Meta:
+        model = models.Publication
+        fields = ['lecture', 'description']
