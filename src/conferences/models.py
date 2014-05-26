@@ -25,19 +25,19 @@ class TimePeriod(models.Model):
     start = models.DateTimeField(verbose_name=_('Początek'))
     end = models.DateTimeField(verbose_name=_('Koniec'))
 
-    # 'conference_durations' = FK(Conference)
-    # 'summaries_submissions' = FK(Conference)
-    # 'publications_submissions' = FK(Conference)
+    # 'conference_duration' = 11(Conference)
+    # 'summaries_submission' = 11(Conference)
+    # 'publications_submission' = 11(Conference)
     # 'registration_periods' = MM(Conference)
-    # 'sessions_dates' = FK(Session)
-    # 'lectures_dates' = FK(Lecture)
-    # 'payments' = FK(Payment)
+    # 'sessions_date' = 11(Session)
+    # 'lectures_date' = 11(Lecture)
+    # 'payment' = 11(Payment)
     # 'reviewer_availability' = MM(Reviewer)
     # 'reviewer_unavailability' = MM(Reviewer)
 
     def __str__(self):
         return '%s: %s - %s' % (self.description, self.start.strftime('%Y-%m-%d %H:%M'),
-                            self.end.strftime('%Y-%m-%d %H:%M'))
+                                self.end.strftime('%Y-%m-%d %H:%M'))
 
     def get_duration(self):
         """
@@ -68,13 +68,13 @@ class Conference(models.Model):
 
     name = models.CharField(max_length=256)
 
-    duration = models.ForeignKey(
-        TimePeriod, related_name='conference_durations')
-    summaries_submission_period = models.ForeignKey(
-        TimePeriod, related_name='summaries_submissions')
+    duration = models.OneToOneField(
+        TimePeriod, related_name='conference_duration')
+    summaries_submission_period = models.OneToOneField(
+        TimePeriod, related_name='summaries_submission')
     # 'summaries' = FK(Summary)
-    publications_submission_period = models.ForeignKey(
-        TimePeriod, related_name='publications_submissions')
+    publications_submission_period = models.OneToOneField(
+        TimePeriod, related_name='publications_submission')
     # 'sessions__lectures__publications'
     registration_periods = models.ManyToManyField(
         TimePeriod, related_name='registration_periods')
@@ -242,6 +242,7 @@ class Reviewer(models.Model):
     def __str__(self):
         return self.name()
 
+
 class Review(models.Model):
     """
     Represents review of lecture summaries and publications
@@ -321,7 +322,7 @@ class Lecture(models.Model):
     summary = models.OneToOneField(Summary, verbose_name=_('Streszczenie'))
     # 'publications' = FK(Publication)
 
-    duration = models.ForeignKey(
+    duration = models.OneToOneField(
         TimePeriod, related_name='lectures_dates', verbose_name=_('Czas trwania'))
 
     def __str__(self):
@@ -336,6 +337,7 @@ class Publication(ConferencesFile):
     folder_path = ['conferences', 'publications']
     lecture = models.ForeignKey(Lecture, related_name='publications')
 
+
 class Balance(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     is_student = models.BooleanField(default=False)
@@ -346,8 +348,8 @@ class Payment(models.Model):
     short_description = models.CharField(max_length=128)
     full_description = models.TextField(blank=True)
 
-    time_to_pay = models.ForeignKey(
-        TimePeriod, related_name='payments')
+    time_to_pay = models.OneToOneField(
+        TimePeriod, related_name='payment')
 
     currency = models.CharField(max_length=3, choices=(
         ('PLN', _('Złote polskie')),
