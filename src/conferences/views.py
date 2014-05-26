@@ -406,14 +406,14 @@ def publication_add(request):
                 file_data.name = f.name
 
                 publication = Publication.objects.create(
-                    conference_id=request.POST['conference'],
+                    lecture_id=request.POST['lecture'],
                     owner=request.user,
                     original_filename=f.name,
                     description=request.POST['description'],
                     file=file_data)
                 publication.save()
                 return render(request, 'conferences/base.html', {
-                    'content': _('Dodano publikację %(summary)s') % {
+                    'content': _('Dodano publikację %(publication)s') % {
                         'publication': publication.url
                     }
                 })
