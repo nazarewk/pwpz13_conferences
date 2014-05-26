@@ -24,8 +24,7 @@ def home(request):
 def reviewer_list(request):
     try:
         user = request.user
-        profile = UserProfile.objects.get(user=user)
-        if profile.is_admin():
+        if user.is_authenticated():
             reviewers = Reviewer.objects.filter(is_active=True)
             return render(request, "conferences/reviewers/reviewer_list.html",
                           {'reviewers': reviewers})
@@ -88,8 +87,7 @@ def reviewer_delete(request, pk):
 
 def review_list(request):
     user = request.user
-    profile = UserProfile.objects.get(user=user)
-    if profile.is_reviewer():
+    if user.is_authenticated():
         reviewer=Reviewer.objects.filter(user_account=user)
         reviews = Review.objects.filter(reviewer=reviewer)
         return render(request, "conferences/reviews/reviews_list.html",

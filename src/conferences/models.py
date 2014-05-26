@@ -36,8 +36,8 @@ class TimePeriod(models.Model):
     # 'reviewer_unavailability' = MM(Reviewer)
 
     def __str__(self):
-        return '%s - %s' % (self.start.strftime('%Y-%m-%d %H:%M:%S'),
-                            self.end.strftime('%Y-%m-%d %H:%M:%S'))
+        return '%s: %s - %s' % (self.description, self.start.strftime('%Y-%m-%d %H:%M'),
+                            self.end.strftime('%Y-%m-%d %H:%M'))
 
     def get_duration(self):
         """
@@ -246,8 +246,8 @@ class Review(models.Model):
     """
     Represents review of lecture summaries and publications
     """
-    reviewer = models.ForeignKey(Reviewer)
-    file_reviewed = models.ForeignKey(ConferencesFile)
+    reviewer = models.ForeignKey(Reviewer, verbose_name=_('Recenzent'))
+    file_reviewed = models.ForeignKey(ConferencesFile, verbose_name=_('Plik do recenzji'))
 
     # unguessable ID for use in urls
     unguessable_id_length = 32
@@ -383,31 +383,3 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
-
-    def is_admin(self):
-        allowed_group = set(['admin'])
-        groups = [ x.name for x in self.user.groups.all()]
-        if allowed_group.intersection(set(groups)):
-           return True
-        return False
-
-    def is_session_admin(self):
-        allowed_group = set(['session_admin'])
-        groups = [ x.name for x in self.user.groups.all()]
-        if allowed_group.intersection(set(groups)):
-           return True
-        return False
-
-    def is_reviewer(self):
-        allowed_group = set(['reviewer'])
-        groups = [ x.name for x in self.user.groups.all()]
-        if allowed_group.intersection(set(groups)):
-           return True
-        return False
-
-    def is_lecturer(self):
-        allowed_group = set(['lecturer'])
-        groups = [ x.name for x in self.user.groups.all()]
-        if allowed_group.intersection(set(groups)):
-           return True
-        return False
