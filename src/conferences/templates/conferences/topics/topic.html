@@ -1,0 +1,12 @@
+{% extends "conferences/base.html" %}
+{% load i18n %}
+{% block content %}
+	<h1>{% trans 'Temat' %}<br></h1>
+	<ul>
+        <li>{% trans 'Nazwa' %}: {{ topic.name }} </li>
+		<li>{% trans 'Konferencja' %}: {{ topic.conference }}</li>
+        {% if topic.super_topic %}
+		    <li>{% trans 'Temat nadrzędny' %}: {{ topic.super_topic }}</li>
+        {% endif %}
+	</ul>
+{% endblock %}

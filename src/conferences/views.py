@@ -13,8 +13,8 @@ from django.core.files.base import ContentFile
 from django.conf import settings
 import tempfile
 
-from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm, SummaryForm, PublicationForm, ReviewForm
-from .models import Reviewer, Session, Lecture, UserProfile, Review, ConferencesFile, Summary, Publication
+from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm, SummaryForm, PublicationForm, ReviewForm, TopicForm
+from .models import Reviewer, Session, Lecture, UserProfile, Review, ConferencesFile, Summary, Publication, Topic
 
 
 def home(request):
@@ -117,6 +117,62 @@ def review_add(request):
         form = ReviewForm()
     return render(request, "conferences/reviews/review_add.html",
                   {'form': form})
+
+def topic_details(request, pk):
+    topic = get_object_or_404(Topic, pk=pk)
+    return render(request, "conferences/topics/topic.html",
+                  {'topic': topic})
+
+def topic_list(request):
+    user = request.user
+    if user.is_authenticated():
+        topics = Topic.objects.all()
+
+        return render(request, 'conferences/topics/topic_list.html',
+                      {'topics':topics})
+    else:
+        text = _('Musisz być zalogowany.')
+        context = {'message': text}
+        return render(request, 'conferences/misc/no_rights.html', context)
+
+
+def topic_add(request):
+    if request.method == 'POST':
+        form = TopicForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect('topic-list')
+        else:
+            print form.errors
+    else:
+        form = TopicForm()
+
+    return render(request, 'conferences/topics/add_topic.html',
+                  {'form': form})
+
+
+def topic_edit(request, pk):
+    topic = get_object_or_404(Topic, pk=pk)
+
+    if request.method == 'POST':
+        form = TopicForm(request.POST, instance=topic)
+
+        if form.is_valid():
+            form.save(commit=True)
+            return redirect('topic-details',pk)
+        else:
+            print form.errors
+    else:
+        form = TopicForm(instance=topic)
+
+    return render(request, 'conferences/topics/edit_topic.html',
+                  {'form': form})
+
+def topic_delete(request, pk):
+    topic = get_object_or_404(Topic, pk=pk)
+    topic.delete()
+    return redirect('topic-list')
 
 def session_details(request, pk):
     context_dict = {}

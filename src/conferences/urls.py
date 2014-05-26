@@ -88,6 +88,30 @@ urlpatterns += patterns(
 
 urlpatterns += patterns(
     '',
+    url(r'^topics/(?P<pk>\d+)/$',
+        views.topic_details,
+        name='topic-details'
+    ),
+    url(r'^topics/add/$',
+        views.topic_add,
+        name='topic-add'
+    ),
+    url(r'^topics/$',
+        views.topic_list,
+        name='topic-list'
+    ),
+    url(r'^topics/edit/(?P<pk>\d+)/$',
+        views.topic_edit,
+        name='topic-edit'
+    ),
+    url(r'^topics/delete/(?P<pk>\d+)/$',
+        views.topic_delete,
+        name='topic-delete'
+    ),
+)
+
+urlpatterns += patterns(
+    '',
     url(r'^lectures/(?P<pk>\d+)/$',
         views.lecture_details,
         name='lecture-details'
