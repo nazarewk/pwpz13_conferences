@@ -22,9 +22,9 @@ class Migration(SchemaMigration):
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('site', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['sites.Site'], unique=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=256)),
-            ('duration', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'conference_durations', to=orm['conferences.TimePeriod'])),
-            ('summaries_submission_period', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'summaries_submissions', to=orm['conferences.TimePeriod'])),
-            ('publications_submission_period', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'publications_submissions', to=orm['conferences.TimePeriod'])),
+            ('duration', self.gf('django.db.models.fields.related.OneToOneField')(blank=True, related_name=u'conference_duration', unique=True, null=True, to=orm['conferences.TimePeriod'])),
+            ('summaries_submission_period', self.gf('django.db.models.fields.related.OneToOneField')(blank=True, related_name=u'summaries_submission', unique=True, null=True, to=orm['conferences.TimePeriod'])),
+            ('publications_submission_period', self.gf('django.db.models.fields.related.OneToOneField')(blank=True, related_name=u'publications_submission', unique=True, null=True, to=orm['conferences.TimePeriod'])),
         ))
         db.send_create_signal(u'conferences', ['Conference'])
 
@@ -48,11 +48,8 @@ class Migration(SchemaMigration):
 
         # Adding model 'ConferencesFile'
         db.create_table(u'conferences_conferencesfile', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('author', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('file', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['filer.File'])),
+            (u'file_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['filer.File'], unique=True, primary_key=True)),
             ('status', self.gf('django.db.models.fields.CharField')(max_length=2)),
-            ('extra_info', self.gf('django.db.models.fields.CharField')(max_length=128)),
         ))
         db.send_create_signal(u'conferences', ['ConferencesFile'])
 
@@ -63,17 +60,10 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'conferences', ['Summary'])
 
-        # Adding model 'Publication'
-        db.create_table(u'conferences_publication', (
-            (u'conferencesfile_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['conferences.ConferencesFile'], unique=True, primary_key=True)),
-            ('lecture', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'publications', to=orm['conferences.Lecture'])),
-        ))
-        db.send_create_signal(u'conferences', ['Publication'])
-
         # Adding model 'Reviewer'
         db.create_table(u'conferences_reviewer', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user_account', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, blank=True)),
+            ('user_account', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True, null=True, blank=True)),
             ('title', self.gf('django.db.models.fields.CharField')(max_length=64, null=True, blank=True)),
             ('first_name', self.gf('django.db.models.fields.CharField')(max_length=64, null=True, blank=True)),
             ('last_name', self.gf('django.db.models.fields.CharField')(max_length=64, null=True, blank=True)),
@@ -106,7 +96,7 @@ class Migration(SchemaMigration):
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('reviewer', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['conferences.Reviewer'])),
             ('file_reviewed', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['conferences.ConferencesFile'])),
-            ('unguessable_id', self.gf('django.db.models.fields.CharField')(default=u'vBoVMnteOUb1KXMVBtZ9cU8FVU1lldOJ', unique=True, max_length=32)),
+            ('unguessable_id', self.gf('django.db.models.fields.CharField')(default=u'MYUpUhbJ9NDafGw35A9il55iaG603WRL', unique=True, max_length=32)),
             ('accepted', self.gf('django.db.models.fields.BooleanField')()),
             ('comment', self.gf('django.db.models.fields.TextField')(blank=True)),
             ('editable', self.gf('django.db.models.fields.BooleanField')(default=True)),
@@ -144,9 +134,10 @@ class Migration(SchemaMigration):
         # Adding model 'Lecture'
         db.create_table(u'conferences_lecture', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('title', self.gf('django.db.models.fields.CharField')(max_length=256)),
             ('session', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'lectures', to=orm['conferences.Session'])),
             ('summary', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['conferences.Summary'], unique=True)),
-            ('duration', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'lectures_dates', to=orm['conferences.TimePeriod'])),
+            ('duration', self.gf('django.db.models.fields.related.OneToOneField')(related_name=u'lectures_dates', unique=True, to=orm['conferences.TimePeriod'])),
         ))
         db.send_create_signal(u'conferences', ['Lecture'])
 
@@ -158,6 +149,13 @@ class Migration(SchemaMigration):
             ('user', models.ForeignKey(orm[u'auth.user'], null=False))
         ))
         db.create_unique(m2m_table_name, ['lecture_id', 'user_id'])
+
+        # Adding model 'Publication'
+        db.create_table(u'conferences_publication', (
+            (u'conferencesfile_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['conferences.ConferencesFile'], unique=True, primary_key=True)),
+            ('lecture', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'publications', to=orm['conferences.Lecture'])),
+        ))
+        db.send_create_signal(u'conferences', ['Publication'])
 
         # Adding model 'Balance'
         db.create_table(u'conferences_balance', (
@@ -173,7 +171,7 @@ class Migration(SchemaMigration):
             ('balance', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['conferences.Balance'])),
             ('short_description', self.gf('django.db.models.fields.CharField')(max_length=128)),
             ('full_description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('time_to_pay', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'payments', to=orm['conferences.TimePeriod'])),
+            ('time_to_pay', self.gf('django.db.models.fields.related.OneToOneField')(related_name=u'payment', unique=True, to=orm['conferences.TimePeriod'])),
             ('currency', self.gf('django.db.models.fields.CharField')(max_length=3)),
             ('amount', self.gf('django.db.models.fields.DecimalField')(max_digits=10, decimal_places=3)),
             ('paid', self.gf('django.db.models.fields.DecimalField')(max_digits=10, decimal_places=3)),
@@ -184,7 +182,7 @@ class Migration(SchemaMigration):
         db.create_table(u'conferences_userprofile', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True)),
-            ('activation_key', self.gf('django.db.models.fields.CharField')(unique=True, max_length=40, blank=True)),
+            ('activation_key', self.gf('django.db.models.fields.CharField')(max_length=40, unique=True, null=True, blank=True)),
         ))
         db.send_create_signal(u'conferences', ['UserProfile'])
 
@@ -207,9 +205,6 @@ class Migration(SchemaMigration):
 
         # Deleting model 'Summary'
         db.delete_table(u'conferences_summary')
-
-        # Deleting model 'Publication'
-        db.delete_table(u'conferences_publication')
 
         # Deleting model 'Reviewer'
         db.delete_table(u'conferences_reviewer')
@@ -237,6 +232,9 @@ class Migration(SchemaMigration):
 
         # Removing M2M table for field referents on 'Lecture'
         db.delete_table(db.shorten_name(u'conferences_lecture_referents'))
+
+        # Deleting model 'Publication'
+        db.delete_table(u'conferences_publication')
 
         # Deleting model 'Balance'
         db.delete_table(u'conferences_balance')
@@ -286,30 +284,28 @@ class Migration(SchemaMigration):
         },
         u'conferences.conference': {
             'Meta': {'object_name': 'Conference'},
-            'admins': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.User']", 'symmetrical': 'False'}),
-            'duration': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'conference_durations'", 'to': u"orm['conferences.TimePeriod']"}),
+            'admins': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': u"orm['auth.User']", 'null': 'True', 'blank': 'True'}),
+            'duration': ('django.db.models.fields.related.OneToOneField', [], {'blank': 'True', 'related_name': "u'conference_duration'", 'unique': 'True', 'null': 'True', 'to': u"orm['conferences.TimePeriod']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
-            'publications_submission_period': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'publications_submissions'", 'to': u"orm['conferences.TimePeriod']"}),
-            'registration_periods': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "u'registration_periods'", 'symmetrical': 'False', 'to': u"orm['conferences.TimePeriod']"}),
+            'publications_submission_period': ('django.db.models.fields.related.OneToOneField', [], {'blank': 'True', 'related_name': "u'publications_submission'", 'unique': 'True', 'null': 'True', 'to': u"orm['conferences.TimePeriod']"}),
+            'registration_periods': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "u'registration_periods'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['conferences.TimePeriod']"}),
             'site': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['sites.Site']", 'unique': 'True'}),
-            'summaries_submission_period': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'summaries_submissions'", 'to': u"orm['conferences.TimePeriod']"})
+            'summaries_submission_period': ('django.db.models.fields.related.OneToOneField', [], {'blank': 'True', 'related_name': "u'summaries_submission'", 'unique': 'True', 'null': 'True', 'to': u"orm['conferences.TimePeriod']"})
         },
         u'conferences.conferencesfile': {
-            'Meta': {'object_name': 'ConferencesFile'},
-            'author': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
-            'extra_info': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'file': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['filer.File']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'Meta': {'object_name': 'ConferencesFile', '_ormbases': ['filer.File']},
+            u'file_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['filer.File']", 'unique': 'True', 'primary_key': 'True'}),
             'status': ('django.db.models.fields.CharField', [], {'max_length': '2'})
         },
         u'conferences.lecture': {
             'Meta': {'object_name': 'Lecture'},
-            'duration': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'lectures_dates'", 'to': u"orm['conferences.TimePeriod']"}),
+            'duration': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "u'lectures_dates'", 'unique': 'True', 'to': u"orm['conferences.TimePeriod']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'referents': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.User']", 'symmetrical': 'False'}),
             'session': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'lectures'", 'to': u"orm['conferences.Session']"}),
-            'summary': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['conferences.Summary']", 'unique': 'True'})
+            'summary': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['conferences.Summary']", 'unique': 'True'}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '256'})
         },
         u'conferences.payment': {
             'Meta': {'object_name': 'Payment'},
@@ -320,7 +316,7 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'paid': ('django.db.models.fields.DecimalField', [], {'max_digits': '10', 'decimal_places': '3'}),
             'short_description': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'time_to_pay': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'payments'", 'to': u"orm['conferences.TimePeriod']"})
+            'time_to_pay': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "u'payment'", 'unique': 'True', 'to': u"orm['conferences.TimePeriod']"})
         },
         u'conferences.publication': {
             'Meta': {'object_name': 'Publication', '_ormbases': [u'conferences.ConferencesFile']},
@@ -335,7 +331,7 @@ class Migration(SchemaMigration):
             'file_reviewed': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['conferences.ConferencesFile']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'reviewer': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['conferences.Reviewer']"}),
-            'unguessable_id': ('django.db.models.fields.CharField', [], {'default': "u'9UjrSPA8uLKlLBHb8JogVvpVwxOzRL4s'", 'unique': 'True', 'max_length': '32'})
+            'unguessable_id': ('django.db.models.fields.CharField', [], {'default': "u'YJJ2fLNKeUHtd5pFC9MixllBuaMoW881'", 'unique': 'True', 'max_length': '32'})
         },
         u'conferences.reviewer': {
             'Meta': {'object_name': 'Reviewer'},
@@ -348,7 +344,7 @@ class Migration(SchemaMigration):
             'last_name': ('django.db.models.fields.CharField', [], {'max_length': '64', 'null': 'True', 'blank': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '64', 'null': 'True', 'blank': 'True'}),
             'unavailability': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "u'reviewer_unavailability'", 'symmetrical': 'False', 'to': u"orm['conferences.TimePeriod']"}),
-            'user_account': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']", 'null': 'True', 'blank': 'True'})
+            'user_account': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['auth.User']", 'unique': 'True', 'null': 'True', 'blank': 'True'})
         },
         u'conferences.session': {
             'Meta': {'object_name': 'Session'},
@@ -380,7 +376,7 @@ class Migration(SchemaMigration):
         },
         u'conferences.userprofile': {
             'Meta': {'object_name': 'UserProfile'},
-            'activation_key': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '40', 'blank': 'True'}),
+            'activation_key': ('django.db.models.fields.CharField', [], {'max_length': '40', 'unique': 'True', 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'user': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['auth.User']", 'unique': 'True'})
         },

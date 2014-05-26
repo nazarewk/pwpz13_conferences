@@ -5,10 +5,9 @@ import os
 import string
 from datetime import datetime, timedelta, MAXYEAR, MINYEAR
 
-from django.contrib.auth.models import User, Group
 from django.conf import settings
 from django.contrib.sites.managers import CurrentSiteManager
-from django.db.models import Q
+from django.db.models import Q, Manager
 from django.utils.translation import ugettext as _
 from django.db import models
 from django.contrib.sites.models import Site
@@ -64,21 +63,28 @@ class TimePeriod(models.Model):
 
 class Conference(models.Model):
     site = models.OneToOneField(Site)
-    admins = models.ManyToManyField(settings.AUTH_USER_MODEL)
+    admins = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        null=True, blank=True)
 
     name = models.CharField(max_length=256)
 
     duration = models.OneToOneField(
-        TimePeriod, related_name='conference_duration')
+        TimePeriod, related_name='conference_duration',
+        null=True, blank=True)
     summaries_submission_period = models.OneToOneField(
-        TimePeriod, related_name='summaries_submission')
+        TimePeriod, related_name='summaries_submission',
+        null=True, blank=True)
     # 'summaries' = FK(Summary)
     publications_submission_period = models.OneToOneField(
-        TimePeriod, related_name='publications_submission')
+        TimePeriod, related_name='publications_submission',
+        null=True, blank=True)
     # 'sessions__lectures__publications'
     registration_periods = models.ManyToManyField(
-        TimePeriod, related_name='registration_periods')
+        TimePeriod, related_name='registration_periods',
+        null=True, blank=True)
 
+    objects = Manager()
     on_site = CurrentSiteManager()
 
     def __str__(self):
