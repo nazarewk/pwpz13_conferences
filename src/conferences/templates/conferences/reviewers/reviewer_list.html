@@ -10,12 +10,8 @@
                         <a href="{% url 'reviewer-details' r.pk %}">
                             {{ r.name }}
                         </a>
-                        <a href="{% url 'reviewer-edit' r.pk %}" title="{% trans 'Edytuj' %}">
-                            <img src="{% static 'conferences/img/editicon.png' %}"
-                                 class="icon-small"/>
-                        </a>
-                        <a href="{% url 'reviewer-delete' r.pk %}"
-                           onclick="return confirm('{% trans 'Usunąć recenzenta?' %}');"
+                        <a href="{% url 'reviewer-edit' r.pk %}" title="{% trans 'Edytuj' %}"><img src="{% static 'conferences/img/editicon.png' %}" class="icon-small"/></a>
+                        <a href="{% url 'reviewer-delete' r.pk %}" onclick="return confirm('{% trans 'Usunąć recenzenta?' %}');"
                            title="{% trans 'Usuń' %}">
                             <img src="{% static 'conferences/img/deleteicon.png' %}"
                                  class="icon-small"/>

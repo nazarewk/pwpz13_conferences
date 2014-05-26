@@ -19,6 +19,10 @@ class ReviewForm(forms.ModelForm):
         model = models.Review
         fields = ['reviewer', 'file_reviewed']
 
+class TopicForm(forms.ModelForm):
+    class Meta:
+        model = models.Topic
+
 
 class SessionForm(forms.ModelForm):
     admins = forms.ModelMultipleChoiceField(
