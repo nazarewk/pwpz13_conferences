@@ -164,6 +164,7 @@ TEMPLATE_CONTEXT_PROCESSORS += [
     'django.core.context_processors.media',
     'django.core.context_processors.static',
     'sekizai.context_processors.sekizai',
+    'conferences.context_processors.is_conference_admin',
 ]
 
 TEMPLATE_DIRS += [
