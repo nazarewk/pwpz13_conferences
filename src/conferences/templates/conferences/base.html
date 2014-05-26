@@ -29,48 +29,10 @@
                     href="{% url 'user-logout' %}">{% trans 'Wyloguj' %}</a></div>
         {% endif %}
     </div>
+    {% load menu_tags %}
     <div class="leftNav">
         <ul>
-            <li><a href="/">
-                <img src="{% static 'conferences/img/home.png' %}"
-                     class="icon"/>
-                Strona główna
-            </a></li>
-            <li><a href="{% url 'reviewer-list' %}">
-                <img src="{% static 'conferences/img/home.png' %}"
-                     class="icon"/>
-                Recenzenci
-            </a></li>
-            <li><a href="{% url 'session-list' %}">
-                <img src="{% static 'conferences/img/home.png' %}"
-                     class="icon"/>
-                Sesje
-            </a></li>
-            <li><a href="{% url 'lecture-list' %}">
-                <img src="{% static 'conferences/img/home.png' %}"
-                     class="icon"/>
-                Referaty
-            </a></li>
-            <li><a href="{% url 'review-list' %}">
-                <img src="{% static 'conferences/img/home.png' %}"
-                     class="icon"/>
-                Twoje publikacje do zrecenzowania
-            </a></li>
-            <li><a href="{% url 'summary-add' %}">
-                <img src="{% static 'conferences/img/home.png' %}"
-                     class="icon"/>
-                Dodawanie streszczenia
-            </a></li>
-            <li><a href="{% url 'publication-add' %}">
-                <img src="{% static 'conferences/img/home.png' %}"
-                     class="icon"/>
-                Dodawanie publikacje
-            </a></li>
-            <li><a href="{% url 'review-add' %}">
-                <img src="{% static 'conferences/img/home.png' %}"
-                     class="icon"/>
-                Dodawanie żądania recenzji
-            </a></li>
+            {% show_menu 0 100 100 100 %}
         </ul>
     </div>
     <div id="content">
