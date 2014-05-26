@@ -89,7 +89,7 @@ class Conference(models.Model):
         return cls.on_site.first()
 
     def is_admin(self, user):
-        return self.admins.filter(username=user).exists()
+        return self.admins.filter(pk=user.pk).exists()
 
 
 class ConferencesFile(File):
