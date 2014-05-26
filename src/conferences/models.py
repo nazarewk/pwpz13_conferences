@@ -89,7 +89,7 @@ class Conference(models.Model):
         return cls.on_site.first()
 
     def is_admin(self, user):
-        return self.admins.filter(user=user).exists()
+        return self.admins.filter(username=user).exists()
 
 
 class ConferencesFile(File):
@@ -278,12 +278,13 @@ class Topic(models.Model):
     Class represents topics structure of the conferences,
      topics without super_topic are the most general
     """
-    conference = models.ForeignKey(Conference)
-    name = models.CharField(max_length=256)
+    conference = models.ForeignKey(Conference, verbose_name="Konferencja")
+    name = models.CharField(max_length=256, verbose_name="Nazwa")
     super_topic = models.ForeignKey(
         'self',
         null=True, blank=True,
-        related_name='sub_topics')
+        related_name='sub_topics',
+        verbose_name="Temat nadrzędny")
 
     def __str__(self):
         return self.name
@@ -307,7 +308,7 @@ class Session(models.Model):
         return self.name
 
     def is_admin(self, user):
-        return self.admins.filter(user=user).exists()
+        return self.admins.filter(pk=user).exists()
 
 
 class Lecture(models.Model):

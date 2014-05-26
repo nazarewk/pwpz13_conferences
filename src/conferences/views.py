@@ -87,7 +87,7 @@ def reviewer_delete(request, pk):
 
 def review_list(request):
     user = request.user
-    if user.is_authenticated():
+    if user.reviewer:
         reviewer=Reviewer.objects.filter(user_account=user)
         reviews = Review.objects.filter(reviewer=reviewer)
         return render(request, "conferences/reviews/reviews_list.html",

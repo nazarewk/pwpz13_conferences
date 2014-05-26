@@ -12,7 +12,7 @@ class ReviewerForm(forms.ModelForm):
     class Meta:
         model = models.Reviewer
         fields = ['user_account', 'first_name', 'last_name', 'email', 'title',
-                  'contact_phone', 'availability']
+                  'contact_phone']
 
 class ReviewForm(forms.ModelForm):
     class Meta:
