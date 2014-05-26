@@ -1,13 +1,12 @@
 {% extends "conferences/base.html" %}
 {% load staticfiles i18n %}
 {% block content %}
-    <h1>{% trans 'Recenzenje' %}</h1>
+    <h1>{% trans 'Recenzje' %}</h1>
     <div class="listContainer">
         {% if reviews %}
             <ul>
                 {% for r in reviews %}
-                    <li>{{ r.comment }} <a href="{{ r.file_reviewed.url }}">{{ r.file_reviewed.name }}</a>
-                    </li>
+                    <li>{{ r.reviewer }} <a href="{{ r.file_reviewed.url }}">{{ r.file_reviewed }}</a></li>
                 {% endfor %}
             </ul>
         {% else %}

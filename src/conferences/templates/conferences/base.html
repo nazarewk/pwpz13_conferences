@@ -51,7 +51,7 @@
                      class="icon"/>
                 Referaty
             </a></li>
-            <li><a href="{% url 'reviews-list' %}">
+            <li><a href="{% url 'review-list' %}">
                 <img src="{% static 'conferences/img/home.png' %}"
                      class="icon"/>
                 Twoje publikacje do zrecenzowania
@@ -65,6 +65,11 @@
                 <img src="{% static 'conferences/img/home.png' %}"
                      class="icon"/>
                 Dodawanie publikacje
+            </a></li>
+            <li><a href="{% url 'review-add' %}">
+                <img src="{% static 'conferences/img/home.png' %}"
+                     class="icon"/>
+                Dodawanie żądania recenzji
             </a></li>
         </ul>
     </div>

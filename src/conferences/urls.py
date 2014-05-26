@@ -48,8 +48,12 @@ urlpatterns += patterns(
 urlpatterns += patterns(
     '',
     url(r'^reviews/$',
-        views.reviews_list,
-        name='reviews-list'
+        views.review_list,
+        name='review-list'
+    ),
+    url(r'^reviews/add$',
+        views.review_add,
+        name='review-add'
     ),
 )
 

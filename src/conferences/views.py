@@ -13,7 +13,7 @@ from django.core.files.base import ContentFile
 from django.conf import settings
 import tempfile
 
-from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm, SummaryForm, PublicationForm
+from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm, SummaryForm, PublicationForm, ReviewForm
 from .models import Reviewer, Session, Lecture, UserProfile, Review, ConferencesFile, Summary, Publication
 
 
@@ -86,7 +86,7 @@ def reviewer_delete(request, pk):
     return redirect('reviewer-list')
 
 
-def reviews_list(request):
+def review_list(request):
     user = request.user
     profile = UserProfile.objects.get(user=user)
     if profile.is_reviewer():
@@ -99,8 +99,24 @@ def reviews_list(request):
         context = {'message': text}
         return render(request, 'conferences/misc/no_rights.html', context)
 
-
-
+def review_add(request):
+    if request.method == 'POST':
+        form = ReviewForm(data=request.POST)
+        if form.is_valid():
+            review = Review.objects.create(
+                reviewer_id=request.POST['reviewer'],
+                file_reviewed_id=request.POST['file_reviewed'],
+                accepted=False)
+            review.save()
+            return render(request, 'conferences/base.html', {
+                    'content': _('Dodano recencje %(review)s') % {
+                        'review': review.file_reviewed.name
+                    }
+                })
+    else:
+        form = ReviewForm()
+    return render(request, "conferences/reviews/review_add.html",
+                  {'form': form})
 
 def session_details(request, pk):
     context_dict = {}

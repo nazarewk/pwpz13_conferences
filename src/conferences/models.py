@@ -151,6 +151,7 @@ class Summary(ConferencesFile):
     folder_path = ['conferences', 'summaries']
     conference = models.ForeignKey(Conference, related_name='summaries')
 
+
 class Reviewer(models.Model):
     """
     Represents both out-of-system and in-system reviewers including
@@ -238,6 +239,8 @@ class Reviewer(models.Model):
         else:
             return '%s %s' % (self.first_name, self.last_name)
 
+    def __str__(self):
+        return self.name()
 
 class Review(models.Model):
     """
