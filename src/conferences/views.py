@@ -16,7 +16,7 @@ import tempfile
 
 from .context_processors import is_conference_admin
 
-from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm, SummaryForm, PublicationForm, ReviewForm, TopicForm
+from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm, SummaryForm, PublicationCreateForm, PublicationUpdateForm, ReviewForm, TopicForm
 from .models import Reviewer, Session, Lecture, UserProfile, Review, ConferencesFile, Summary, Publication, Topic
 
 
@@ -100,7 +100,7 @@ def review_list(request):
         context = {'message': text}
         return render(request, 'conferences/misc/no_rights.html', context)
 
-def review_add(request):
+def review_add(request,file_id = None):
     if request.method == 'POST':
         form = ReviewForm(data=request.POST)
         if form.is_valid():
@@ -115,7 +115,12 @@ def review_add(request):
                     }
                 })
     else:
-        form = ReviewForm()
+        review=Review()
+        try:
+            review.file_reviewed_id=file_id
+        except:
+            pass
+        form = ReviewForm(instance=review)
     return render(request, "conferences/reviews/review_add.html",
                   {'form': form})
 
@@ -478,6 +483,9 @@ def summary_list(request):
     user = request.user
     if is_conference_admin:
         summaries=Summary.objects.all()
+        for s in summaries:
+            s.review_count=s.review_set.all().count()
+            s.accepted_count=s.review_set.filter(accepted=True).count()
         return render(request, 'conferences/summary/summary_list.html',
                       { 'summaries':summaries})
     else:
@@ -489,7 +497,7 @@ def publication_add(request):
     user = request.user
     if user.is_authenticated():
         if request.method == 'POST':
-            publication_form = PublicationForm(request.POST, request.FILES)
+            publication_form = PublicationCreateForm(request.POST, request.FILES)
             if publication_form.is_valid():
                 conference = publication_form.cleaned_data['lecture'].session.conference
                 start = conference.publications_submission_period.start.replace(tzinfo=None)
@@ -519,18 +527,38 @@ def publication_add(request):
             else:
                 print publication_form.errors
         else:
-            publication_form = PublicationForm()
+            publication_form = PublicationCreateForm()
         return render(
             request,
             'conferences/publications/add_publication.html',
-            {'form': PublicationForm})
+            {'form': PublicationCreateForm})
     else:
         text = _('Musisz być zalogowany, aby przesłać publikację.')
         context = {'message': text}
         return render(request, 'conferences/misc/no_rights.html', context)
 
+def publication_edit(request, pk):
+    publication = get_object_or_404(Publication, pk=pk)
+    user=request.user
+    dupa=user
+    if request.method == 'POST':
+        form = PublicationUpdateForm(request.POST, instance=publication)
+
+        if form.is_valid():
+            form.save(commit=True)
+
+            return redirect('pages-root')
+        else:
+            print form.errors
+    else:
+        form = SessionForm(instance=session)
+
+    return render(request, 'conferences/sessions/edit_session.html',
+                  {'form': form})
+
 def publication_list(request):
     user = request.user
+    raise Exception
     if is_conference_admin:
         publications=Publication.objects.all()
         return render(request, 'conferences/publications/publication_list.html',

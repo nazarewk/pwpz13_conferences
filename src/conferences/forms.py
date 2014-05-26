@@ -3,9 +3,11 @@ from __future__ import unicode_literals
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.admin import widgets
+from django.db.models.query import EmptyQuerySet
 from django.utils.translation import ugettext as _
 
 from . import models
+from .models import Session, Conference, TimePeriod
 
 
 class ReviewerForm(forms.ModelForm):
@@ -49,9 +51,22 @@ class TimePeriodForm(forms.ModelForm):
 
 
 class LectureForm(forms.ModelForm):
+    session = forms.ModelChoiceField(
+        queryset=Conference.get_sessions())
+
+    start = forms.DateTimeField()
+    end = forms.DateTimeField()
+
+    def save(self, commit=True):
+        lecture = super(LectureForm, self).save(commit=False)
+        tp = TimePeriod(start=self.cleaned_data['start'], end=self.cleaned_data['end'])
+        tp.save()
+        lecture.duration = tp
+        lecture.save()
+
     class Meta:
         model = models.Lecture
-        fields = ['session', 'title', 'referents', 'summary', 'duration']
+        fields = ['session', 'title', 'referents', 'summary',]
 
 
 class UserForm(forms.ModelForm):
@@ -87,7 +102,14 @@ class SummaryForm(forms.ModelForm):
         model = models.Summary
         fields = ['conference', 'description']
 
-class PublicationForm(forms.ModelForm):
+class PublicationCreateForm(forms.ModelForm):
+    file = forms.FileField()
+
+    class Meta:
+        model = models.Publication
+        fields = ['lecture', 'description']
+
+class PublicationUpdateForm(forms.ModelForm):
     file = forms.FileField()
 
     class Meta:

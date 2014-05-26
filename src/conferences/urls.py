@@ -55,6 +55,10 @@ urlpatterns += patterns(
         views.review_add,
         name='review-add'
     ),
+    url(r'^reviews/add/(?P<file_id>\d+)/$',
+        views.review_add,
+        name='review-add'
+    ),
 )
 
 urlpatterns += patterns(

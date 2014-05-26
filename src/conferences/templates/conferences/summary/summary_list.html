@@ -6,7 +6,13 @@
         {% if summaries %}
             <ul>
                 {% for s in summaries %}
-                    <li>{{ s.original_filename }} <a href="{{ s.url }}">[pobierz]</a></li>
+                    <li>
+                        {{ s.original_filename }} {{ s.status_verbose }}
+                        <a href="{{ s.url }}">[pobierz]</a>
+                        {% trans 'Przypisano recenzentów: ' %} {{ s.review_count }}
+                        {% trans 'Zaakceptowało recenzentów: ' %} {{ s.accepted_count }}
+                        <a href="{% url 'review-add' s.id %}">[zleć recenzje]  </a>
+                    </li>
                 {% endfor %}
             </ul>
         {% else %}

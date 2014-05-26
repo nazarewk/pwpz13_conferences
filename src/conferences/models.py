@@ -8,12 +8,21 @@ from datetime import datetime, timedelta, MAXYEAR, MINYEAR
 from django.conf import settings
 from django.contrib.sites.managers import CurrentSiteManager
 from django.db.models import Q, Manager
+from django.db.models.query import EmptyQuerySet
 from django.utils.translation import ugettext as _
 from django.db import models
 from django.contrib.sites.models import Site
 from django.utils import timezone
 from filer.models import File, Folder
 
+
+FILE_STATUSES =(
+        ('PR', _('Oczekuje')),
+        ('RD', _('Gotowy')),  # Ready for admin's decision to accept or reject
+        ('OK', _('Akceptowany')),
+        ('NO', _('Odrzucony')),
+        ('ER', _('Spam')),
+    )
 
 class TimePeriod(models.Model):
     """
@@ -91,8 +100,15 @@ class Conference(models.Model):
         return self.name
 
     @classmethod
+    def get_sessions(cls):
+        c = cls.get_current()
+        return c.sessions if c else EmptyQuerySet
+
+    @classmethod
     def get_current(cls):
-        return cls.on_site.first()
+        if not hasattr(cls, '_current'):
+            cls._current = cls.on_site.first()
+        return cls._current
 
     def is_admin(self, user):
         return self.admins.filter(pk=user.pk).exists()
@@ -107,13 +123,9 @@ class ConferencesFile(File):
     filename_extensions = []
     folder_path = ['conferences', 'files']
 
-    status = models.CharField(max_length=2, choices=(
-        ('PR', _('Oczekuje')),
-        ('RD', _('Gotowy')),  # Ready for admin's decision to accept or reject
-        ('OK', _('Akceptowany')),
-        ('NO', _('Odrzucony')),
-        ('ER', _('Spam')),
-    ))
+    status = models.CharField(max_length=2,
+                              choices=FILE_STATUSES,
+                              default='PR')
 
     def save(self, *args, **kwargs):
         # self.folder = Folder.objects.create(name="root folder", parent=None)
@@ -147,6 +159,13 @@ class ConferencesFile(File):
     def matches_file_type(cls, iname, ifile, request):
         ext = os.path.splitext(iname)[1].lower()
         return ext in cls.filename_extensions if cls.filename_extensions else True
+
+    @property
+    def status_verbose(self):
+        return get_display(self.status, FILE_STATUSES)
+
+
+
 
 
 class Summary(ConferencesFile):
@@ -284,7 +303,9 @@ class Topic(models.Model):
     Class represents topics structure of the conferences,
      topics without super_topic are the most general
     """
-    conference = models.ForeignKey(Conference, verbose_name="Konferencja")
+    conference = models.ForeignKey(
+        Conference, default=lambda: Conference.get_current(),
+        verbose_name="Konferencja")
     name = models.CharField(max_length=256, verbose_name="Nazwa")
     super_topic = models.ForeignKey(
         'self',
@@ -392,3 +413,9 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+def get_display(key, list):
+    d = dict(list)
+    if key in d:
+        return d[key]
+    return None
