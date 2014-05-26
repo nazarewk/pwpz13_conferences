@@ -1,0 +1,16 @@
+{% extends "conferences/base.html" %}
+{% load i18n %}
+{% block content %}
+    <h1>{% trans 'Publikacje' %}</h1>
+    <div class="listContainer">
+        {% if publications %}
+            <ul>
+                {% for p in publications %}
+                    <li>{{ p.original_filename }} <a href="{{ p.url }}">[pobierz]</a></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>{% trans 'Nie dodano żadnych publikacji' %}</p>
+        {% endif %}
+    </div>
+{% endblock %}

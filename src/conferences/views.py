@@ -506,13 +506,23 @@ def publication_add(request):
             publication_form = PublicationForm()
         return render(
             request,
-            'conferences/publication/add_publication.html',
+            'conferences/publications/add_publication.html',
             {'form': PublicationForm})
     else:
         text = _('Musisz być zalogowany, aby przesłać streszczenie')
         context = {'message': text}
         return render(request, 'conferences/misc/no_rights.html', context)
 
+def publication_list(request):
+    user = request.user
+    if is_conference_admin:
+        publications=Publication.objects.all()
+        return render(request, 'conferences/publications/publication_list.html',
+                      { 'publications':publications})
+    else:
+        text = _('Musisz być zalogowany, aby przesłać publikacje')
+        context = {'message': text}
+        return render(request, 'conferences/misc/no_rights.html', context)
 
 '''
     def create_file(self, folder, filename=None):

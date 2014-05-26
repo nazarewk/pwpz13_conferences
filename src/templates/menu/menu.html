@@ -7,6 +7,7 @@
     <li><a href="{% url 'session-list' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>Sesje</a></li>
     <li><a href="{% url 'lecture-list' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>Referaty</a></li>
     <li><a href="{% url 'summary-list' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>Streszczenia</a></li>
+    <li><a href="{% url 'publication-list' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>Publikacje</a></li>
     {% endif %}
     {% if user.reviewer %}
         <li><a href="{% url 'review-list' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>Twoje publikacje do zrecenzowania</a></li>
