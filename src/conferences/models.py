@@ -157,7 +157,7 @@ class Reviewer(models.Model):
     Represents both out-of-system and in-system reviewers including
         availability information
     """
-    user_account = models.ForeignKey(
+    user_account = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         null=True, blank=True,
         verbose_name=_('Konto użytkownika'))
