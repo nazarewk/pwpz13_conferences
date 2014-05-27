@@ -152,3 +152,22 @@ class SendingEmailForm(forms.Form):
     message = forms.CharField(max_length=500, widget=forms.Textarea,
                               label=_('Treść'),
                               required=True)
+
+
+class SendingEmailsForm(forms.Form):
+    CHOICES = [('reviewers', _('Recenzenci')),
+               ('users', _('Użytkownicy'))]
+    sessions = Session.objects.all()
+    for session in sessions:
+        CHOICES.append((session.name, _('Admini sesji: %s') % session.name))
+
+    group = forms.MultipleChoiceField(choices=CHOICES,
+                                      widget=forms.CheckboxSelectMultiple(),
+                                      label=_('Grupy'),
+                                      required=True)
+    subject = forms.CharField(max_length=30,
+                              label=_('Temat'),
+                              required=True)
+    message = forms.CharField(max_length=500, widget=forms.Textarea,
+                              label=_('Treść'),
+                              required=True)

@@ -168,6 +168,10 @@ urlpatterns += patterns(
         views.email_send,
         name='email-send'
     ),
+    url(r'^users/multi-sending/$',
+        views.multi_email_send,
+        name='multi-email-send'
+    ),
 )
 
 urlpatterns += patterns(

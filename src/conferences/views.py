@@ -18,7 +18,7 @@ import tempfile
 from .context_processors import is_conference_admin
 
 from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm, SummaryForm, PublicationCreateForm, PublicationUpdateForm, ReviewCreateForm, TopicForm, \
-    ReviewUpdateForm, SendingEmailForm,SummaryUpdateForm
+    ReviewUpdateForm, SendingEmailForm,SummaryUpdateForm, SendingEmailsForm
 from .models import Reviewer, Session, Lecture, UserProfile, Review, ConferencesFile, Summary, Publication, Topic
 
 
@@ -632,5 +632,47 @@ def email_send(request):
             context = {'form': form}
     else:
         form = SendingEmailForm()
+        context = {'form': form}
+    return render(request, 'conferences/users/send-email.html', context)
+
+def multi_email_send(request):
+    if request.method == 'POST':
+        form = SendingEmailsForm(data=request.POST)
+        if form.is_valid():
+            subject = request.POST['subject']
+            message = request.POST['message']
+            groups = form.cleaned_data.get('group')
+            if 'users' in groups:
+                users = User.objects.all()
+                emails = []
+                for u in users:
+                    emails.append(u.email)
+                send_mail(subject, message, settings.EMAIL_HOST_USER, emails, fail_silently=False)
+                text = _("Wysłano masową wiadomość.")
+                context = {'message': text, 'form': form}
+                return render(request, 'conferences/users/send-email.html', context)
+
+            emails = []
+            if 'reviewers' in groups:
+                reviewers = Reviewer.objects.all()
+                for r in reviewers:
+                    emails.append(r.user_account.email)
+
+            sessions = Session.objects.all()
+            for s in sessions:
+                if s.name in groups:
+                    admins = s.admins.all()
+                    emails = []
+                    for a in admins:
+                        emails.append(a.email)
+            send_mail(subject, message, settings.EMAIL_HOST_USER, emails, fail_silently=False)
+            text = _("Wysłano masową wiadomość.")
+            context = {'message': text, 'form': form}
+            return render(request, 'conferences/users/send-email.html', context)
+        else:
+            print form.errors
+            context = {'form': form}
+    else:
+        form = SendingEmailsForm()
         context = {'form': form}
     return render(request, 'conferences/users/send-email.html', context)
