@@ -213,3 +213,11 @@ urlpatterns += patterns(
         name='publication-edit'
     ),
 )
+
+urlpatterns += patterns(
+    '',
+    url(r'^payments/$',
+        views.payment_list,
+        name='payment_list'
+    ),
+)
