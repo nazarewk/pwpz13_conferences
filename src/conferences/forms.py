@@ -8,7 +8,7 @@ from django.db.models.query import EmptyQuerySet
 from django.utils.translation import ugettext as _
 
 from . import models
-from .models import Session, Conference, TimePeriod
+from .models import Session, Conference, TimePeriod,Summary
 
 
 class ReviewerForm(forms.ModelForm):
@@ -63,11 +63,11 @@ class LectureForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(LectureForm, self).__init__(*args, **kwargs)
         self.fields['session'].queryset=Conference.get_sessions()
-        try:
+        if self.instance.id:
             self.fields['start'].initial=self.instance.duration.start
             self.fields['end'].initial=self.instance.duration.end
-        except:
-            pass
+        else:
+            self.fields['summary'].queryset=Summary.objects.filter(conference=Conference.get_current(), lecture=None)
         self.fields['start'].widget = widgets.AdminSplitDateTime()
         self.fields['end'].widget = widgets.AdminSplitDateTime()
 
