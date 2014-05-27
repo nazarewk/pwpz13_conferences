@@ -123,10 +123,20 @@ class SummaryForm(forms.ModelForm):
         fields = ['conference', 'description']
 
 class SummaryUpdateForm(forms.ModelForm):
+    editable=forms.BooleanField(label="Pozwalaj recenzować",required=False)
 
     class Meta:
         model = models.Summary
         fields = ['status']
+
+    def __init__(self, *args, **kwargs):
+        super(SummaryUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['editable'].initial = self.instance.review_set.filter(editable=True).exists()
+
+    def save(self):
+        super(SummaryUpdateForm, self)
+        if self.cleaned_data['editable'] is False:
+            self.instance.review_set.update(editable=self.cleaned_data['editable'])
 
 class PublicationCreateForm(forms.ModelForm):
     file = forms.FileField()
@@ -148,7 +158,8 @@ class PublicationUpdateForm(forms.ModelForm):
 
     def save(self):
         super(PublicationUpdateForm, self)
-        self.instance.review_set.update(editable=self.cleaned_data['editable'])
+        if self.cleaned_data['editable'] is False:
+            self.instance.review_set.update(editable=self.cleaned_data['editable'])
 
 class SendingEmailForm(forms.Form):
     user = forms.ModelChoiceField(queryset=User.objects.all(),

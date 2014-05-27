@@ -521,7 +521,7 @@ def summary_edit(request,pk):
             form = SummaryUpdateForm(request.POST, instance=summary)
 
             if form.is_valid():
-                form.save(commit=True)
+                form.save()
 
                 return redirect('summary-list')
     else:
