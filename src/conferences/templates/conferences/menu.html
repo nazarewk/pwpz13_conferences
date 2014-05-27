@@ -12,7 +12,8 @@
     <li><a href="{% url 'multi-email-send' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>Wyślij masową wiadomość</a></li>
     {% endif %}
     {% if user.reviewer %}
-        <li><a href="{% url 'review-list' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>Twoje publikacje do zrecenzowania</a></li>
+        <li><a href="{% url 'review-summaries-list' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>Twoje streszczenia do zrecenzowania</a></li>
+        <li><a href="{% url 'review-publications-list' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>Twoje publikacje do zrecenzowania</a></li>
     {% endif %}
     <li><a href="{% url 'summary-add' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>Dodawanie streszczenia</a></li>
     <li><a href="{% url 'publication-add' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>Dodawanie publikacje</a></li>

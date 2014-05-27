@@ -309,7 +309,9 @@ class Review(models.Model):
         file=self.file_reviewed
         if file.review_set.filter(status='OK').count()==2:
             file.status='RD'
-            file.save()
+        if file.review_set.filter(status='RE').count()>=1:
+            file.status='NO'
+        file.save()
         super(Review, self).save(*args, **kwargs)
 
 class Topic(models.Model):

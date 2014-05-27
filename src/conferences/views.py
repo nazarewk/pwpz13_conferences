@@ -90,11 +90,23 @@ def reviewer_delete(request, pk):
     return redirect('reviewer-list')
 
 
-def review_list(request):
+def publications_for_review_list(request):
     user = request.user
     if user.reviewer:
         reviewer=Reviewer.objects.filter(user_account=user)
-        reviews = Review.objects.filter(reviewer=reviewer)
+        reviews = Review.objects.filter(reviewer=reviewer, editable=True, file_reviewed__summary=None)
+        return render(request, "conferences/reviews/reviews_list.html",
+                  {'reviews': reviews})
+    else:
+        text = _('Musisz być zalogowany jako recenzent żeby mieć dostęp do tej sekcji.')
+        context = {'message': text}
+        return render(request, 'conferences/misc/no_rights.html', context)
+
+def summaries_for_review_list(request):
+    user = request.user
+    if user.reviewer:
+        reviewer=Reviewer.objects.filter(user_account=user)
+        reviews = Review.objects.filter(reviewer=reviewer, editable=True, file_reviewed__publication=None)
         return render(request, "conferences/reviews/reviews_list.html",
                   {'reviews': reviews})
     else:

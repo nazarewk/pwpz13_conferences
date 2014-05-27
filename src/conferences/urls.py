@@ -47,9 +47,13 @@ urlpatterns += patterns(
 
 urlpatterns += patterns(
     '',
-    url(r'^reviews/$',
-        views.review_list,
-        name='review-list'
+    url(r'^reviews/publications/$',
+        views.publications_for_review_list,
+        name='review-publications-list'
+    ),
+    url(r'^reviews/summaries/$',
+        views.summaries_for_review_list,
+        name='review-summaries-list'
     ),
     url(r'^reviews/add$',
         views.review_add,
