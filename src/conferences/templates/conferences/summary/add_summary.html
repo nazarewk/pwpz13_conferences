@@ -1,6 +1,7 @@
 {% extends "conferences/base.html" %}
 {% load i18n %}
 {% block content %}
+{{ message }}
 <form method="post" enctype='multipart/form-data'>
 	{% csrf_token %}
 	{{ form.as_p }}

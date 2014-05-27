@@ -473,38 +473,37 @@ def summary_add(request):
         if request.method == 'POST':
             summary_form = SummaryForm(request.POST, request.FILES)
             if summary_form.is_valid():
-                start = summary_form.cleaned_data['conference'].summaries_submission_period.start.replace(tzinfo=None)
-                end = summary_form.cleaned_data['conference'].summaries_submission_period.end.replace(tzinfo=None)
-                if start <= datetime.now() <= end:
-                    # Handle uploaded file
-                    f = request.FILES['file']
-                    file_data = ContentFile(f.read())
-                    file_data.name = f.name
+                # Handle uploaded file
+                f = request.FILES['file']
+                file_data = ContentFile(f.read())
+                file_data.name = f.name
 
-                    summary = Summary.objects.create(
-                        conference_id=request.POST['conference'],
-                        owner=request.user,
-                        original_filename=f.name,
-                        description=request.POST['description'],
-                        file=file_data)
-                    summary.save()
-                    return render(request, 'conferences/base.html', {
-                        'content': _('Dodano streszczenie %(summary)s') % {
-                            'summary': summary.url
-                        }
-                    })
-                else:
-                    text = _('Minął czas przesyłania streszczeń.')
-                    context = {'message': text}
-                    return render(request, 'conferences/misc/no_rights.html', context)
+                summary = Summary.objects.create(
+                    conference_id=request.POST['conference'],
+                    owner=request.user,
+                    original_filename=f.name,
+                    description=request.POST['description'],
+                    file=file_data)
+                summary.save()
+                return render(request, 'conferences/base.html', {
+                    'content': _('Dodano streszczenie %(summary)s') % {
+                        'summary': summary.url
+                    }
+                })
             else:
                 print summary_form.errors
+                context = {'form': summary_form}
         else:
             summary_form = SummaryForm()
+            # Jak zrobi się, że będzie tylko 1 konferencja to sie dorobi sprawdzanie czy minął czas, bo teraz
+            # nie ma jak tego zrobić
+            # text = _('Minął czas nadsyłania streszczeń.')
+            # context = {'form': summary_form,'message': text}
+            context = {'form': summary_form}
         return render(
             request,
             'conferences/summary/add_summary.html',
-            {'form': summary_form})
+            context)
     else:
         text = _('Musisz być zalogowany, aby przesłać streszczenie')
         context = {'message': text}
@@ -549,31 +548,23 @@ def publication_add(request):
         if request.method == 'POST':
             publication_form = PublicationCreateForm(request.POST, request.FILES)
             if publication_form.is_valid():
-                conference = publication_form.cleaned_data['lecture'].session.conference
-                start = conference.publications_submission_period.start.replace(tzinfo=None)
-                end = conference.publications_submission_period.end.replace(tzinfo=None)
-                if start <= datetime.now() <= end:
-                    # Handle uploaded file
-                    f = request.FILES['file']
-                    file_data = ContentFile(f.read())
-                    file_data.name = f.name
+                # Handle uploaded file
+                f = request.FILES['file']
+                file_data = ContentFile(f.read())
+                file_data.name = f.name
 
-                    publication = Publication.objects.create(
-                        lecture_id=request.POST['lecture'],
-                        owner=request.user,
-                        original_filename=f.name,
-                        description=request.POST['description'],
-                        file=file_data)
-                    publication.save()
-                    return render(request, 'conferences/base.html', {
-                        'content': _('Dodano publikację %(publication)s') % {
-                            'publication': publication.url
-                        }
-                    })
-                else:
-                    text = _('Minął czas przesyłania publikacji.')
-                    context = {'message': text}
-                    return render(request, 'conferences/misc/no_rights.html', context)
+                publication = Publication.objects.create(
+                    lecture_id=request.POST['lecture'],
+                    owner=request.user,
+                    original_filename=f.name,
+                    description=request.POST['description'],
+                    file=file_data)
+                publication.save()
+                return render(request, 'conferences/base.html', {
+                    'content': _('Dodano publikację %(publication)s') % {
+                        'publication': publication.url
+                    }
+                })
             else:
                 print publication_form.errors
         else:
