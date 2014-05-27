@@ -65,10 +65,11 @@ class LectureForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(LectureForm, self).__init__(*args, **kwargs)
-        instance=kwargs.pop('instance')
-        if instance:
-            self.fields['start'].initial=instance.duration.start
-            self.fields['end'].initial=instance.duration.end
+        try:
+            self.fields['start'].initial=self.instance.duration.start
+            self.fields['end'].initial=self.instance.duration.end
+        except:
+            pass
         self.fields['start'].widget = widgets.AdminSplitDateTime()
         self.fields['end'].widget = widgets.AdminSplitDateTime()
 
