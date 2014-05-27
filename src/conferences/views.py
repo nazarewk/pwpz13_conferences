@@ -605,7 +605,6 @@ def email_send(request):
     if request.method == 'POST':
         form = SendingEmailForm(data=request.POST)
         if form.is_valid():
-            form.save()
             user_id = request.POST['user']
             subject = request.POST['subject']
             message = request.POST['message']
