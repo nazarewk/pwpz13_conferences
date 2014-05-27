@@ -10,6 +10,17 @@ from django.utils.translation import ugettext as _
 from . import models
 from .models import Session, Conference, TimePeriod,Summary
 
+class FilterForm(forms.Form):
+    FILTERS=[('', _('Wszystkie')),
+             ('accepted', _('Zaakceptowane')),
+             ('waiting', _('Oczekujące')),
+             ('rejected', _('Odrzucone')),
+             ('questionable', _('Sporne')),
+             ]
+    filter=forms.ChoiceField(choices=FILTERS,
+                                  widget=forms.RadioSelect(),
+                                  label='Filtry',
+                                  required=False)
 
 class ReviewerForm(forms.ModelForm):
     class Meta:
@@ -134,7 +145,7 @@ class SummaryUpdateForm(forms.ModelForm):
         self.fields['editable'].initial = self.instance.review_set.filter(editable=True).exists()
 
     def save(self):
-        super(SummaryUpdateForm, self)
+        super(SummaryUpdateForm, self).save()
         if self.cleaned_data['editable'] is False:
             self.instance.review_set.update(editable=self.cleaned_data['editable'])
 

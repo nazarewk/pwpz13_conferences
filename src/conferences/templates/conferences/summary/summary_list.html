@@ -2,6 +2,11 @@
 {% load i18n %}
 {% block content %}
     <h1>{% trans 'Streszczenia' %}</h1>
+
+    <form method="GET" action="{% url 'summary-list' %}" >
+        {{ filter_form.as_p }}
+        <input type="submit" value="Filtruj" />
+    </form>
     <div class="listContainer">
         {% if summaries %}
             <table>
@@ -29,7 +34,7 @@
                 {% endfor %}
             </table>
         {% else %}
-            <p>{% trans 'Nie dodano żadnych streszczeń' %}</p>
+            <p>{% trans 'Brak streszczeń' %}</p>
         {% endif %}
     </div>
 {% endblock %}

@@ -18,7 +18,7 @@ import tempfile
 from .context_processors import is_conference_admin
 
 from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm, SummaryForm, PublicationCreateForm, PublicationUpdateForm, ReviewCreateForm, TopicForm, \
-    ReviewUpdateForm, SendingEmailForm,SummaryUpdateForm, SendingEmailsForm
+    ReviewUpdateForm, SendingEmailForm,SummaryUpdateForm, SendingEmailsForm, FilterForm
 from .models import Reviewer, Session, Lecture, UserProfile, Review, ConferencesFile, Summary, Publication, Topic
 
 
@@ -532,12 +532,24 @@ def summary_edit(request,pk):
 def summary_list(request):
     user = request.user
     if is_conference_admin:
-        summaries=Summary.objects.all()
+        if request.GET.get('filter'):
+            filter=request.GET.get('filter')
+            if filter=='accepted':
+                summaries=Summary.objects.filter(status='OK')
+            elif filter=='waiting':
+                summaries=Summary.objects.filter(status='PR')
+            elif filter=='rejected':
+                summaries=Summary.objects.filter(status='NO')
+            elif filter=='questionable':
+                summaries=Summary.objects.all()
+        else:
+            summaries=Summary.objects.all()
         for s in summaries:
             s.review_count=s.review_set.all().count()
             s.accepted_count=s.review_set.filter(status='OK').count()
+        filter_form = FilterForm(request.GET)
         return render(request, 'conferences/summary/summary_list.html',
-                      { 'summaries':summaries})
+                      { 'summaries':summaries, 'filter_form':filter_form})
     else:
         text = _('Musisz być zalogowany, aby przesłać streszczenie.')
         context = {'message': text}
