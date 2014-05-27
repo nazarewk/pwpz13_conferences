@@ -383,26 +383,25 @@ class Publication(ConferencesFile):
 
 
 class Balance(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
-    is_student = models.BooleanField(default=False)
-
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('Użytkownik'))
+    is_student = models.BooleanField(default=False, verbose_name=_('Czy jest studentem?'))
     def payment(self):
         return False
 
 
 class Payment(models.Model):
-    balance = models.ForeignKey(Balance)
-    short_description = models.CharField(max_length=128)
-    full_description = models.TextField(blank=True)
+    balance = models.ForeignKey(Balance, verbose_name=_('Saldo'))
+    short_description = models.CharField(max_length=128, verbose_name=_('Krótki opis'))
+    full_description = models.TextField(blank=True, verbose_name=_('Pełny opis'))
 
     time_to_pay = models.OneToOneField(
-        TimePeriod, related_name='payment')
+        TimePeriod, related_name='payment', verbose_name=_('Czas zapłaty'))
 
     currency = models.CharField(max_length=3, choices=(
-        ('PLN', _('Złote polskie')),
-    ))
-    amount = models.DecimalField(max_digits=10, decimal_places=3)
-    paid = models.DecimalField(max_digits=10, decimal_places=3)
+        ('PLN', _('Złote polskie'), ),
+    ), verbose_name=_('Waluta'))
+    amount = models.DecimalField(max_digits=10, decimal_places=3, verbose_name=_('Kwota do zapłaty'))
+    paid = models.DecimalField(max_digits=10, decimal_places=3, verbose_name=_('Wpłacono'))
 
 
 class UserProfile(models.Model):
