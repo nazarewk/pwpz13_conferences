@@ -581,7 +581,7 @@ def publication_add(request):
         return render(
             request,
             'conferences/publications/add_publication.html',
-            {'form': PublicationCreateForm})
+            {'form': publication_form})
     else:
         text = _('Musisz być zalogowany, aby przesłać publikację.')
         context = {'message': text}
