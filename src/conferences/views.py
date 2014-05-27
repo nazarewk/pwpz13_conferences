@@ -19,7 +19,7 @@ from .context_processors import is_conference_admin
 
 from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm, SummaryForm, PublicationCreateForm, PublicationUpdateForm, ReviewCreateForm, TopicForm, \
     ReviewUpdateForm, SendingEmailForm,SummaryUpdateForm, SendingEmailsForm, FilterForm
-from .models import Reviewer, Session, Lecture, UserProfile, Review, ConferencesFile, Summary, Publication, Topic
+from .models import Reviewer, Session, Lecture, UserProfile, Review, ConferencesFile, Summary, Publication, Topic, Balance
 
 
 def home(request):
@@ -703,3 +703,14 @@ def multi_email_send(request):
         form = SendingEmailsForm()
         context = {'form': form}
     return render(request, 'conferences/users/send-email.html', context)
+
+
+def payment_list(request):
+
+    context_dict = {}
+    users = User.objects.all()
+    balances = Balance.objects.all()
+    context_dict['users'] = users
+    context_dict['balances'] = balances
+
+    return render(request, 'conferences/payments/payment_list.html', context_dict)
