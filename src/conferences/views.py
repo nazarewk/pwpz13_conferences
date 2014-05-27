@@ -18,7 +18,7 @@ import tempfile
 from .context_processors import is_conference_admin
 
 from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm, SummaryForm, PublicationCreateForm, PublicationUpdateForm, ReviewCreateForm, TopicForm, \
-    ReviewUpdateForm, SendingEmailForm
+    ReviewUpdateForm, SendingEmailForm,SummaryUpdateForm
 from .models import Reviewer, Session, Lecture, UserProfile, Review, ConferencesFile, Summary, Publication, Topic
 
 
@@ -502,6 +502,20 @@ def summary_details(request,pk):
     summary = get_object_or_404(Summary, pk=pk)
     return render(request, "conferences/summary/summary_details.html",
                   {'summary': summary})
+
+def summary_edit(request,pk):
+    summary = get_object_or_404(Summary, pk=pk)
+    if request.method == 'POST':
+            form = SummaryUpdateForm(request.POST, instance=summary)
+
+            if form.is_valid():
+                form.save(commit=True)
+
+                return redirect('summary-list')
+    else:
+        form = SummaryUpdateForm(instance=summary)
+    return render(request, 'conferences/summary/summary_edit.html',
+                      {'summary':summary,'form': form})
 
 def summary_list(request):
     user = request.user

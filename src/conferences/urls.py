@@ -184,6 +184,10 @@ urlpatterns += patterns(
         views.summary_details,
         name='summary-details'
     ),
+    url(r'^summaries/edit/(?P<pk>\d+)/$',
+        views.summary_edit,
+        name='summary-edit'
+    ),
 )
 
 urlpatterns += patterns(

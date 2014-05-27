@@ -21,7 +21,7 @@
                     <td>{{ s.accepted_count }}</td>
                     <td>{{ s.review_count }}</td>
                     <td>
-                        <a href="{% url 'summary-details' s.id %}">[szczegóły]</a>&nbsp
+                        <a href="{% url 'summary-edit' s.id %}">[edytuj]</a>&nbsp
                         <a href="{% url 'review-add' s.id %}">[zleć recenzje]</a>&nbsp
                         <a href="{{ s.url }}">[pobierz]</a>
                     </td>

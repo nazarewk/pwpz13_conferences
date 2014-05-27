@@ -117,6 +117,12 @@ class SummaryForm(forms.ModelForm):
         model = models.Summary
         fields = ['conference', 'description']
 
+class SummaryUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = models.Summary
+        fields = ['status']
+
 class PublicationCreateForm(forms.ModelForm):
     file = forms.FileField()
 
