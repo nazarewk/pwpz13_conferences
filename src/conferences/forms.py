@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.admin import widgets
 from django.contrib.auth.models import User
 from django.db.models.query import EmptyQuerySet
+from django.utils.datetime_safe import datetime
 from django.utils.translation import ugettext as _
 
 from . import models
@@ -133,6 +134,28 @@ class SummaryForm(forms.ModelForm):
         model = models.Summary
         fields = ['conference', 'description']
 
+    def clean(self):
+        error_messages = []
+        from django.core.exceptions import ValidationError
+        cleaned_data = super(SummaryForm, self).clean()
+        conference = cleaned_data.get("conference")
+        description = cleaned_data.get("description")
+        summary_file = cleaned_data.get("file")
+
+        if conference:
+            start = conference.summaries_submission_period.start.replace(tzinfo=None)
+            end = conference.summaries_submission_period.end.replace(tzinfo=None)
+            if not (start <= datetime.now() <= end):
+                error_messages.append(ValidationError(_('Minął czas nadsyłania streszczeń.')))
+        if not conference:
+            error_messages.append(ValidationError(_('Musisz podać konferencję.')))
+        if not description:
+            error_messages.append(ValidationError(_('Musisz podać opis streszczenia.')))
+        if not summary_file:
+            error_messages.append(ValidationError(_('Musisz podać plik ze streszczeniem.')))
+        if ( len(error_messages) > 0):
+            raise ValidationError(error_messages)
+
 class SummaryUpdateForm(forms.ModelForm):
     editable=forms.BooleanField(label="Pozwalaj recenzować",required=False)
 
@@ -155,6 +178,29 @@ class PublicationCreateForm(forms.ModelForm):
     class Meta:
         model = models.Publication
         fields = ['lecture', 'description']
+
+    def clean(self):
+        error_messages = []
+        from django.core.exceptions import ValidationError
+        cleaned_data = super(PublicationCreateForm, self).clean()
+        lecture = cleaned_data.get("lecture")
+        description = cleaned_data.get("description")
+        publication_file = cleaned_data.get("file")
+
+        if lecture:
+            conference = lecture.session.conference
+            start = conference.publications_submission_period.start.replace(tzinfo=None)
+            end = conference.publications_submission_period.end.replace(tzinfo=None)
+            if not (start <= datetime.now() <= end):
+                error_messages.append(ValidationError(_('Minął czas nadsyłania publikacji.')))
+        if not lecture:
+            error_messages.append(ValidationError(_('Musisz podać referat.')))
+        if not description:
+            error_messages.append(ValidationError(_('Musisz podać opis referatu.')))
+        if not publication_file:
+            error_messages.append(ValidationError(_('Musisz podać plik z referatem.')))
+        if ( len(error_messages) > 0):
+            raise ValidationError(error_messages)
 
 class PublicationUpdateForm(forms.ModelForm):
     editable=forms.BooleanField(label="Pozwalaj recenzować",required=False)

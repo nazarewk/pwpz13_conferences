@@ -1,0 +1,45 @@
+{% extends "conferences/base.html" %}
+{% load staticfiles i18n %}
+{% block content %}
+{% if not user.is_authenticated %}
+    <p>{{ message }}</p>
+{% else %}
+    <h1>Referaty</h1>
+    <div class="listContainer">
+        {% if users %}
+            <table>
+                <thead>
+                    <th>Login</th>
+                    <th>Imię</th>
+                    <th>Nazwisko</th>
+                    <th>Student?</th>
+                    <th>Termin zapłaty</th>
+                    <th>Do zapłaty</th>
+                    <th>Zapłacono</th>
+                    <th>Waluta</th>
+                    <th>Status</th>
+                </thead>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.first_name }}</td>
+                        <td>{{ user.last_name }}</td>
+                        {% for b in user.balance_set.all  %}
+                            <td>{{ b.is_student }}</td>
+                            {% for p in b.payment_set.all %}
+                                <td>{{ p.time_to_pay.end }}</td>
+                                <td>{{ p.amount }}</td>
+                                <td>{{ p.paid }} </td>
+                                <td>{{ p.currency }}</td>
+                                <td>{{ p.is_valid }}</td>
+                            {% endfor %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p>{% trans 'Nie został utworzony jeszcze żaden referat.' %}</p>
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock %}
