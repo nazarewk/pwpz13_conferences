@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.admin import widgets
+from django.contrib.auth.models import User
 from django.db.models.query import EmptyQuerySet
 from django.utils.translation import ugettext as _
 
@@ -120,3 +121,14 @@ class PublicationUpdateForm(forms.ModelForm):
     class Meta:
         model = models.Publication
         fields = ['lecture', 'description']
+
+class SendingEmailForm(forms.Form):
+    user = forms.ModelChoiceField(queryset=User.objects.all(),
+                                  label=_('Nazwa użytkownika'),
+                                  required=True)
+    subject = forms.CharField(max_length=30,
+                              label=_('Temat'),
+                              required=True)
+    message = forms.CharField(max_length=500, widget=forms.Textarea,
+                              label=_('Treść'),
+                              required=True)

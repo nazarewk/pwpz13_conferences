@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.contrib.auth.models import User
 
 from django.core.mail import send_mail
 from django.shortcuts import render
@@ -17,7 +18,7 @@ import tempfile
 from .context_processors import is_conference_admin
 
 from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm, SummaryForm, PublicationCreateForm, PublicationUpdateForm, ReviewCreateForm, TopicForm, \
-    ReviewUpdateForm
+    ReviewUpdateForm, SendingEmailForm
 from .models import Reviewer, Session, Lecture, UserProfile, Review, ConferencesFile, Summary, Publication, Topic
 
 
@@ -564,7 +565,6 @@ def publication_add(request):
 def publication_edit(request, pk):
     publication = get_object_or_404(Publication, pk=pk)
     user=request.user
-    dupa=user
     if request.method == 'POST':
         form = PublicationUpdateForm(request.POST, instance=publication)
 
@@ -575,7 +575,7 @@ def publication_edit(request, pk):
         else:
             print form.errors
     else:
-        form = SessionForm(instance=session)
+        form = PublicationUpdateForm(instance=publication)
 
     return render(request, 'conferences/sessions/edit_session.html',
                   {'form': form})
@@ -601,3 +601,25 @@ def publication_list(request):
         file_obj.save()
         return file_obj
 '''
+
+
+def email_send(request):
+    if request.method == 'POST':
+        form = SendingEmailForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            user_id = request.POST['user']
+            subject = request.POST['subject']
+            message = request.POST['message']
+            user = User.objects.get(id=user_id)
+            send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)
+            text = _("Wysłano wiadmość.")
+            context = {'message': text, 'form': form}
+            return render(request, 'conferences/users/send-email.html', context)
+        else:
+            print form.errors
+            context = {'form': form}
+    else:
+        form = SendingEmailForm()
+        context = {'form': form}
+    return render(request, 'conferences/users/send-email.html', context)

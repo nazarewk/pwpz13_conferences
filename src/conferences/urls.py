@@ -164,6 +164,10 @@ urlpatterns += patterns(
         views.user_confirm,
         name='user-confirm'
     ),
+    url(r'^users/sending/$',
+        views.email_send,
+        name='email-send'
+    ),
 )
 
 urlpatterns += patterns(
