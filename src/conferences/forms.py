@@ -57,14 +57,12 @@ class TimePeriodForm(forms.ModelForm):
 
 
 class LectureForm(forms.ModelForm):
-    session = forms.ModelChoiceField(
-        queryset=Conference.get_sessions())
-
     start = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'], label='Początek')
     end = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'], label='Koniec')
 
     def __init__(self, *args, **kwargs):
         super(LectureForm, self).__init__(*args, **kwargs)
+        self.fields['session'].queryset=Conference.get_sessions()
         try:
             self.fields['start'].initial=self.instance.duration.start
             self.fields['end'].initial=self.instance.duration.end

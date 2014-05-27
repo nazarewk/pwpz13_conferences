@@ -4,14 +4,7 @@
     <h1>{% trans 'Dodaj referat' %}</h1>
     <form id="lecture_form" method="post">
         {% csrf_token %}
-        {% for field in form.visible_fields %}
-            <br>
-            <b>{{ field.errors }}</b>
-            {{ field.label_tag }} - {{ field }}
-            <br>
-        {% endfor %}
-        <input class="createBtn" type="button" value="{% trans 'Dodaj odcinek czasu' %}"
-               onclick='window.location.href="{% url 'lecture-timeperiod-add' %}"'>
+        {{ form.as_p }}
         <input type="submit" name="submit" value="{% trans 'Stwórz referat' %}">
     </form>
 {% endblock %}
