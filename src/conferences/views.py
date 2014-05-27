@@ -312,7 +312,7 @@ def lecture_list(request):
     user = request.user
     if user.is_authenticated():
         context_dict = {}
-        lectures_list = Lecture.objects.all()
+        lectures_list = Lecture.objects.all().order_by('duration__end')
         context_dict['lectures'] = lectures_list
 
         return render(request, 'conferences/lectures/lecture_list.html',

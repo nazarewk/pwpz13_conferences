@@ -74,7 +74,12 @@ class LectureForm(forms.ModelForm):
 
     def save(self, commit=True):
         lecture = super(LectureForm, self).save(commit=False)
-        tp = TimePeriod(start=self.cleaned_data['start'], end=self.cleaned_data['end'])
+        if lecture.duration_id:
+            tp=TimePeriod.objects.get(pk=lecture.duration.pk)
+            tp.start=self.cleaned_data['start']
+            tp.end=self.cleaned_data['end']
+        else:
+            tp = TimePeriod(start=self.cleaned_data['start'], end=self.cleaned_data['end'])
         tp.save()
         lecture.duration = tp
         lecture.save()

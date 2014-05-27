@@ -13,6 +13,9 @@
                         <a href="{% url 'lecture-details' lecture.id %}">
                             {{ lecture.title }}
                         </a>
+                        <p>{{ lecture.summary }}</p>
+                        <p>{{ lecture.duration.start }}</p>
+                        <p>{{ lecture.duration.end }}</p>
                         <a href="{% url 'lecture-edit' lecture.id %}"
                            title="Edytuj">
                             <img src="{% static 'conferences/img/editicon.png' %}"
