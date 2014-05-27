@@ -395,13 +395,13 @@ class Payment(models.Model):
     full_description = models.TextField(blank=True, verbose_name=_('Pełny opis'))
 
     time_to_pay = models.OneToOneField(
-        TimePeriod, related_name='payment', verbose_name=_('Czas zapłaty'))
+        TimePeriod, related_name='payment', verbose_name=_('Termin zapłaty'))
 
     currency = models.CharField(max_length=3, choices=(
         ('PLN', _('Złote polskie'), ),
     ), verbose_name=_('Waluta'))
-    amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Kwota do zapłaty'))
-    paid = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Wpłacono'))
+    amount = models.DecimalField(max_digits=10, decimal_places=3, verbose_name=_('Kwota do zapłaty'))
+    paid = models.DecimalField(max_digits=10, decimal_places=3, verbose_name=_('Wpłacono'))
 
     def is_valid(self):
         if self.paid >= self.amount:
