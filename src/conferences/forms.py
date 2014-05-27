@@ -25,7 +25,7 @@ class ReviewCreateForm(forms.ModelForm):
 class ReviewUpdateForm(forms.ModelForm):
     class Meta:
         model = models.Review
-        fields = ['accepted','comment']
+        fields = ['status','comment']
 
 class TopicForm(forms.ModelForm):
     class Meta:
@@ -60,8 +60,14 @@ class LectureForm(forms.ModelForm):
     session = forms.ModelChoiceField(
         queryset=Conference.get_sessions())
 
-    start = forms.DateTimeField()
-    end = forms.DateTimeField()
+    start = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'], label='Początek')
+    end = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'], label='Koniec')
+
+    def __init__(self, *args, **kwargs):
+        super(LectureForm, self).__init__(*args, **kwargs)
+        self.fields['start'].widget = widgets.AdminSplitDateTime()
+        self.fields['end'].widget = widgets.AdminSplitDateTime()
+
 
     def save(self, commit=True):
         lecture = super(LectureForm, self).save(commit=False)

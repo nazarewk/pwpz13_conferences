@@ -24,6 +24,12 @@ FILE_STATUSES =(
         ('ER', _('Spam')),
     )
 
+REVIEW_STATUSES =(
+        ('NO', _('Oczekuje')),
+        ('OK', _('Zaakceptowane')),  # Ready for admin's decision to accept or reject
+        ('RE', _('Odrzucone')),
+    )
+
 class TimePeriod(models.Model):
     """
     Class representing time periods with description, start date and either
@@ -281,7 +287,9 @@ class Review(models.Model):
         max_length=unguessable_id_length, unique=True,
         default=lambda: Review._next_unguessable_id())
 
-    accepted = models.BooleanField()
+    status = models.CharField(max_length=2,
+                              choices=REVIEW_STATUSES,
+                              default='NO')
     comment = models.TextField(blank=True)
 
     # should become uneditable after accepted
@@ -297,6 +305,12 @@ class Review(models.Model):
             if not Review.objects.filter(unguessable_id=rnd_str).exists():
                 return rnd_str
 
+    def save(self, *args, **kwargs):
+        file=self.file_reviewed
+        if file.review_set.filter(status='OK').count()==2:
+            file.status='RD'
+            file.save()
+        super(Review, self).save(*args, **kwargs)
 
 class Topic(models.Model):
     """

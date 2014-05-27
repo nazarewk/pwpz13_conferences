@@ -6,6 +6,7 @@
         {% if summaries %}
             <table>
                 <thead>
+                    <th>{% trans 'Autor ' %}</th>
                     <th>{% trans 'Plik ' %}</th>
                     <th>{% trans 'Status ' %}</th>
                     <th>{% trans 'Zaakceptowało recenzentów ' %}</th>
@@ -14,12 +15,16 @@
                 </thead>
                 {% for s in summaries %}
                 <tr>
-                    <td><a href="{% url 'summary-details' s.id %}">{{ s.original_filename }}</a></td>
+                    <td>{{ s.author }}</td>
+                    <td>{{ s.original_filename }}</td>
                     <td>{{ s.status_verbose }}</td>
                     <td>{{ s.accepted_count }}</td>
                     <td>{{ s.review_count }}</td>
-                    <td><a href="{% url 'review-add' s.id %}">[zleć recenzje]</a>&nbsp<a href="{{ s.url }}">[pobierz]</a></td>
-
+                    <td>
+                        <a href="{% url 'summary-details' s.id %}">[szczegóły]</a>&nbsp
+                        <a href="{% url 'review-add' s.id %}">[zleć recenzje]</a>&nbsp
+                        <a href="{{ s.url }}">[pobierz]</a>
+                    </td>
                 </tr>
                 {% endfor %}
             </table>

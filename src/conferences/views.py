@@ -108,8 +108,7 @@ def review_add(request,file_id = None):
         if form.is_valid():
             review = Review.objects.create(
                 reviewer_id=request.POST['reviewer'],
-                file_reviewed_id=request.POST['file_reviewed'],
-                accepted=False)
+                file_reviewed_id=request.POST['file_reviewed'])
             review.save()
             return render(request, 'conferences/base.html', {
                     'content': _('Dodano recencje %(review)s') % {
@@ -510,7 +509,7 @@ def summary_list(request):
         summaries=Summary.objects.all()
         for s in summaries:
             s.review_count=s.review_set.all().count()
-            s.accepted_count=s.review_set.filter(accepted=True).count()
+            s.accepted_count=s.review_set.filter(status='OK').count()
         return render(request, 'conferences/summary/summary_list.html',
                       { 'summaries':summaries})
     else:
@@ -582,7 +581,6 @@ def publication_edit(request, pk):
 
 def publication_list(request):
     user = request.user
-    raise Exception
     if is_conference_admin:
         publications=Publication.objects.all()
         return render(request, 'conferences/publications/publication_list.html',
