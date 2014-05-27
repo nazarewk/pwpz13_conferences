@@ -84,7 +84,7 @@ ul, ol {
 }
 
 #header {
-    height: 60px;
+    height: 80px;
     padding: 10px;
 }
 
@@ -95,7 +95,6 @@ ul, ol {
 
 #header .userInfo {
     float: right;
-    display: inline-block;
 }
 
 #content {
