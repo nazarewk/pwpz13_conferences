@@ -1,0 +1,13 @@
+{% extends "conferences/base.html" %}
+{% load i18n %}
+{% block content %}
+<form method="post" enctype='multipart/form-data'>
+	{% csrf_token %}
+    <ul>
+        <li>{% trans 'Autor:' %} {{ publication.author }}</li>
+        <li>{% trans 'Plik:' %} {{ publication.original_filename }} <a href="{{ publication.url }}">[pobierz]</a></li>
+    </ul>
+	{{ form.as_p }}
+	<input type="submit" value="{% trans 'Zapisz' %}" />
+</form>
+{% endblock %}

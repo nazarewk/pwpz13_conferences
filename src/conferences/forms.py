@@ -136,11 +136,10 @@ class PublicationCreateForm(forms.ModelForm):
         fields = ['lecture', 'description']
 
 class PublicationUpdateForm(forms.ModelForm):
-    file = forms.FileField()
 
     class Meta:
         model = models.Publication
-        fields = ['lecture', 'description']
+        fields = ['status',]
 
 class SendingEmailForm(forms.Form):
     user = forms.ModelChoiceField(queryset=User.objects.all(),

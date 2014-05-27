@@ -4,11 +4,30 @@
     <h1>{% trans 'Publikacje' %}</h1>
     <div class="listContainer">
         {% if publications %}
-            <ul>
+            <table>
+                <thead>
+                    <th>{% trans 'Autor ' %}</th>
+                    <th>{% trans 'Plik ' %}</th>
+                    <th>{% trans 'Status ' %}</th>
+                    <th>{% trans 'Zaakceptowało recenzentów ' %}</th>
+                    <th>{% trans 'Przypisano recenzentów ' %}</th>
+                    <th>{% trans 'Akcje ' %}</th>
+                </thead>
                 {% for p in publications %}
-                    <li>{{ p.original_filename }} <a href="{{ p.url }}">[pobierz]</a></li>
+                <tr>
+                    <td>{{ p.author }}</td>
+                    <td>{{ p.original_filename }}</td>
+                    <td>{{ p.status_verbose }}</td>
+                    <td>{{ p.accepted_count }}</td>
+                    <td>{{ p.review_count }}</td>
+                    <td>
+                        <a href="{% url 'publication-edit' p.id %}">[edytuj]</a>
+                        <a href="{% url 'review-add' p.id %}">[zleć recenzje]</a>
+                        <a href="{{ p.url }}">[pobierz]</a>
+                    </td>
+                </tr>
                 {% endfor %}
-            </ul>
+            </table>
         {% else %}
             <p>{% trans 'Nie dodano żadnych publikacji' %}</p>
         {% endif %}

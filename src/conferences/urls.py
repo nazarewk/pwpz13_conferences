@@ -196,12 +196,16 @@ urlpatterns += patterns(
 
 urlpatterns += patterns(
     '',
-    url(r'^publication/add$',
+    url(r'^publications/add$',
         views.publication_add,
         name='publication-add'
     ),
     url(r'^publications/$',
         views.publication_list,
         name='publication-list'
+    ),
+    url(r'^publications/edit/(?P<pk>\d+)/$',
+        views.publication_edit,
+        name='publication-edit'
     ),
 )

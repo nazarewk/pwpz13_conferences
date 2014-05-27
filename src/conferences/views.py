@@ -584,19 +584,22 @@ def publication_edit(request, pk):
         if form.is_valid():
             form.save(commit=True)
 
-            return redirect('pages-root')
+            return redirect('publication-list')
         else:
             print form.errors
     else:
         form = PublicationUpdateForm(instance=publication)
 
-    return render(request, 'conferences/sessions/edit_session.html',
-                  {'form': form})
+    return render(request, 'conferences/publications/publication_edit.html',
+                  {'publication':publication,'form': form})
 
 def publication_list(request):
     user = request.user
     if is_conference_admin:
         publications=Publication.objects.all()
+        for p in publications:
+            p.review_count=p.review_set.all().count()
+            p.accepted_count=p.review_set.filter(status='OK').count()
         return render(request, 'conferences/publications/publication_list.html',
                       { 'publications':publications})
     else:

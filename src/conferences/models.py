@@ -384,6 +384,9 @@ class Balance(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     is_student = models.BooleanField(default=False)
 
+    def payment(self):
+        return False
+
 
 class Payment(models.Model):
     balance = models.ForeignKey(Balance)

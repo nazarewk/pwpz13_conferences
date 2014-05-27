@@ -7,29 +7,30 @@
     <h1>Referaty</h1>
     <div class="listContainer">
         {% if lectures %}
-            <ul>
+            <table>
+                <thead>
+                    <th>Start</th>
+                    <th>Koniec</th>
+                    <th>Nazwa</th>
+                    <th>Streszczenie</th>
+                    <th>Akcje</th>
+                </thead>
                 {% for lecture in lectures %}
-                    <li>
-                        <a href="{% url 'lecture-details' lecture.id %}">
-                            {{ lecture.title }}
-                        </a>
-                        <p>{{ lecture.summary }}</p>
-                        <p>{{ lecture.duration.start }}</p>
-                        <p>{{ lecture.duration.end }}</p>
-                        <a href="{% url 'lecture-edit' lecture.id %}"
-                           title="Edytuj">
-                            <img src="{% static 'conferences/img/editicon.png' %}"
-                                 class="icon-small"/>
-                        </a>
-                        <a href="{% url 'lecture-delete' lecture.id %}"
-                           onclick="return confirm({% trans 'Usunąć referat?' %});"
-                           title="Usuń">
-                            <img src="{% static 'conferences/img/deleteicon.png' %}"
-                                 class="icon-small"/>
-                        </a>
-                    </li>
+                    <tr>
+                        <td>{{ lecture.duration.start }}</td>
+                        <td>{{ lecture.duration.end }}</td>
+                        <td>{{ lecture.title }}</td>
+                        <td><a href="{{ lecture.summary.url}}">{{ lecture.summary }}</a></td>
+                        <td>
+                            <a href="{% url 'lecture-edit' lecture.id %}" title="Edytuj">
+                            <img src="{% static 'conferences/img/editicon.png' %}"class="icon-small"/></a>
+                            <a href="{% url 'lecture-delete' lecture.id %}" onclick="return confirm('{% trans 'Usunąć referat?' %}');" title="Usuń">
+                            <img src="{% static 'conferences/img/deleteicon.png' %}" class="icon-small"/>
+                            </a>
+                        </td>
+                    </tr>
                 {% endfor %}
-            </ul>
+            </table>
         {% else %}
             <p>{% trans 'Nie został utworzony jeszcze żaden referat.' %}</p>
         {% endif %}
