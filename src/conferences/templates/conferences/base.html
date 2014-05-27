@@ -3,8 +3,19 @@
 <head>
     <title>Konferencje naukowe!</title>
     <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-    <link href="{% static 'conferences/css/style.css' %}" type="text/css"
-          rel="stylesheet"/>
+    <link href="{% static 'conferences/css/style.css' %}" type="text/css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/widgets.css' %}"/>
+    <script type="text/javascript" src="{% url 'django.views.i18n.javascript_catalog' %}"></script>
+    <script type="text/javascript" src="{% static 'admin/js/core.js' %}"></script>
+    <script type="text/javascript" src="{% static 'admin/js/admin/RelatedObjectLookups.js' %}"></script>
+    <script type="text/javascript" src="{% static 'admin/js/jquery.js' %}"></script>
+    <script type="text/javascript" src="{% static 'admin/js/jquery.init.js' %}"></script>
+    <script type="text/javascript" src="{% static 'admin/js/actions.js' %}"></script>
+    <script type="text/javascript" src="{% static 'admin/js/calendar.js' %}"></script>
+    <script type="text/javascript" src="{% static 'admin/js/admin/DateTimeShortcuts.js' %}"></script>
+    <script type="text/javascript">
+        window.__admin_media_prefix__ ="{% filter escapejs %}{% static 'admin/' %}{% endfilter %}";
+    </script>
     {% render_block "css" %}
 </head>
 <body>

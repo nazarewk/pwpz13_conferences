@@ -1,28 +1,6 @@
 {% extends "conferences/base.html" %}
 {% load i18n staticfiles %}
 {% block content %}
-        <link rel="stylesheet" type="text/css"
-              href="{% static 'admin/css/widgets.css' %}"/>
-        <script type="text/javascript"
-                src="{% url 'django.views.i18n.javascript_catalog' %}"></script>
-        <script type="text/javascript"
-                src="{% static 'admin/js/core.js' %}"></script>
-        <script type="text/javascript"
-                src="{% static 'admin/js/admin/RelatedObjectLookups.js' %}"></script>
-        <script type="text/javascript"
-                src="{% static 'admin/js/jquery.js' %}"></script>
-        <script type="text/javascript"
-                src="{% static 'admin/js/jquery.init.js' %}"></script>
-        <script type="text/javascript"
-                src="{% static 'admin/js/actions.js' %}"></script>
-        <script type="text/javascript"
-                src="{% static 'admin/js/calendar.js' %}"></script>
-        <script type="text/javascript"
-                src="{% static 'admin/js/admin/DateTimeShortcuts.js' %}"></script>
-        <script type="text/javascript">
-            window.__admin_media_prefix__ =
-                    "{% filter escapejs %}{% static 'admin/' %}{% endfilter %}";
-        </script>
     <h1>{% trans 'Dodaj referat' %}</h1>
     <form id="lecture_form" method="post">
         {% csrf_token %}

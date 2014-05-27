@@ -349,7 +349,7 @@ def lecture_edit(request, pk):
         if form.is_valid():
             form.save(commit=True)
 
-            return redirect('pages-root')
+            return redirect('lecture-list')
         else:
             print form.errors
     else:
