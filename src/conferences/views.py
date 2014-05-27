@@ -594,7 +594,7 @@ def publication_edit(request, pk):
         form = PublicationUpdateForm(request.POST, instance=publication)
 
         if form.is_valid():
-            form.save(commit=True)
+            form.save()
 
             return redirect('publication-list')
         else:

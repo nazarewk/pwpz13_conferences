@@ -136,10 +136,19 @@ class PublicationCreateForm(forms.ModelForm):
         fields = ['lecture', 'description']
 
 class PublicationUpdateForm(forms.ModelForm):
+    editable=forms.BooleanField(label="Pozwalaj recenzować",required=False)
 
     class Meta:
         model = models.Publication
         fields = ['status',]
+
+    def __init__(self, *args, **kwargs):
+        super(PublicationUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['editable'].initial = self.instance.review_set.filter(editable=True).exists()
+
+    def save(self):
+        super(PublicationUpdateForm, self)
+        self.instance.review_set.update(editable=self.cleaned_data['editable'])
 
 class SendingEmailForm(forms.Form):
     user = forms.ModelChoiceField(queryset=User.objects.all(),
