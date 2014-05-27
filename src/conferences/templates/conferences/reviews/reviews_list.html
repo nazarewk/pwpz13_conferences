@@ -6,7 +6,7 @@
         {% if reviews %}
             <ul>
                 {% for r in reviews %}
-                    <li>{{ r.reviewer }} <a href="{{ r.file_reviewed.url }}">{{ r.file_reviewed }}</a></li>
+                    <li>{{ r.file_reviewed }} <a href="{% url 'review-edit' r.id %}">[recenzuj</a> <a href="{{ r.file_reviewed.url }}">[pobierz]</a></li>
                 {% endfor %}
             </ul>
         {% else %}

@@ -16,7 +16,8 @@ import tempfile
 
 from .context_processors import is_conference_admin
 
-from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm, SummaryForm, PublicationCreateForm, PublicationUpdateForm, ReviewForm, TopicForm
+from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm, SummaryForm, PublicationCreateForm, PublicationUpdateForm, ReviewCreateForm, TopicForm, \
+    ReviewUpdateForm
 from .models import Reviewer, Session, Lecture, UserProfile, Review, ConferencesFile, Summary, Publication, Topic
 
 
@@ -102,7 +103,7 @@ def review_list(request):
 
 def review_add(request,file_id = None):
     if request.method == 'POST':
-        form = ReviewForm(data=request.POST)
+        form = ReviewCreateForm(data=request.POST)
         if form.is_valid():
             review = Review.objects.create(
                 reviewer_id=request.POST['reviewer'],
@@ -120,9 +121,27 @@ def review_add(request,file_id = None):
             review.file_reviewed_id=file_id
         except:
             pass
-        form = ReviewForm(instance=review)
+        form = ReviewCreateForm(instance=review)
     return render(request, "conferences/reviews/review_add.html",
                   {'form': form})
+
+def review_edit(request, pk):
+    review = get_object_or_404(Review, pk=pk)
+
+    if request.method == 'POST':
+        form = ReviewUpdateForm(request.POST, instance=review)
+
+        if form.is_valid():
+            form.save()
+            return redirect('review-list')
+        else:
+            print form.errors
+    else:
+        form = ReviewUpdateForm(instance=review)
+
+    return render(request, 'conferences/reviews/review_edit.html',
+                  {'form': form})
+
 
 def topic_details(request, pk):
     topic = get_object_or_404(Topic, pk=pk)
@@ -478,6 +497,11 @@ def summary_add(request):
         text = _('Musisz być zalogowany, aby przesłać streszczenie')
         context = {'message': text}
         return render(request, 'conferences/misc/no_rights.html', context)
+
+def summary_details(request,pk):
+    summary = get_object_or_404(Summary, pk=pk)
+    return render(request, "conferences/summary/summary_details.html",
+                  {'summary': summary})
 
 def summary_list(request):
     user = request.user

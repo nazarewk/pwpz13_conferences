@@ -59,6 +59,10 @@ urlpatterns += patterns(
         views.review_add,
         name='review-add'
     ),
+    url(r'^reviews/edit/(?P<pk>\d+)/$',
+        views.review_edit,
+        name='review-edit'
+    ),
 )
 
 urlpatterns += patterns(
@@ -171,6 +175,10 @@ urlpatterns += patterns(
     url(r'^summaries/$',
         views.summary_list,
         name='summary-list'
+    ),
+    url(r'^summaries/(?P<pk>\d+)/$',
+        views.summary_details,
+        name='summary-details'
     ),
 )
 

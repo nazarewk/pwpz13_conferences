@@ -1,0 +1,10 @@
+{% extends "conferences/base.html" %}
+{% load staticfiles i18n %}
+{% block content %}
+<form method="post">
+	{% csrf_token %}
+	{{ form.as_p }}
+	<input type="submit" value="{% trans 'Zapisz' %}" />
+</form>
+{% endblock %}
+

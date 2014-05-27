@@ -4,17 +4,25 @@
     <h1>{% trans 'Streszczenia' %}</h1>
     <div class="listContainer">
         {% if summaries %}
-            <ul>
+            <table>
+                <thead>
+                    <th>{% trans 'Plik ' %}</th>
+                    <th>{% trans 'Status ' %}</th>
+                    <th>{% trans 'Zaakceptowało recenzentów ' %}</th>
+                    <th>{% trans 'Przypisano recenzentów ' %}</th>
+                    <th>{% trans 'Akcje ' %}</th>
+                </thead>
                 {% for s in summaries %}
-                    <li>
-                        {{ s.original_filename }} {{ s.status_verbose }}
-                        <a href="{{ s.url }}">[pobierz]</a>
-                        {% trans 'Przypisano recenzentów: ' %} {{ s.review_count }}
-                        {% trans 'Zaakceptowało recenzentów: ' %} {{ s.accepted_count }}
-                        <a href="{% url 'review-add' s.id %}">[zleć recenzje]  </a>
-                    </li>
+                <tr>
+                    <td><a href="{% url 'summary-details' s.id %}">{{ s.original_filename }}</a></td>
+                    <td>{{ s.status_verbose }}</td>
+                    <td>{{ s.accepted_count }}</td>
+                    <td>{{ s.review_count }}</td>
+                    <td><a href="{% url 'review-add' s.id %}">[zleć recenzje]</a>&nbsp<a href="{{ s.url }}">[pobierz]</a></td>
+
+                </tr>
                 {% endfor %}
-            </ul>
+            </table>
         {% else %}
             <p>{% trans 'Nie dodano żadnych streszczeń' %}</p>
         {% endif %}

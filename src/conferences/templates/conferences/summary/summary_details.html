@@ -1,0 +1,12 @@
+{% extends "conferences/base.html" %}
+{% load i18n %}
+{% block content %}
+    <ul>
+        <li>{% trans 'Plik' %}: {{ summary.original_filename }}</li>
+        <li>{% trans 'Status' %}: {{ summary.status_verbose }}</li>
+        {% for review in summary.review_set.all %}
+            <h1>{{ review.accepted }}</h1>
+            <h1>{{ review.comment }}</h1>
+        {% endfor %}
+    </ul>
+{% endblock %}

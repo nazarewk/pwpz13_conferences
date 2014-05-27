@@ -16,10 +16,15 @@ class ReviewerForm(forms.ModelForm):
         fields = ['user_account', 'first_name', 'last_name', 'email', 'title',
                   'contact_phone']
 
-class ReviewForm(forms.ModelForm):
+class ReviewCreateForm(forms.ModelForm):
     class Meta:
         model = models.Review
         fields = ['reviewer', 'file_reviewed']
+
+class ReviewUpdateForm(forms.ModelForm):
+    class Meta:
+        model = models.Review
+        fields = ['accepted','comment']
 
 class TopicForm(forms.ModelForm):
     class Meta:
