@@ -2,6 +2,7 @@
 <ul>
     <li><a href="/"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>{% trans 'Strona główna' %}</a></li>
     {% if IS_CONFERENCE_ADMIN %}
+    <li><a href="{% url 'payments-list' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>{% trans 'Lista płatności' %}</a></li>
     <li><a href="{% url 'reviewer-list' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>{% trans 'Recenzenci' %}</a></li>
     <li><a href="{% url 'topic-list' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>{% trans 'Tematy' %}</a></li>
     <li><a href="{% url 'session-list' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>{% trans 'Sesje' %}</a></li>

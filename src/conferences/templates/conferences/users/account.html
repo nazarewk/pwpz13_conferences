@@ -8,7 +8,7 @@
         <input type="submit" value="{% trans 'Zatwierdź zmiany' %}"/>
     </form>
     <p>{% trans 'Informacje o koncie' %}</p>
-    <h1>{% trans 'Stan konta' %}: {{ user.balance.amount }}</h1>
+    <h1>{% trans 'Stan konta' %}: {{ user.balance.available }}</h1>
     <p>
         {% if user.balance.is_student %}
             {% trans 'Student' %}

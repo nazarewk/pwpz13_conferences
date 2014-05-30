@@ -712,7 +712,7 @@ def multi_email_send(request):
     return render(request, 'conferences/users/send-email.html', context)
 
 
-def payment_list(request):
+def payments_list(request):
     context_dict = {}
     users = User.objects.all()
     context_dict['users'] = users

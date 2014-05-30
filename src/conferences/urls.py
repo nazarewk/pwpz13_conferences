@@ -217,7 +217,7 @@ urlpatterns += patterns(
 urlpatterns += patterns(
     '',
     url(r'^payments/$',
-        views.payment_list,
-        name='payment_list'
+        views.payments_list,
+        name='payments-list'
     ),
 )
