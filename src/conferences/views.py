@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.contrib.auth.models import User
 
 from django.core.mail import send_mail
+from django.core import mail
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
@@ -670,30 +671,34 @@ def multi_email_send(request):
             subject = request.POST['subject']
             message = request.POST['message']
             groups = form.cleaned_data.get('group')
+            connection = mail.get_connection()
+            connection.open()
             if 'users' in groups:
                 users = User.objects.all()
-                emails = []
                 for u in users:
-                    emails.append(u.email)
-                send_mail(subject, message, settings.EMAIL_HOST_USER, emails, fail_silently=False)
+                    email = mail.EmailMessage(subject, message, settings.EMAIL_HOST_USER,
+                          [u.email], connection=connection)
+                    email.send()
                 text = _("Wysłano masową wiadomość.")
                 context = {'message': text, 'form': form}
                 return render(request, 'conferences/users/send-email.html', context)
 
-            emails = []
             if 'reviewers' in groups:
                 reviewers = Reviewer.objects.all()
                 for r in reviewers:
-                    emails.append(r.user_account.email)
+                    email = mail.EmailMessage(subject, message, settings.EMAIL_HOST_USER,
+                          [r.user_account.email], connection=connection)
+                    email.send()
 
             sessions = Session.objects.all()
             for s in sessions:
                 if s.name in groups:
                     admins = s.admins.all()
-                    emails = []
                     for a in admins:
-                        emails.append(a.email)
-            send_mail(subject, message, settings.EMAIL_HOST_USER, emails, fail_silently=False)
+                        email = mail.EmailMessage(subject, message, settings.EMAIL_HOST_USER,
+                          [a.email], connection=connection)
+                        email.send()
+            connection.close()
             text = _("Wysłano masową wiadomość.")
             context = {'message': text, 'form': form}
             return render(request, 'conferences/users/send-email.html', context)
