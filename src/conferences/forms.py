@@ -168,8 +168,8 @@ class SummaryUpdateForm(forms.ModelForm):
         super(SummaryUpdateForm, self).__init__(*args, **kwargs)
         self.fields['editable'].initial = self.instance.review_set.filter(editable=True).exists()
 
-    def save(self):
-        super(SummaryUpdateForm, self).save()
+    def save(self, *args, **kwargs):
+        super(SummaryUpdateForm, self).save(*args, **kwargs)
         if self.cleaned_data['editable'] is False:
             self.instance.review_set.update(editable=self.cleaned_data['editable'])
 

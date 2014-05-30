@@ -16,19 +16,20 @@ from django.utils import timezone
 from filer.models import File, Folder
 
 
-FILE_STATUSES =(
-        ('PR', _('Oczekuje')),
-        ('RD', _('Gotowy')),  # Ready for admin's decision to accept or reject
-        ('OK', _('Akceptowany')),
-        ('NO', _('Odrzucony')),
-        ('ER', _('Spam')),
-    )
+FILE_STATUSES = (
+    ('PR', _('Oczekuje')),
+    ('RD', _('Gotowy')),  # Ready for admin's decision to accept or reject
+    ('OK', _('Akceptowany')),
+    ('NO', _('Odrzucony')),
+    ('ER', _('Spam')),
+)
 
-REVIEW_STATUSES =(
-        ('NO', _('Oczekuje')),
-        ('OK', _('Zaakceptowane')),  # Ready for admin's decision to accept or reject
-        ('RE', _('Odrzucone')),
-    )
+REVIEW_STATUSES = (
+    ('NO', _('Oczekuje')),
+    ('OK', _('Zaakceptowane')),  # Ready for admin's decision to accept or reject
+    ('RE', _('Odrzucone')),
+)
+
 
 class TimePeriod(models.Model):
     """
@@ -171,9 +172,6 @@ class ConferencesFile(File):
         return get_display(self.status, FILE_STATUSES)
 
 
-
-
-
 class Summary(ConferencesFile):
     """
     Represents summaries to accept for further lectures during conferences
@@ -306,13 +304,14 @@ class Review(models.Model):
                 return rnd_str
 
     def save(self, *args, **kwargs):
-        file=self.file_reviewed
-        if file.review_set.filter(status='OK').count()==2:
-            file.status='RD'
-        if file.review_set.filter(status='RE').count()>=1:
-            file.status='NO'
+        file = self.file_reviewed
+        if file.review_set.filter(status='OK').count() >= 2:
+            file.status = 'RD'
+        if file.review_set.filter(status='RE').count() >= 1:
+            file.status = 'NO'
         file.save()
         super(Review, self).save(*args, **kwargs)
+
 
 class Topic(models.Model):
     """
@@ -385,6 +384,7 @@ class Publication(ConferencesFile):
 class Balance(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('Użytkownik'))
     is_student = models.BooleanField(default=False, verbose_name=_('Czy jest studentem?'))
+
     def payment(self):
         return False
 
@@ -434,6 +434,7 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+
 
 def get_display(key, list):
     d = dict(list)

@@ -89,26 +89,16 @@ def reviewer_delete(request, pk):
     return redirect('reviewer-list')
 
 
-def publications_for_review_list(request):
+def review_list(request):
     user = request.user
     if user.reviewer:
         reviewer = Reviewer.objects.filter(user_account=user)
-        reviews = Review.objects.filter(reviewer=reviewer, editable=True, file_reviewed__summary=None)
-        return render(request, "conferences/reviews/reviews_list.html",
-                      {'reviews': reviews})
-    else:
-        text = _('Musisz być zalogowany jako recenzent żeby mieć dostęp do tej sekcji.')
-        context = {'message': text}
-        return render(request, 'conferences/misc/no_rights.html', context)
-
-
-def summaries_for_review_list(request):
-    user = request.user
-    if user.reviewer:
-        reviewer = Reviewer.objects.filter(user_account=user)
-        reviews = Review.objects.filter(reviewer=reviewer, editable=True, file_reviewed__publication=None)
-        return render(request, "conferences/reviews/reviews_list.html",
-                      {'reviews': reviews})
+        publications = Review.objects.filter(reviewer=reviewer, editable=True, file_reviewed__publication__isnull=False)
+        summaries = Review.objects.filter(reviewer=reviewer, editable=True, file_reviewed__summary__isnull=False)
+        return render(request, "conferences/reviews/reviews_list.html", {
+            'publication_reviews': publications,
+            'summary_reviews': summaries
+        })
     else:
         text = _('Musisz być zalogowany jako recenzent żeby mieć dostęp do tej sekcji.')
         context = {'message': text}
@@ -492,7 +482,7 @@ def summary_add(request):
                         file=file_data)
                     summary.save()
                     return render(request, 'conferences/base.html', {
-                        'content': _('Dodano streszczenie %(summary)s') % {
+                        'content': _('Dodano streszczenie <a href="%(summary)s">%(summary)s</a>,') % {
                             'summary': summary.url
                         }
                     })
@@ -585,7 +575,7 @@ def publication_add(request):
                         file=file_data)
                     publication.save()
                     return render(request, 'conferences/base.html', {
-                        'content': _('Dodano publikację %(publication)s') % {
+                        'content': _('Dodano publikację <a href="%(publication)s">%(publication)s</a>') % {
                             'publication': publication.url
                         }
                     })
