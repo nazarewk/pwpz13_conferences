@@ -405,9 +405,7 @@ def user_login(request):
             context = {'message': text}
             return render(request, 'conferences/users/login.html', context)
 
-    return render(request, 'conferences/base.html', {
-        'content': _('Zaloguj się.')
-    })
+    return render(request, "conferences/users/login.html")
 
 
 def registration(request):
