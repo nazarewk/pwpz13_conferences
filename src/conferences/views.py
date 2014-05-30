@@ -411,7 +411,7 @@ def registration(request):
             activation_url = request.build_absolute_uri(reverse('user-confirm', kwargs={
                 'key': user.userprofile.activation_key
             }))
-            balance = Balance.objects.get(user=user)
+            balance = user.balance
             balance.is_student = request.POST.get('student', False)
             balance.save()
             title = _('Potwierdzenie rejestracji')
