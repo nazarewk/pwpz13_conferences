@@ -408,10 +408,8 @@ def registration(request):
             user.set_password(user.password)
             user.is_active = False
             user.save()
-            profile = UserProfile(user=user)
-            profile.save()
             activation_url = request.build_absolute_uri(reverse('user-confirm', kwargs={
-                'key': profile.activation_key
+                'key': user.profile.activation_key
             }))
             title = _('Potwierdzenie rejestracji')
             content = _("Witaj %(name)s,\nAby dokończyć rejestrację kliknij w link aktywacyjny %(url)s.") % {
