@@ -729,7 +729,8 @@ def account(request):
                 account_form = AccountForm(request.user)
                 context = {
                     'message': text,
-                    'form': account_form
+                    'form': account_form,
+                    'user': user
                 }
             else:
                 print account_form.errors

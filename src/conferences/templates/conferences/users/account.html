@@ -7,4 +7,27 @@
 	{{ form.as_p }}
 	<input type="submit" value="{% trans 'Zatwierdź zmiany' %}" />
 </form>
+<p>{% trans 'Informacje o koncie' %}</p>
+<table>
+    <thead>
+        <th>Student?</th>
+        <th>Termin zapłaty</th>
+        <th>Do zapłaty</th>
+        <th>Zapłacono</th>
+        <th>Waluta</th>
+        <th>Status</th>
+    </thead>
+        <tr>
+{% for b in user.balance_set.all  %}
+    <td>{{ b.is_student }}</td>
+    {% for p in b.payment_set.all %}
+        <td>{{ p.time_to_pay.end }}</td>
+        <td>{{ p.amount }}</td>
+        <td>{{ p.paid }} </td>
+        <td>{{ p.currency }}</td>
+        <td>{{ p.is_valid }}</td>
+    {% endfor %}
+{% endfor %}
+        </tr>
+</table>
 {% endblock %}
