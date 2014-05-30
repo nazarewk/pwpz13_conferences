@@ -114,6 +114,7 @@ class UserForm(forms.ModelForm):
                             error_messages=email_errors)
     password = forms.CharField(widget=forms.PasswordInput(), label='Hasło',
                                min_length=8)
+    student = forms.BooleanField(label='Student', required=False)
 
     def clean_username(self):
         username = self.cleaned_data['username']
