@@ -405,7 +405,10 @@ class Publication(ConferencesFile):
 
 
 class Balance(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name=_('Użytkownik'))
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        verbose_name=_('Użytkownik'),
+        related_name='balance')
     available = models.DecimalField(
         max_digits=10,
         decimal_places=3,
@@ -414,19 +417,14 @@ class Balance(models.Model):
     is_student = models.BooleanField(default=False, verbose_name=_('Czy jest studentem?'))
 
     def set_paid(self, payment):
-        if self.available >= payment.amount:
-            self.available -= payment.amount
-            payment.is_paid = True
-            payment.save()
-            self.save()
-        else:
-            raise ValidationError(_('Konto użytkownika nie posiada środków do pokrycia płatności.'))
+        self.available -= payment.amount
+        payment.is_paid = True
+        payment.save()
+        self.save()
 
     @staticmethod
     def add_user_balance(sender, instance, **kwargs):
-        if not instance.balance:
-            b = Balance(user=instance)
-            b.save()
+        b, created = Balance.objects.get_or_create(user=instance)
 
 
 class Payment(models.Model):
@@ -483,6 +481,10 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.username
 
+    @staticmethod
+    def add_user_profile(sender, instance, **kwargs):
+        o, created = UserProfile.objects.get_or_create(user=instance)
+
 
 def get_display(key, list):
     d = dict(list)
@@ -491,7 +493,5 @@ def get_display(key, list):
     return None
 
 
-
-
-
 post_save.connect(Balance.add_user_balance, sender=get_user_model())
+post_save.connect(UserProfile.add_user_profile, sender=get_user_model())

@@ -715,9 +715,7 @@ def multi_email_send(request):
 def payment_list(request):
     context_dict = {}
     users = User.objects.all()
-    balances = Balance.objects.all()
     context_dict['users'] = users
-    context_dict['balances'] = balances
 
     return render(request, 'conferences/payments/payment_list.html', context_dict)
 
