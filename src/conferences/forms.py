@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.db.models.query import EmptyQuerySet
 from django.utils.datetime_safe import datetime
 from django.utils.translation import ugettext as _
+from django.core.exceptions import ValidationError
 
 from . import models
 from .models import Session, Conference, TimePeriod,Summary
@@ -136,7 +137,6 @@ class SummaryForm(forms.ModelForm):
 
     def clean(self):
         error_messages = []
-        from django.core.exceptions import ValidationError
         cleaned_data = super(SummaryForm, self).clean()
         conference = cleaned_data.get("conference")
         description = cleaned_data.get("description")
@@ -153,8 +153,9 @@ class SummaryForm(forms.ModelForm):
             error_messages.append(ValidationError(_('Musisz podać opis streszczenia.')))
         if not summary_file:
             error_messages.append(ValidationError(_('Musisz podać plik ze streszczeniem.')))
-        if ( len(error_messages) > 0):
+        if len(error_messages) > 0:
             raise ValidationError(error_messages)
+        return cleaned_data
 
 class SummaryUpdateForm(forms.ModelForm):
     editable=forms.BooleanField(label="Pozwalaj recenzować",required=False)
@@ -199,8 +200,9 @@ class PublicationCreateForm(forms.ModelForm):
             error_messages.append(ValidationError(_('Musisz podać opis referatu.')))
         if not publication_file:
             error_messages.append(ValidationError(_('Musisz podać plik z referatem.')))
-        if ( len(error_messages) > 0):
+        if len(error_messages) > 0:
             raise ValidationError(error_messages)
+        return cleaned_data
 
 class PublicationUpdateForm(forms.ModelForm):
     editable=forms.BooleanField(label="Pozwalaj recenzować",required=False)

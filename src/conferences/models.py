@@ -112,12 +112,12 @@ class Conference(models.Model):
 
     @classmethod
     def get_current(cls):
-        if not hasattr(cls, '_current'):
-            cls._current = cls.on_site.first()
-        return cls._current
+        return cls.on_site.first()
 
-    def is_admin(self, user):
-        return self.admins.filter(pk=user.pk).exists()
+    @classmethod
+    def is_admin(cls, user):
+        c = cls.get_current()
+        return c.admins.filter(pk=user.pk).exists() if c else False
 
 
 class ConferencesFile(File):
@@ -403,11 +403,8 @@ class Payment(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=3, verbose_name=_('Kwota do zapłaty'))
     paid = models.DecimalField(max_digits=10, decimal_places=3, verbose_name=_('Wpłacono'))
 
-    def is_valid(self):
-        if self.paid >= self.amount:
-            return "OK"
-        else:
-            return "NOT OK"
+    def is_paid(self):
+        return self.paid >= self.amount
 
 
 class UserProfile(models.Model):

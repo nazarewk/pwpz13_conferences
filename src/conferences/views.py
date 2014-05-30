@@ -13,13 +13,13 @@ from django.core.urlresolvers import reverse
 from django.core.files.base import ContentFile
 from django.conf import settings
 from django.utils.datetime_safe import datetime
-import tempfile
 
-from .context_processors import is_conference_admin
-
-from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm, SummaryForm, PublicationCreateForm, PublicationUpdateForm, ReviewCreateForm, TopicForm, \
-    ReviewUpdateForm, SendingEmailForm,SummaryUpdateForm, SendingEmailsForm, FilterForm, AccountForm
-from .models import Reviewer, Session, Lecture, UserProfile, Review, ConferencesFile, Summary, Publication, Topic, Balance
+from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm, SummaryForm, PublicationCreateForm, \
+    PublicationUpdateForm, ReviewCreateForm, TopicForm, \
+    ReviewUpdateForm, SendingEmailForm, SummaryUpdateForm, SendingEmailsForm, FilterForm, AccountForm
+from .models import Reviewer, Session, Lecture, UserProfile, Review, ConferencesFile, Summary, Publication, Topic, \
+    Balance, \
+    Conference
 
 
 def home(request):
@@ -38,7 +38,6 @@ def reviewer_list(request):
     text = _('Musisz być zalogowany jako admin żeby mieć dostęp do tej sekcji.')
     context = {'message': text}
     return render(request, 'conferences/misc/no_rights.html', context)
-
 
 
 def reviewer_details(request, pk):
@@ -93,28 +92,30 @@ def reviewer_delete(request, pk):
 def publications_for_review_list(request):
     user = request.user
     if user.reviewer:
-        reviewer=Reviewer.objects.filter(user_account=user)
+        reviewer = Reviewer.objects.filter(user_account=user)
         reviews = Review.objects.filter(reviewer=reviewer, editable=True, file_reviewed__summary=None)
         return render(request, "conferences/reviews/reviews_list.html",
-                  {'reviews': reviews})
+                      {'reviews': reviews})
     else:
         text = _('Musisz być zalogowany jako recenzent żeby mieć dostęp do tej sekcji.')
         context = {'message': text}
         return render(request, 'conferences/misc/no_rights.html', context)
+
 
 def summaries_for_review_list(request):
     user = request.user
     if user.reviewer:
-        reviewer=Reviewer.objects.filter(user_account=user)
+        reviewer = Reviewer.objects.filter(user_account=user)
         reviews = Review.objects.filter(reviewer=reviewer, editable=True, file_reviewed__publication=None)
         return render(request, "conferences/reviews/reviews_list.html",
-                  {'reviews': reviews})
+                      {'reviews': reviews})
     else:
         text = _('Musisz być zalogowany jako recenzent żeby mieć dostęp do tej sekcji.')
         context = {'message': text}
         return render(request, 'conferences/misc/no_rights.html', context)
 
-def review_add(request,file_id = None):
+
+def review_add(request, file_id=None):
     if request.method == 'POST':
         form = ReviewCreateForm(data=request.POST)
         if form.is_valid():
@@ -123,19 +124,20 @@ def review_add(request,file_id = None):
                 file_reviewed_id=request.POST['file_reviewed'])
             review.save()
             return render(request, 'conferences/base.html', {
-                    'content': _('Dodano recencje %(review)s') % {
-                        'review': review.file_reviewed.name
-                    }
-                })
+                'content': _('Dodano recencje %(review)s') % {
+                    'review': review.file_reviewed.name
+                }
+            })
     else:
-        review=Review()
+        review = Review()
         try:
-            review.file_reviewed_id=file_id
+            review.file_reviewed_id = file_id
         except:
             pass
         form = ReviewCreateForm(instance=review)
     return render(request, "conferences/reviews/review_add.html",
                   {'form': form})
+
 
 def review_edit(request, pk):
     review = get_object_or_404(Review, pk=pk)
@@ -160,13 +162,14 @@ def topic_details(request, pk):
     return render(request, "conferences/topics/topic.html",
                   {'topic': topic})
 
+
 def topic_list(request):
     user = request.user
     if user.is_authenticated():
         topics = Topic.objects.all()
 
         return render(request, 'conferences/topics/topic_list.html',
-                      {'topics':topics})
+                      {'topics': topics})
     else:
         text = _('Musisz być zalogowany.')
         context = {'message': text}
@@ -197,7 +200,7 @@ def topic_edit(request, pk):
 
         if form.is_valid():
             form.save(commit=True)
-            return redirect('topic-details',pk)
+            return redirect('topic-details', pk)
         else:
             print form.errors
     else:
@@ -206,10 +209,12 @@ def topic_edit(request, pk):
     return render(request, 'conferences/topics/edit_topic.html',
                   {'form': form})
 
+
 def topic_delete(request, pk):
     topic = get_object_or_404(Topic, pk=pk)
     topic.delete()
     return redirect('topic-list')
+
 
 def session_details(request, pk):
     context_dict = {}
@@ -510,50 +515,54 @@ def summary_add(request):
         context = {'message': text}
         return render(request, 'conferences/misc/no_rights.html', context)
 
-def summary_details(request,pk):
+
+def summary_details(request, pk):
     summary = get_object_or_404(Summary, pk=pk)
     return render(request, "conferences/summary/summary_details.html",
                   {'summary': summary})
 
-def summary_edit(request,pk):
+
+def summary_edit(request, pk):
     summary = get_object_or_404(Summary, pk=pk)
     if request.method == 'POST':
-            form = SummaryUpdateForm(request.POST, instance=summary)
+        form = SummaryUpdateForm(request.POST, instance=summary)
 
-            if form.is_valid():
-                form.save()
+        if form.is_valid():
+            form.save()
 
-                return redirect('summary-list')
+            return redirect('summary-list')
     else:
         form = SummaryUpdateForm(instance=summary)
     return render(request, 'conferences/summary/summary_edit.html',
-                      {'summary':summary,'form': form})
+                  {'summary': summary, 'form': form})
+
 
 def summary_list(request):
     user = request.user
-    if is_conference_admin:
+    if Conference.is_admin(user):
         if request.GET.get('filter'):
-            filter=request.GET.get('filter')
-            if filter=='accepted':
-                summaries=Summary.objects.filter(status='OK')
-            elif filter=='waiting':
-                summaries=Summary.objects.filter(status='PR')
-            elif filter=='rejected':
-                summaries=Summary.objects.filter(status='NO')
-            elif filter=='questionable':
-                summaries=Summary.objects.all()
+            filter = request.GET.get('filter')
+            if filter == 'accepted':
+                summaries = Summary.objects.filter(status='OK')
+            elif filter == 'waiting':
+                summaries = Summary.objects.filter(status='PR')
+            elif filter == 'rejected':
+                summaries = Summary.objects.filter(status='NO')
+            elif filter == 'questionable':
+                summaries = Summary.objects.all()
         else:
-            summaries=Summary.objects.all()
+            summaries = Summary.objects.all()
         for s in summaries:
-            s.review_count=s.review_set.all().count()
-            s.accepted_count=s.review_set.filter(status='OK').count()
+            s.review_count = s.review_set.all().count()
+            s.accepted_count = s.review_set.filter(status='OK').count()
         filter_form = FilterForm(request.GET)
         return render(request, 'conferences/summary/summary_list.html',
-                      { 'summaries':summaries, 'filter_form':filter_form})
+                      {'summaries': summaries, 'filter_form': filter_form})
     else:
         text = _('Musisz być zalogowany, aby przesłać streszczenie.')
         context = {'message': text}
         return render(request, 'conferences/misc/no_rights.html', context)
+
 
 def publication_add(request):
     user = request.user
@@ -599,9 +608,10 @@ def publication_add(request):
         context = {'message': text}
         return render(request, 'conferences/misc/no_rights.html', context)
 
+
 def publication_edit(request, pk):
     publication = get_object_or_404(Publication, pk=pk)
-    user=request.user
+    user = request.user
     if request.method == 'POST':
         form = PublicationUpdateForm(request.POST, instance=publication)
 
@@ -615,21 +625,23 @@ def publication_edit(request, pk):
         form = PublicationUpdateForm(instance=publication)
 
     return render(request, 'conferences/publications/publication_edit.html',
-                  {'publication':publication,'form': form})
+                  {'publication': publication, 'form': form})
+
 
 def publication_list(request):
     user = request.user
-    if is_conference_admin:
-        publications=Publication.objects.all()
+    if Conference.is_admin(user):
+        publications = Publication.objects.all()
         for p in publications:
-            p.review_count=p.review_set.all().count()
-            p.accepted_count=p.review_set.filter(status='OK').count()
+            p.review_count = p.review_set.all().count()
+            p.accepted_count = p.review_set.filter(status='OK').count()
         return render(request, 'conferences/publications/publication_list.html',
-                      { 'publications':publications})
+                      {'publications': publications})
     else:
         text = _('Musisz być zalogowany, aby przesłać publikacje')
         context = {'message': text}
         return render(request, 'conferences/misc/no_rights.html', context)
+
 
 '''
     def create_file(self, folder, filename=None):
@@ -661,6 +673,7 @@ def email_send(request):
         form = SendingEmailForm()
         context = {'form': form}
     return render(request, 'conferences/users/send-email.html', context)
+
 
 def multi_email_send(request):
     if request.method == 'POST':
@@ -706,7 +719,6 @@ def multi_email_send(request):
 
 
 def payment_list(request):
-
     context_dict = {}
     users = User.objects.all()
     balances = Balance.objects.all()

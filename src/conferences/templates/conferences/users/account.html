@@ -25,7 +25,13 @@
         <td>{{ p.amount }}</td>
         <td>{{ p.paid }} </td>
         <td>{{ p.currency }}</td>
-        <td>{{ p.is_valid }}</td>
+        <td>
+            {% if p.is_paid %}
+                {% trans 'Zapłacone' %}
+            {% else %}
+                {% trans 'Nie zapłacono' %}
+            {% endif %}
+        </td>
     {% endfor %}
 {% endfor %}
         </tr>
