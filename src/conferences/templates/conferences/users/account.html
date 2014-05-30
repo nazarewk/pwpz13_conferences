@@ -1,0 +1,10 @@
+{% extends "conferences/base.html" %}
+{% load i18n %}
+{% block content %}
+{{ message }}
+<form method="POST">
+	{% csrf_token %}
+	{{ form.as_p }}
+	<input type="submit" value="{% trans 'Zatwierdź zmiany' %}" />
+</form>
+{% endblock %}

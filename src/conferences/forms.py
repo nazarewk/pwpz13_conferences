@@ -247,3 +247,29 @@ class SendingEmailsForm(forms.Form):
     message = forms.CharField(max_length=500, widget=forms.Textarea,
                               label=_('Treść'),
                               required=True)
+
+
+class AccountForm(forms.Form):
+    old_password = forms.CharField(widget=forms.PasswordInput(), label='Obecne hasło')
+    new_password = forms.CharField(widget=forms.PasswordInput(), label='Nowe hasło', min_length=8)
+    repeat_new_password = forms.CharField(widget=forms.PasswordInput(), label='Powtórz hasło')
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super(AccountForm, self).__init__(*args, **kwargs)
+
+    def clean(self):
+        error_messages = []
+        from django.core.exceptions import ValidationError
+        cleaned_data = super(AccountForm, self).clean()
+        old = cleaned_data.get("old_password")
+        new = cleaned_data.get("new_password")
+        repeated = cleaned_data.get("repeat_new_password")
+
+        if old and new and repeated:
+            if not self.user.check_password(old):
+                error_messages.append(ValidationError(_('Obecne hasło jest niepoprawne.')))
+            if new != repeated:
+                error_messages.append(ValidationError(_('Podane hasła różnią się.')))
+            if ( len(error_messages) > 0):
+                raise ValidationError(error_messages)

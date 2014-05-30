@@ -176,6 +176,10 @@ urlpatterns += patterns(
         views.multi_email_send,
         name='multi-email-send'
     ),
+    url(r'^users/account/$',
+        views.account,
+        name='account'
+    ),
 )
 
 urlpatterns += patterns(

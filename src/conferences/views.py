@@ -18,7 +18,7 @@ import tempfile
 from .context_processors import is_conference_admin
 
 from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm, SummaryForm, PublicationCreateForm, PublicationUpdateForm, ReviewCreateForm, TopicForm, \
-    ReviewUpdateForm, SendingEmailForm,SummaryUpdateForm, SendingEmailsForm, FilterForm
+    ReviewUpdateForm, SendingEmailForm,SummaryUpdateForm, SendingEmailsForm, FilterForm, AccountForm
 from .models import Reviewer, Session, Lecture, UserProfile, Review, ConferencesFile, Summary, Publication, Topic, Balance
 
 
@@ -714,3 +714,31 @@ def payment_list(request):
     context_dict['balances'] = balances
 
     return render(request, 'conferences/payments/payment_list.html', context_dict)
+
+
+def account(request):
+    user = request.user
+    if user.is_authenticated():
+        if request.method == 'POST':
+            account_form = AccountForm(request.user, data=request.POST)
+            if account_form.is_valid():
+                new_pass = request.POST['new_password']
+                user.set_password(new_pass)
+                user.save()
+                text = _('Zmieniono hasło.')
+                account_form = AccountForm(request.user)
+                context = {
+                    'message': text,
+                    'form': account_form
+                }
+            else:
+                print account_form.errors
+                context = {'form': account_form}
+        else:
+            account_form = AccountForm(request.user)
+            context = {'form': account_form}
+        return render(request, 'conferences/users/account.html', context)
+    else:
+        text = _('Musisz być zalogowany, aby przesłać publikację.')
+        context = {'message': text}
+        return render(request, 'conferences/misc/no_rights.html', context)
