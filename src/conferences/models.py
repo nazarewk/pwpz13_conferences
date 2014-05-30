@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from decimal import Decimal
 import random
 import os
 import string
 from datetime import datetime, timedelta, MAXYEAR, MINYEAR
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.contrib.sites.managers import CurrentSiteManager
+from django.core.exceptions import ValidationError
 from django.db.models import Q, Manager
 from django.db.models.query import EmptyQuerySet
+from django.db.models.signals import post_save
 from django.utils.translation import ugettext as _
 from django.db import models
 from django.contrib.sites.models import Site
@@ -60,6 +64,10 @@ class TimePeriod(models.Model):
         """
         return self.end - self.start
 
+    def is_now(self):
+        now = datetime.now()
+        return self.start <= now and now <= self.end
+
     @staticmethod
     def are_continuous(
             time_periods_query_set,
@@ -81,7 +89,12 @@ class Conference(models.Model):
     site = models.OneToOneField(Site)
     admins = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
-        null=True, blank=True)
+        null=True, blank=True,
+        related_name='conference_admins')
+    registered_users = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        null=True, blank=True,
+        related_name='conference_registered_users')
 
     name = models.CharField(max_length=256)
 
@@ -337,8 +350,18 @@ class Session(models.Model):
     Represents sessions assigned to given root/sub topics,
      admin of super-topic session should be also admin of all sub-sessions
     """
-    conference = models.ForeignKey(Conference, related_name='sessions', verbose_name=_('Konferencja'))
-    admins = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=_('Admini'))
+    conference = models.ForeignKey(
+        Conference,
+        related_name='sessions',
+        verbose_name=_('Konferencja'))
+    admins = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        verbose_name=_('Admini'),
+        related_name='session_admins')
+    registered_users = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        null=True, blank=True,
+        related_name='session_registered_users')
     topic = models.OneToOneField(Topic, verbose_name=_('Temat'))
 
     name = models.CharField(max_length=256, verbose_name=_('Nazwa'))
@@ -382,17 +405,41 @@ class Publication(ConferencesFile):
 
 
 class Balance(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('Użytkownik'))
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name=_('Użytkownik'))
+    available = models.DecimalField(
+        max_digits=10,
+        decimal_places=3,
+        verbose_name=_('Dostępne środki'),
+        default=0)
     is_student = models.BooleanField(default=False, verbose_name=_('Czy jest studentem?'))
 
-    def payment(self):
-        return False
+    def set_paid(self, payment):
+        if self.available >= payment.amount:
+            self.available -= payment.amount
+            payment.is_paid = True
+            payment.save()
+            self.save()
+        else:
+            raise ValidationError(_('Konto użytkownika nie posiada środków do pokrycia płatności.'))
+
+    @staticmethod
+    def add_user_balance(sender, instance, **kwargs):
+        if not instance.balance:
+            b = Balance(user=instance)
+            b.save()
 
 
 class Payment(models.Model):
-    balance = models.ForeignKey(Balance, verbose_name=_('Saldo'))
-    short_description = models.CharField(max_length=128, verbose_name=_('Krótki opis'))
-    full_description = models.TextField(blank=True, verbose_name=_('Pełny opis'))
+    balance = models.ForeignKey(
+        Balance,
+        verbose_name=_('Saldo'),
+        related_name='payments')
+    short_description = models.CharField(
+        max_length=128,
+        verbose_name=_('Krótki opis płatności'))
+    full_description = models.TextField(
+        blank=True,
+        verbose_name=_('Pełny opis płatności'))
 
     time_to_pay = models.OneToOneField(
         TimePeriod, related_name='payment', verbose_name=_('Termin zapłaty'))
@@ -400,11 +447,12 @@ class Payment(models.Model):
     currency = models.CharField(max_length=3, choices=(
         ('PLN', _('Złote polskie'), ),
     ), verbose_name=_('Waluta'))
-    amount = models.DecimalField(max_digits=10, decimal_places=3, verbose_name=_('Kwota do zapłaty'))
-    paid = models.DecimalField(max_digits=10, decimal_places=3, verbose_name=_('Wpłacono'))
+    amount = models.DecimalField(max_digits=10, decimal_places=3, verbose_name=_('Kwota płatności'))
 
-    def is_paid(self):
-        return self.paid >= self.amount
+    is_paid = models.BooleanField(_('Czy zapłacono?'), default=False)
+
+    def set_paid(self):
+        self.balance.set_paid(self)
 
 
 class UserProfile(models.Model):
@@ -441,3 +489,9 @@ def get_display(key, list):
     if key in d:
         return d[key]
     return None
+
+
+
+
+
+post_save.connect(Balance.add_user_balance, sender=get_user_model())

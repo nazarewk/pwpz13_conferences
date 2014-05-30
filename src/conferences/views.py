@@ -17,7 +17,8 @@ from django.utils.datetime_safe import datetime
 
 from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm, SummaryForm, PublicationCreateForm, \
     PublicationUpdateForm, ReviewCreateForm, TopicForm, \
-    ReviewUpdateForm, SendingEmailForm, SummaryUpdateForm, SendingEmailsForm, FilterForm, AccountForm
+    ReviewUpdateForm, SendingEmailForm, SummaryUpdateForm, SendingEmailsForm, FilterForm, AccountForm, \
+    ConferenceRegistrationForm
 from .models import Reviewer, Session, Lecture, UserProfile, Review, ConferencesFile, Summary, Publication, Topic, \
     Balance, \
     Conference
@@ -748,3 +749,10 @@ def account(request):
         text = _('Musisz być zalogowany, aby przesłać publikację.')
         context = {'message': text}
         return render(request, 'conferences/misc/no_rights.html', context)
+
+def conference_register(request):
+    ConferenceRegistrationForm
+    ctx = {
+
+    }
+    return render(request, 'conferences/conference/register.html', ctx)

@@ -215,8 +215,8 @@ class PublicationUpdateForm(forms.ModelForm):
         super(PublicationUpdateForm, self).__init__(*args, **kwargs)
         self.fields['editable'].initial = self.instance.review_set.filter(editable=True).exists()
 
-    def save(self):
-        super(PublicationUpdateForm, self)
+    def save(self, *args, **kwargs):
+        super(PublicationUpdateForm, self).save(*args, **kwargs)
         if self.cleaned_data['editable'] is False:
             self.instance.review_set.update(editable=self.cleaned_data['editable'])
 
@@ -275,3 +275,7 @@ class AccountForm(forms.Form):
                 error_messages.append(ValidationError(_('Podane hasła różnią się.')))
             if ( len(error_messages) > 0):
                 raise ValidationError(error_messages)
+
+class ConferenceRegistrationForm(forms.Form):
+
+    pass
