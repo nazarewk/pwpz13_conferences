@@ -10,7 +10,7 @@ from django.utils.translation import ugettext as _
 from django.core.exceptions import ValidationError
 
 from . import models
-from .models import Session, Conference, TimePeriod,Summary
+from .models import Session, Conference, TimePeriod,Summary, Topic
 
 class FilterForm(forms.Form):
     FILTERS=[('', _('Wszystkie')),
@@ -49,10 +49,34 @@ class SessionForm(forms.ModelForm):
     admins = forms.ModelMultipleChoiceField(
         queryset=get_user_model().objects.all(), label='Admini')
     admins.help_text = ''
+    start = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'], label='Początek')
+    end = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'], label='Koniec')
+
+    def __init__(self, *args, **kwargs):
+        super(SessionForm, self).__init__(*args, **kwargs)
+        if self.instance.id:
+            self.fields['start'].initial = self.instance.duration.start
+            self.fields['end'].initial = self.instance.duration.end
+        else:
+            self.fields['topic'].queryset = Topic.objects.filter(conference=Conference.get_current())
+        self.fields['start'].widget = widgets.AdminSplitDateTime()
+        self.fields['end'].widget = widgets.AdminSplitDateTime()
+
+    def save(self, commit=True):
+        session = super(SessionForm, self).save(commit=False)
+        if session.duration_id:
+            tp = TimePeriod.objects.get(pk=session.duration.pk)
+            tp.start = self.cleaned_data['start']
+            tp.end = self.cleaned_data['end']
+        else:
+            tp = TimePeriod(start=self.cleaned_data['start'], end=self.cleaned_data['end'])
+        tp.save()
+        session.duration = tp
+        session.save()
 
     class Meta:
         model = models.Session
-        fields = ['name', 'duration', 'conference', 'topic', 'admins']
+        fields = ['name', 'conference', 'topic', 'admins']
 
 
 class TimePeriodForm(forms.ModelForm):
@@ -70,6 +94,9 @@ class TimePeriodForm(forms.ModelForm):
 
 
 class LectureForm(forms.ModelForm):
+    referents = forms.ModelMultipleChoiceField(
+        queryset=get_user_model().objects.all(), label='Referenci')
+    referents.help_text = ''
     start = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'], label='Początek')
     end = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'], label='Koniec')
 

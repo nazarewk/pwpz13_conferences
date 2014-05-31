@@ -245,7 +245,7 @@ def session_add(request):
         if form.is_valid():
             form.save()
 
-            return redirect('pages-root')
+            return redirect('session-list')
         else:
             print form.errors
     else:
@@ -264,7 +264,7 @@ def session_edit(request, pk):
         if form.is_valid():
             form.save(commit=True)
 
-            return redirect('pages-root')
+            return redirect('session-list')
         else:
             print form.errors
     else:
@@ -339,7 +339,7 @@ def lecture_add(request):
         if form.is_valid():
             form.save()
 
-            return redirect('pages-root')
+            return redirect('lecture-list')
         else:
             print form.errors
     else:
