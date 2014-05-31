@@ -67,6 +67,10 @@ ul, ol {
     width:200px;
 }
 
+.leftNav a{
+    color:#FFFFFF;
+}
+
 .leftNav li {
     list-style-type: none;
 }
