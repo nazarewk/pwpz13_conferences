@@ -7,26 +7,28 @@
 
 html {
     font-size: 62.5%;
+    height:100%;
 }
 
 body {
-    background-color: #DFDFDF;
     font-family: Cabin, "Helvetica Neue", "HelveticaNeue", Helvetica, Arial, "Lucida Grande", sans-serif;
     font-size: 1.4em;
     line-height: 1;
-    color: #000;
+    color: #37363D;
     position: relative;
     -webkit-font-smoothing: antialiased;
+    height:100%;
+    min-width:600px;
 }
 
 /* Links ---------------------- */
 a {
-    color: #000;
+    color: #37363D;
     line-height: inherit;
 }
 
 a:hover {
-    color: #999900 !important;
+    color: #F7B246 !important;
 }
 
 a:visited {
@@ -41,7 +43,7 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, 
 }
 
 p {
-    color: #000;
+    color: #37363D;
     font-size: 14px;
     line-height: 1.6;
     margin-bottom: 17px;
@@ -57,9 +59,12 @@ ul, ol {
 
 /*Custom classes */
 .leftNav {
-    margin-top: 30px;
-    float: left;
-    padding-right: 20px;
+    background-color: #F0513E;
+    position:absolute;
+    padding-top:20px;
+    top:50px;
+    bottom:32px;
+    width:200px;
 }
 
 .leftNav li {
@@ -84,7 +89,8 @@ ul, ol {
 }
 
 #header {
-    height: 80px;
+    background-color: #F0513E;
+    height: 50px;
     padding: 10px;
 }
 
@@ -98,8 +104,14 @@ ul, ol {
 }
 
 #content {
+    background-color: #F7F6F5;
     overflow: auto;
-    min-height: 400px;
+    position:absolute;
+    bottom:32px;
+    top:50px;
+    left:200px;
+    right:0px;
+    padding:10px;
 }
 
 #footer, .push {
@@ -107,7 +119,11 @@ ul, ol {
 }
 
 #footer {
-    background-color: #C0C0C0;
+    background-color: #434448;
+}
+
+#footer a {
+    color: #8E8F94;
 }
 
 .footer_block {
@@ -116,6 +132,7 @@ ul, ol {
     margin-top: 10px;
     margin-left: 10px;
     margin-right: 10px;
+    color:#8E8F94;
     float: left;
 }
 

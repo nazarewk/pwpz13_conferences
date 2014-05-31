@@ -2,23 +2,23 @@
 <ul>
     <li><a href="/"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>{% trans 'Strona główna' %}</a></li>
     {% if IS_CONFERENCE_ADMIN %}
-    <li><a href="{% url 'payments-list' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>{% trans 'Lista płatności' %}</a></li>
-    <li><a href="{% url 'reviewer-list' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>{% trans 'Recenzenci' %}</a></li>
-    <li><a href="{% url 'topic-list' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>{% trans 'Tematy' %}</a></li>
-    <li><a href="{% url 'session-list' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>{% trans 'Sesje' %}</a></li>
-    <li><a href="{% url 'lecture-list' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>{% trans 'Referaty' %}</a></li>
-    <li><a href="{% url 'summary-list' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>{% trans 'Streszczenia' %}</a></li>
-    <li><a href="{% url 'publication-list' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>{% trans 'Publikacje' %}</a></li>
-    <li><a href="{% url 'review-add' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>{% trans 'Dodawanie zlecenia recenzji' %}</a></li>
-    <li><a href="{% url 'email-send' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>{% trans 'Wyślij wiadomość' %}</a></li>
-    <li><a href="{% url 'multi-email-send' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>{% trans 'Wyślij masową wiadomość' %}</a></li>
+    <li><a href="{% url 'payments-list' %}"><img src="{% static 'conferences/img/dollar-sign.png' %}" class="icon"/>{% trans 'Lista płatności' %}</a></li>
+    <li><a href="{% url 'reviewer-list' %}"><img src="{% static 'conferences/img/graduation-cap.png' %}" class="icon"/>{% trans 'Recenzenci' %}</a></li>
+    <li><a href="{% url 'topic-list' %}"><img src="{% static 'conferences/img/drawer.png' %}" class="icon"/>{% trans 'Tematy' %}</a></li>
+    <li><a href="{% url 'session-list' %}"><img src="{% static 'conferences/img/calendar.png' %}" class="icon"/>{% trans 'Sesje' %}</a></li>
+    <li><a href="{% url 'lecture-list' %}"><img src="{% static 'conferences/img/microphone.png' %}" class="icon"/>{% trans 'Referaty' %}</a></li>
+    <li><a href="{% url 'summary-list' %}"><img src="{% static 'conferences/img/document.png' %}" class="icon"/>{% trans 'Streszczenia' %}</a></li>
+    <li><a href="{% url 'publication-list' %}"><img src="{% static 'conferences/img/diary.png' %}" class="icon"/>{% trans 'Publikacje' %}</a></li>
+    <li><a href="{% url 'review-add' %}"><img src="{% static 'conferences/img/swap.png' %}" class="icon"/>{% trans 'Dodaj zlecenie recenzji' %}</a></li>
+    <li><a href="{% url 'email-send' %}"><img src="{% static 'conferences/img/message.png' %}" class="icon"/>{% trans 'Wyślij wiadomość' %}</a></li>
+    <li><a href="{% url 'multi-email-send' %}"><img src="{% static 'conferences/img/multiple.png' %}" class="icon"/>{% trans 'Wyślij masową wiadomość' %}</a></li>
     {% endif %}
     {% if user.reviewer %}
-        <li><a href="{% url 'review-list' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>{% trans 'Twoje recenzje' %}</a></li>
+        <li><a href="{% url 'review-list' %}"><img src="{% static 'conferences/img/paperwork.png' %}" class="icon"/>{% trans 'Twoje recenzje' %}</a></li>
     {% endif %}
     {% if user.is_authenticated %}
-        <li><a href="{% url 'summary-add' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>{% trans 'Dodawanie streszczenia' %}</a></li>
-        <li><a href="{% url 'publication-add' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>{% trans 'Dodawanie publikacje' %}</a></li>
-        <li><a href="{% url 'account' %}"><img src="{% static 'conferences/img/home.png' %}" class="icon"/>{% trans 'Moje konto' %}</a></li>
+        <li><a href="{% url 'summary-add' %}"><img src="{% static 'conferences/img/document.png' %}" class="icon"/>{% trans 'Dodaj streszczenie' %}</a></li>
+        <li><a href="{% url 'publication-add' %}"><img src="{% static 'conferences/img/diary.png' %}" class="icon"/>{% trans 'Dodaj publikację' %}</a></li>
+        <li><a href="{% url 'account' %}"><img src="{% static 'conferences/img/man.png' %}" class="icon"/>{% trans 'Moje konto' %}</a></li>
     {% endif %}
 </ul>
