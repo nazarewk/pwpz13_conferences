@@ -9,8 +9,6 @@
             {{ field.label_tag }} - {{ field }}
             <br>
         {% endfor %}
-        <input class="createBtn" type="button" value="{% trans 'Dodaj czas trwania' %}"
-               onclick='window.location.href="{% url 'session-timeperiod-add' %}"'>
         <input type="submit" name="submit" value="{% trans 'Edytuj sesję' %}"/>
     </form>
 {% endblock %}
