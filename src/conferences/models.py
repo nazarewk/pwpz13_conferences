@@ -191,7 +191,7 @@ class Summary(ConferencesFile):
     """
     filename_extensions = ['.pdf', '.txt']
     folder_path = ['conferences', 'summaries']
-    conference = models.ForeignKey(Conference, related_name='summaries')
+    conference = models.ForeignKey(Conference, related_name='summaries', verbose_name=_('Konferencja'))
 
 
 class Reviewer(models.Model):
@@ -401,7 +401,7 @@ class Publication(ConferencesFile):
     """
     filename_extensions = ['.pdf', '.txt']
     folder_path = ['conferences', 'publications']
-    lecture = models.ForeignKey(Lecture, related_name='publications')
+    lecture = models.ForeignKey(Lecture, related_name='publications', verbose_name=_('Referat'))
 
 
 class Balance(models.Model):
