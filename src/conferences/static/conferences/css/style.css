@@ -59,7 +59,7 @@ ul, ol {
 
 /*Custom classes */
 .leftNav {
-    background-color: #F0513E;
+    background-color: #000000;
     position:absolute;
     padding-top:20px;
     top:50px;
@@ -93,9 +93,14 @@ ul, ol {
 }
 
 #header {
-    background-color: #F0513E;
+    color: #ffffff;
+    background-color: #000000;
     height: 50px;
     padding: 10px;
+}
+
+#header a {
+    color: #ffffff;
 }
 
 #header h1 {
