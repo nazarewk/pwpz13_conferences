@@ -46,14 +46,12 @@ class TopicForm(forms.ModelForm):
 
 
 class SessionForm(forms.ModelForm):
-    admins = forms.ModelMultipleChoiceField(
-        queryset=get_user_model().objects.all(), label='Admini')
-    admins.help_text = ''
     start = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'], label='Początek')
     end = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'], label='Koniec')
 
     def __init__(self, *args, **kwargs):
         super(SessionForm, self).__init__(*args, **kwargs)
+        self.fields['admins'].help_text = ''
         if self.instance.id:
             self.fields['start'].initial = self.instance.duration.start
             self.fields['end'].initial = self.instance.duration.end
@@ -73,6 +71,7 @@ class SessionForm(forms.ModelForm):
         tp.save()
         session.duration = tp
         session.save()
+        self.save_m2m()
 
     class Meta:
         model = models.Session
@@ -123,6 +122,7 @@ class LectureForm(forms.ModelForm):
         tp.save()
         lecture.duration = tp
         lecture.save()
+        self.save_m2m()
 
     class Meta:
         model = models.Lecture
