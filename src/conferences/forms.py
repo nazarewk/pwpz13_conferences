@@ -71,7 +71,8 @@ class SessionForm(forms.ModelForm):
         tp.save()
         session.duration = tp
         session.save()
-        self.save_m2m()
+        if commit:
+            self.save_m2m()
 
     class Meta:
         model = models.Session
@@ -122,7 +123,8 @@ class LectureForm(forms.ModelForm):
         tp.save()
         lecture.duration = tp
         lecture.save()
-        self.save_m2m()
+        if commit:
+            self.save_m2m()
 
     class Meta:
         model = models.Lecture
