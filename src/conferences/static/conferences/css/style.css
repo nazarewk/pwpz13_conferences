@@ -19,6 +19,7 @@ body {
     -webkit-font-smoothing: antialiased;
     height:100%;
     min-width:600px;
+    min-height:600px;
 }
 
 /* Links ---------------------- */
@@ -59,7 +60,7 @@ ul, ol {
 
 /*Custom classes */
 .leftNav {
-    background-color: #000000;
+    background-color: #829aa8;
     position:absolute;
     padding-top:20px;
     top:50px;
@@ -94,7 +95,7 @@ ul, ol {
 
 #header {
     color: #ffffff;
-    background-color: #000000;
+    background-color: #829aa8;
     height: 50px;
     padding: 10px;
 }
@@ -158,5 +159,26 @@ ul, ol {
 
 ul.errorlist {
     color: #FF0000;
+}
+
+.blog{
+
+}
+
+.post{
+    border: solid #000000 1px;
+}
+
+.blog h1{
+    border: solid #000000 1px;
+    padding:10px;
+    margin-top:10px;
+}
+
+.blog p{
+    padding:5px;
+    border-left: solid #000000 1px;
+    border-right: solid #000000 1px;
+    border-bottom: solid #000000 1px;
 }
 
