@@ -182,3 +182,17 @@ ul.errorlist {
     border-bottom: solid #000000 1px;
 }
 
+table {
+	border-width : 1px;
+	border-style : outset;
+	border-color : #000000;
+	border-collapse: collapse;
+}
+
+td {
+	border-width : 1px;
+	border-style : inset;
+	border-color : #000000;
+	text-align : center;
+	padding: 4px 20px;
+}

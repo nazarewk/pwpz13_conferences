@@ -7,37 +7,34 @@
         {{ form.as_p }}
         <input type="submit" value="{% trans 'Zatwierdź zmiany' %}"/>
     </form>
-    <p>{% trans 'Informacje o koncie' %}</p>
-    <h1>{% trans 'Stan konta' %}: {{ user.balance.available }}</h1>
-    <p>
-        {% if user.balance.is_student %}
-            {% trans 'Student' %}
-        {% else %}
-            {% trans 'Nie-student' %}
-        {% endif %}
-    </p>
-    <table>
-        <thead>
-        <tr>
-            <th>Termin zapłaty</th>
-            <th>Do zapłaty</th>
-            <th>Waluta</th>
-            <th>Status</th>
-        </tr>
-        </thead>
-        {% for p in user.balance.payments.all %}
+    <br /> <br />
+    <h1>{% trans 'Wpłacono' %}: {{ user.balance.available }} {% trans 'zł' %}</h1>
+    {% if user.balance.payments.all %}
+        <table>
+            <thead>
             <tr>
-                <td>{{ p.time_to_pay.end }}</td>
-                <td>{{ p.amount }}</td>
-                <td>{{ p.currency }}</td>
-                <td>
-                    {% if p.is_paid %}
-                        {% trans 'Zapłacone' %}
-                    {% else %}
-                        {% trans 'Nie zapłacono' %}
-                    {% endif %}
-                </td>
+                <th>Termin zapłaty</th>
+                <th>Do zapłaty</th>
+                <th>Waluta</th>
+                <th>Status</th>
             </tr>
-        {% endfor %}
-    </table>
+            </thead>
+            {% for p in user.balance.payments.all %}
+                <tr>
+                    <td>{{ p.time_to_pay.end }}</td>
+                    <td>{{ p.amount }}</td>
+                    <td>{{ p.currency }}</td>
+                    <td>
+                        {% if p.is_paid %}
+                            {% trans 'Zapłacone' %}
+                        {% else %}
+                            {% trans 'Nie zapłacono' %}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>{% trans 'Brak przypisnaych płatności' %}</p>
+    {% endif %}
 {% endblock %}
