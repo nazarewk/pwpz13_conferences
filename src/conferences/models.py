@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from decimal import Decimal
 import random
 import os
 import string
@@ -9,7 +8,6 @@ from datetime import datetime, timedelta, MAXYEAR, MINYEAR
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.sites.managers import CurrentSiteManager
-from django.core.exceptions import ValidationError
 from django.db.models import Q, Manager
 from django.db.models.query import EmptyQuerySet
 from django.db.models.signals import post_save
@@ -114,7 +112,6 @@ class Conference(models.Model):
         null=True, blank=True)
 
     objects = Manager()
-    on_site = CurrentSiteManager()
 
     def __str__(self):
         return self.name
@@ -126,7 +123,25 @@ class Conference(models.Model):
 
     @classmethod
     def get_current(cls):
-        return cls.on_site.first()
+        ret, created = cls.objects.get_or_create(defaults={
+            'name': _('Default conference'),
+        }, site__id=settings.SITE_ID)
+        if created:
+            start = datetime.now()
+            duration = timedelta(days=365)
+            tp = TimePeriod(start=start, end=start + duration)
+            tp.save()
+            ret.duration = tp
+            tp = TimePeriod(start=start, end=start + duration)
+            tp.save()
+            ret.summaries_submission_period = tp
+            tp = TimePeriod(start=start, end=start + duration)
+            tp.save()
+            ret.publications_submission_period = tp
+            tp = TimePeriod(start=start, end=start + duration)
+            tp.save()
+            ret.registration_periods = tp
+        return ret
 
     @classmethod
     def is_admin(cls, user):
@@ -191,7 +206,11 @@ class Summary(ConferencesFile):
     """
     filename_extensions = ['.pdf', '.txt']
     folder_path = ['conferences', 'summaries']
-    conference = models.ForeignKey(Conference, related_name='summaries', verbose_name=_('Konferencja'))
+    conference = models.ForeignKey(
+        Conference,
+        default=lambda: Conference.get_current(),
+        related_name='summaries',
+        verbose_name=_('Konferencja'))
 
 
 class Reviewer(models.Model):
@@ -332,13 +351,15 @@ class Topic(models.Model):
      topics without super_topic are the most general
     """
     conference = models.ForeignKey(
-        Conference, default=lambda: Conference.get_current(),
+        Conference,
+        default=lambda: Conference.get_current(),
+        related_name='topics',
         verbose_name="Konferencja")
     name = models.CharField(max_length=256, verbose_name="Nazwa")
-    super_topic = models.ForeignKey(
+    parent = models.ForeignKey(
         'self',
         null=True, blank=True,
-        related_name='sub_topics',
+        related_name='children',
         verbose_name="Temat nadrzędny")
 
     def __str__(self):
@@ -352,6 +373,7 @@ class Session(models.Model):
     """
     conference = models.ForeignKey(
         Conference,
+        default=lambda: Conference.get_current(),
         related_name='sessions',
         verbose_name=_('Konferencja'))
     admins = models.ManyToManyField(
@@ -449,6 +471,13 @@ class Payment(models.Model):
 
     is_paid = models.BooleanField(_('Czy zapłacono?'), default=False)
 
+    summary = models.OneToOneField(
+        Summary,
+        verbose_name=_('Dotyczy streszczenia (referatu)'),
+        related_name='payment',
+        blank=True, null=True
+    )
+
     def set_paid(self):
         self.balance.set_paid(self)
 
@@ -484,6 +513,22 @@ class UserProfile(models.Model):
     @staticmethod
     def add_user_profile(sender, instance, **kwargs):
         o, created = UserProfile.objects.get_or_create(user=instance)
+
+
+class Price(models.Model):
+    conference = models.ForeignKey(Conference, related_name='pricing')
+    title = models.CharField(
+        verbose_name=_('Krótki opis'),
+        max_length=128)
+    description = models.TextField(verbose_name=_('Pełny opis'))
+    value = models.DecimalField(
+        max_digits=10,
+        decimal_places=3,
+        verbose_name=_('Wartość'),
+        default=0)
+
+    def __str__(self):
+        return '[%.2f] %s' % (self.value, self.title)
 
 
 def get_display(key, list):

@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django import forms
 from django.contrib.auth.models import User
 
 from django.core.mail import send_mail
 from django.core import mail
+from django.forms import widgets
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
@@ -497,6 +499,8 @@ def summary_add(request):
                 print summary_form.errors
         else:
             summary_form = SummaryForm()
+            if not Conference.get_current().is_admin(user):
+                summary_form.fields['owner'].widget = widgets.HiddenInput()
         return render(
             request,
             'conferences/summary/add_summary.html',
@@ -524,6 +528,8 @@ def summary_edit(request, pk):
             return redirect('summary-list')
     else:
         form = SummaryUpdateForm(instance=summary)
+        if not Conference.get_current().is_admin(request.user):
+            form.fields['owner'].widget = widgets.HiddenInput()
     return render(request, 'conferences/summary/summary_edit.html',
                   {'summary': summary, 'form': form})
 

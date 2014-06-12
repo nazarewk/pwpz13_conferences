@@ -1,0 +1,25 @@
+{% load i18n static %}
+<li>
+    <div class="highlight">
+        {{ topic.name }}
+        {% if is_admin %}
+            <div class="icons">
+                <a href="{% url 'topic-edit' topic.id %}" title="{% trans 'Edytuj' %}"><img
+                        src="{% static 'conferences/img/editicon.png' %}" class="icon-small"/></a>
+                <a href="{% url 'topic-delete' topic.id %}"
+                   onclick="return confirm('{% trans 'Usunąć temat?' %}');" title="{% trans 'Usuń' %}">
+                    <img src="{% static 'conferences/img/deleteicon.png' %}" class="icon-small"/>
+                </a>
+            </div>
+        {% endif %}
+    </div>
+    {% if topic.children %}
+        <ul>
+            {% for topic in topic.children %}
+                {% with template_name='conferences/topics/topic_tree_item.html' %}
+                    {% include template_name %}
+                {% endwith %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+</li>

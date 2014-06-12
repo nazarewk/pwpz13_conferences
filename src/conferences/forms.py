@@ -10,19 +10,21 @@ from django.utils.translation import ugettext as _
 from django.core.exceptions import ValidationError
 
 from . import models
-from .models import Session, Conference, TimePeriod,Summary, Topic
+from .models import Session, Conference, TimePeriod, Summary, Topic
+
 
 class FilterForm(forms.Form):
-    FILTERS=[('', _('Wszystkie')),
-             ('accepted', _('Zaakceptowane')),
-             ('waiting', _('Oczekujące')),
-             ('rejected', _('Odrzucone')),
-             ('questionable', _('Sporne')),
-             ]
-    filter=forms.ChoiceField(choices=FILTERS,
-                                  widget=forms.RadioSelect(),
-                                  label='Filtry',
-                                  required=False)
+    FILTERS = [('', _('Wszystkie')),
+               ('accepted', _('Zaakceptowane')),
+               ('waiting', _('Oczekujące')),
+               ('rejected', _('Odrzucone')),
+               ('questionable', _('Sporne')),
+    ]
+    filter = forms.ChoiceField(choices=FILTERS,
+                               widget=forms.RadioSelect(),
+                               label='Filtry',
+                               required=False)
+
 
 class ReviewerForm(forms.ModelForm):
     class Meta:
@@ -30,15 +32,18 @@ class ReviewerForm(forms.ModelForm):
         fields = ['user_account', 'first_name', 'last_name', 'email', 'title',
                   'contact_phone']
 
+
 class ReviewCreateForm(forms.ModelForm):
     class Meta:
         model = models.Review
         fields = ['reviewer', 'file_reviewed']
 
+
 class ReviewUpdateForm(forms.ModelForm):
     class Meta:
         model = models.Review
-        fields = ['status','comment']
+        fields = ['status', 'comment']
+
 
 class TopicForm(forms.ModelForm):
     class Meta:
@@ -76,7 +81,7 @@ class SessionForm(forms.ModelForm):
 
     class Meta:
         model = models.Session
-        fields = ['name', 'conference', 'topic', 'admins']
+        fields = ['name', 'topic', 'admins']
 
 
 class TimePeriodForm(forms.ModelForm):
@@ -102,12 +107,12 @@ class LectureForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(LectureForm, self).__init__(*args, **kwargs)
-        self.fields['session'].queryset=Conference.get_sessions()
+        self.fields['session'].queryset = Conference.get_sessions()
         if self.instance.id:
-            self.fields['start'].initial=self.instance.duration.start
-            self.fields['end'].initial=self.instance.duration.end
+            self.fields['start'].initial = self.instance.duration.start
+            self.fields['end'].initial = self.instance.duration.end
         else:
-            self.fields['summary'].queryset=Summary.objects.filter(conference=Conference.get_current(), lecture=None)
+            self.fields['summary'].queryset = Summary.objects.filter(conference=Conference.get_current(), lecture=None)
         self.fields['start'].widget = widgets.AdminSplitDateTime()
         self.fields['end'].widget = widgets.AdminSplitDateTime()
 
@@ -115,9 +120,9 @@ class LectureForm(forms.ModelForm):
     def save(self, commit=True):
         lecture = super(LectureForm, self).save(commit=False)
         if lecture.duration_id:
-            tp=TimePeriod.objects.get(pk=lecture.duration.pk)
-            tp.start=self.cleaned_data['start']
-            tp.end=self.cleaned_data['end']
+            tp = TimePeriod.objects.get(pk=lecture.duration.pk)
+            tp.start = self.cleaned_data['start']
+            tp.end = self.cleaned_data['end']
         else:
             tp = TimePeriod(start=self.cleaned_data['start'], end=self.cleaned_data['end'])
         tp.save()
@@ -128,7 +133,7 @@ class LectureForm(forms.ModelForm):
 
     class Meta:
         model = models.Lecture
-        fields = ['session', 'title', 'referents', 'summary',]
+        fields = ['session', 'title', 'referents', 'summary', ]
 
 
 class UserForm(forms.ModelForm):
@@ -163,7 +168,7 @@ class SummaryForm(forms.ModelForm):
 
     class Meta:
         model = models.Summary
-        fields = ['conference', 'description']
+        fields = ['name', 'owner', 'description']
 
     def clean(self):
         error_messages = []
@@ -187,8 +192,9 @@ class SummaryForm(forms.ModelForm):
             raise ValidationError(error_messages)
         return cleaned_data
 
+
 class SummaryUpdateForm(forms.ModelForm):
-    editable=forms.BooleanField(label="Pozwalaj recenzować",required=False)
+    editable = forms.BooleanField(label="Pozwalaj recenzować", required=False)
 
     class Meta:
         model = models.Summary
@@ -203,6 +209,7 @@ class SummaryUpdateForm(forms.ModelForm):
         if self.cleaned_data['editable'] is False:
             self.instance.review_set.update(editable=self.cleaned_data['editable'])
 
+
 class PublicationCreateForm(forms.ModelForm):
     file = forms.FileField()
 
@@ -213,6 +220,7 @@ class PublicationCreateForm(forms.ModelForm):
     def clean(self):
         error_messages = []
         from django.core.exceptions import ValidationError
+
         cleaned_data = super(PublicationCreateForm, self).clean()
         lecture = cleaned_data.get("lecture")
         description = cleaned_data.get("description")
@@ -234,12 +242,13 @@ class PublicationCreateForm(forms.ModelForm):
             raise ValidationError(error_messages)
         return cleaned_data
 
+
 class PublicationUpdateForm(forms.ModelForm):
-    editable=forms.BooleanField(label="Pozwalaj recenzować",required=False)
+    editable = forms.BooleanField(label="Pozwalaj recenzować", required=False)
 
     class Meta:
         model = models.Publication
-        fields = ['status',]
+        fields = ['status', ]
 
     def __init__(self, *args, **kwargs):
         super(PublicationUpdateForm, self).__init__(*args, **kwargs)
@@ -249,6 +258,7 @@ class PublicationUpdateForm(forms.ModelForm):
         super(PublicationUpdateForm, self).save(*args, **kwargs)
         if self.cleaned_data['editable'] is False:
             self.instance.review_set.update(editable=self.cleaned_data['editable'])
+
 
 class SendingEmailForm(forms.Form):
     user = forms.ModelChoiceField(queryset=User.objects.all(),
@@ -293,6 +303,7 @@ class AccountForm(forms.Form):
     def clean(self):
         error_messages = []
         from django.core.exceptions import ValidationError
+
         cleaned_data = super(AccountForm, self).clean()
         old = cleaned_data.get("old_password")
         new = cleaned_data.get("new_password")
@@ -306,6 +317,6 @@ class AccountForm(forms.Form):
             if ( len(error_messages) > 0):
                 raise ValidationError(error_messages)
 
-class ConferenceRegistrationForm(forms.Form):
 
+class ConferenceRegistrationForm(forms.Form):
     pass

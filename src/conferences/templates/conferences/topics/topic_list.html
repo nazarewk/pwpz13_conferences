@@ -1,28 +1,18 @@
 {% extends "conferences/base.html" %}
-{% load staticfiles i18n %}
+{% load staticfiles i18n topics %}
 {% block content %}
-{% if not user.is_authenticated %}
-    <p>{{ message }}</p>
-{% else %}
-    <h1>{% trans 'Tematy' %}</h1>
-    <div class="listContainer">
-        {% if topics %}
-            <ul>
-                {% for topic in topics %}
-                    <li>
-                        <a href="{% url 'topic-details' topic.id %}">{{ topic.name }}</a>
-                        <a href="{% url 'topic-edit' topic.id %}" title="{% trans 'Edytuj' %}"><img src="{% static 'conferences/img/editicon.png' %}" class="icon-small"/></a>
-                        <a href="{% url 'topic-delete' topic.id %}" onclick="return confirm('{% trans 'Usunąć temat?' %}');" title="{% trans 'Usuń' %}">
-                            <img src="{% static 'conferences/img/deleteicon.png' %}" class="icon-small"/>
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>{% trans 'Nie został utworzony jeszcze żaden temat.' %}</p>
-        {% endif %}
-    </div>
-    <input class="createBtn" type="button" value="{% trans 'Dodaj temat' %}"
-           onclick='window.location.href="{% url 'topic-add' %}"'>
-{% endif %}
+    {% if not user.is_authenticated %}
+        <p>{{ message }}</p>
+    {% else %}
+        <h1>{% trans 'Tematy' %}</h1>
+        <div class="listContainer">
+            {% if topics %}
+                {% render_topics user.is_staff %}
+            {% else %}
+                <p>{% trans 'Nie został utworzony jeszcze żaden temat.' %}</p>
+            {% endif %}
+        </div>
+        <input class="createBtn" type="button" value="{% trans 'Dodaj temat' %}"
+               onclick='window.location.href="{% url 'topic-add' %}"'>
+    {% endif %}
 {% endblock %}

@@ -7,7 +7,7 @@
 
 html {
     font-size: 62.5%;
-    height:100%;
+    height: 100%;
 }
 
 body {
@@ -17,9 +17,9 @@ body {
     color: #37363D;
     position: relative;
     -webkit-font-smoothing: antialiased;
-    height:100%;
-    min-width:600px;
-    min-height:600px;
+    height: 100%;
+    min-width: 600px;
+    min-height: 600px;
 }
 
 /* Links ---------------------- */
@@ -61,15 +61,15 @@ ul, ol {
 /*Custom classes */
 .leftNav {
     background-color: #829aa8;
-    position:absolute;
-    padding-top:20px;
-    top:50px;
-    bottom:32px;
-    width:200px;
+    position: absolute;
+    padding-top: 20px;
+    top: 50px;
+    bottom: 32px;
+    width: 200px;
 }
 
-.leftNav a{
-    color:#FFFFFF;
+.leftNav a {
+    color: #FFFFFF;
 }
 
 .leftNav li {
@@ -79,7 +79,7 @@ ul, ol {
 .listContainer {
     min-height: 100px;
     padding-top: 10px;
-    padding-bottom: 40px;
+    padding-bottom: 10px;
 }
 
 .listContainer ul li {
@@ -116,12 +116,12 @@ ul, ol {
 #content {
     background-color: #F7F6F5;
     overflow: auto;
-    position:absolute;
-    bottom:32px;
-    top:50px;
-    left:200px;
-    right:0px;
-    padding:10px;
+    position: absolute;
+    bottom: 32px;
+    top: 50px;
+    left: 200px;
+    right: 0px;
+    padding: 10px;
 }
 
 #footer, .push {
@@ -142,7 +142,7 @@ ul, ol {
     margin-top: 10px;
     margin-left: 10px;
     margin-right: 10px;
-    color:#8E8F94;
+    color: #8E8F94;
     float: left;
 }
 
@@ -151,6 +151,7 @@ ul, ol {
     height: 30px;
     vertical-align: middle;
 }
+
 .icon-small {
     width: 16px;
     height: 16px;
@@ -161,38 +162,53 @@ ul.errorlist {
     color: #FF0000;
 }
 
-.blog{
+.blog {
 
 }
 
-.post{
+.post {
     border: solid #000000 1px;
 }
 
-.blog h1{
+.blog h1 {
     border: solid #000000 1px;
-    padding:10px;
-    margin-top:10px;
+    padding: 10px;
+    margin-top: 10px;
 }
 
-.blog p{
-    padding:5px;
+.blog p {
+    padding: 5px;
     border-left: solid #000000 1px;
     border-right: solid #000000 1px;
     border-bottom: solid #000000 1px;
 }
 
 table {
-	border-width : 1px;
-	border-style : outset;
-	border-color : #000000;
-	border-collapse: collapse;
+    border-width: 1px;
+    border-style: outset;
+    border-color: #000000;
+    border-collapse: collapse;
 }
 
 td {
-	border-width : 1px;
-	border-style : inset;
-	border-color : #000000;
-	text-align : center;
-	padding: 4px 20px;
+    border-width: 1px;
+    border-style: inset;
+    border-color: #000000;
+    text-align: center;
+    padding: 4px 20px;
+}
+
+ul.tree,
+ul.tree ul {
+    margin: 10px
+}
+
+ul.tree .icons {
+    position: absolute;
+    display: inline-block;
+    right: 10px;
+}
+
+.highlight:hover {
+    background-color: #829aa8;
 }

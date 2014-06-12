@@ -16,7 +16,7 @@ def autoregister(app_name, excludes=[]):
                 pass
 
 
-excludes = [ConferencesFile, Summary, Publication]
+excludes = [ConferencesFile]
 autoregister('conferences', excludes)
 
 for model in excludes:
