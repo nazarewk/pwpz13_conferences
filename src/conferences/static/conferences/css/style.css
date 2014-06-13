@@ -206,7 +206,7 @@ ul.tree ul {
 ul.tree .icons {
     position: absolute;
     display: inline-block;
-    right: 10px;
+    right: 15px;
 }
 
 .highlight:hover {

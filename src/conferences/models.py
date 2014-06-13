@@ -52,7 +52,7 @@ class TimePeriod(models.Model):
     # 'reviewer_availability' = MM(Reviewer)
     # 'reviewer_unavailability' = MM(Reviewer)
 
-    def __str__(self):
+    def __unicode__(self):
         return '%s: %s - %s' % (self.description, self.start.strftime('%Y-%m-%d %H:%M'),
                                 self.end.strftime('%Y-%m-%d %H:%M'))
 
@@ -113,7 +113,7 @@ class Conference(models.Model):
 
     objects = Manager()
 
-    def __str__(self):
+    def __unicode__(self):
         return self.name
 
     @classmethod
@@ -300,7 +300,7 @@ class Reviewer(models.Model):
         else:
             return '%s %s' % (self.first_name, self.last_name)
 
-    def __str__(self):
+    def __unicode__(self):
         return self.name()
 
 
@@ -362,7 +362,7 @@ class Topic(models.Model):
         related_name='children',
         verbose_name="Temat nadrzędny")
 
-    def __str__(self):
+    def __unicode__(self):
         return self.name
 
 
@@ -391,7 +391,7 @@ class Session(models.Model):
     duration = models.ForeignKey(
         TimePeriod, related_name='sessions_dates', verbose_name=_('Czas trwania'))
 
-    def __str__(self):
+    def __unicode__(self):
         return self.name
 
     def is_admin(self, user):
@@ -413,7 +413,7 @@ class Lecture(models.Model):
     duration = models.OneToOneField(
         TimePeriod, related_name='lectures_dates', verbose_name=_('Czas trwania'))
 
-    def __str__(self):
+    def __unicode__(self):
         return self.title
 
 
@@ -448,6 +448,8 @@ class Balance(models.Model):
     def add_user_balance(sender, instance, **kwargs):
         b, created = Balance.objects.get_or_create(user=instance)
 
+    def __unicode__(self):
+        return '%s - %.2f PLN' % (self.user, self.available)
 
 class Payment(models.Model):
     balance = models.ForeignKey(
@@ -473,13 +475,16 @@ class Payment(models.Model):
 
     summary = models.OneToOneField(
         Summary,
-        verbose_name=_('Dotyczy streszczenia (referatu)'),
+        verbose_name=_('Za streszczenie (referat)'),
         related_name='payment',
         blank=True, null=True
     )
 
     def set_paid(self):
         self.balance.set_paid(self)
+
+    def __unicode__(self):
+        return '[%s %.2f %s] %s' %(self.balance.user, self.amount, self.currency, self.short_description)
 
 
 class UserProfile(models.Model):
@@ -507,7 +512,7 @@ class UserProfile(models.Model):
     def name(self):
         return self.user.username
 
-    def __str__(self):
+    def __unicode__(self):
         return self.user.username
 
     @staticmethod
@@ -516,18 +521,23 @@ class UserProfile(models.Model):
 
 
 class Price(models.Model):
-    conference = models.ForeignKey(Conference, related_name='pricing')
+    conference = models.ForeignKey(
+        Conference,
+        default=Conference.get_current(),
+        related_name='pricing')
     title = models.CharField(
         verbose_name=_('Krótki opis'),
         max_length=128)
-    description = models.TextField(verbose_name=_('Pełny opis'))
+    description = models.TextField(
+        verbose_name=_('Pełny opis'),
+        blank=True)
     value = models.DecimalField(
         max_digits=10,
         decimal_places=3,
         verbose_name=_('Wartość'),
         default=0)
 
-    def __str__(self):
+    def __unicode__(self):
         return '[%.2f] %s' % (self.value, self.title)
 
 

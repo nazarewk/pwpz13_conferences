@@ -13,6 +13,8 @@
                         <th>Imię</th>
                         <th>Nazwisko</th>
                         <th>Student?</th>
+                        <th>Opis</th>
+                        <th>Za streszczenie</th>
                         <th>Termin zapłaty</th>
                         <th>Do zapłaty</th>
                         <th>Waluta</th>
@@ -22,11 +24,13 @@
                     {% for user in users %}
                         <tr>
                             {% if user.balance.payments.all %}
-                            <td>{{ user.username }}</td>
-                            <td>{{ user.first_name }}</td>
-                            <td>{{ user.last_name }}</td>
-                            <td>{{ user.balance.is_student|yesno:"+,-" }}</td>
+                                <td>{{ user.username }}</td>
+                                <td>{{ user.first_name }}</td>
+                                <td>{{ user.last_name }}</td>
+                                <td>{{ user.balance.is_student|yesno:"+,-" }}</td>
                                 {% for p in user.balance.payments.all %}
+                                    <td title="{{ p.full_description }}">{{ p.short_description }}</td>
+                                    <td>{% if p.summary %}{{ p.summary }}{% else %}{% endif %}</td>
                                     <td>{{ p.time_to_pay.end }}</td>
                                     <td>{{ p.amount }}</td>
                                     <td>{{ p.currency }}</td>

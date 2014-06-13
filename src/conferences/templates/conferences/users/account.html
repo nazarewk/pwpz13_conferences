@@ -7,13 +7,23 @@
         {{ form.as_p }}
         <input type="submit" value="{% trans 'Zatwierdź zmiany' %}"/>
     </form>
-    <br /> <br />
-    <h1>{% trans 'Wpłacono' %}: {{ user.balance.available }} {% trans 'zł' %}</h1>
+    <br/> <br/>
+    <p>
+        <b>{% trans 'Rodzaj konta' %}:</b>
+        {% if user.balance.is_student %}
+            {% trans 'studenckie' %}
+        {% else %}
+            {% trans 'normalne' %}
+        {% endif %}
+    </p>
+    <p><b>{% trans 'Bilans konta' %}</b>: {{ user.balance.available }} {% trans 'zł' %}</p>
     {% if user.balance.payments.all %}
         <table>
             <thead>
             <tr>
                 <th>Termin zapłaty</th>
+                <th>Opis</th>
+                <th>Za streszczenie</th>
                 <th>Do zapłaty</th>
                 <th>Waluta</th>
                 <th>Status</th>
@@ -22,6 +32,8 @@
             {% for p in user.balance.payments.all %}
                 <tr>
                     <td>{{ p.time_to_pay.end }}</td>
+                    <td title="{{ p.full_description }}">{{ p.short_description }}</td>
+                    <td>{% if p.summary %}{{ p.summary }}{% else %}{% endif %}</td>
                     <td>{{ p.amount }}</td>
                     <td>{{ p.currency }}</td>
                     <td>
@@ -35,6 +47,6 @@
             {% endfor %}
         </table>
     {% else %}
-        <p>{% trans 'Brak przypisnaych płatności' %}</p>
+        <p>{% trans 'Brak przypisanych płatności' %}</p>
     {% endif %}
 {% endblock %}
