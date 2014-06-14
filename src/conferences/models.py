@@ -12,7 +12,7 @@ from django.db.models import Q, Manager
 from django.db.models.query import EmptyQuerySet
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext as _
-from django.db import models
+from django.db import models, OperationalError
 from django.contrib.sites.models import Site
 from django.utils import timezone
 from filer.models import File, Folder
@@ -84,7 +84,7 @@ class TimePeriod(models.Model):
 
 
 class Conference(models.Model):
-    site = models.OneToOneField(Site)
+    site = models.OneToOneField(Site, null=True, blank=True)
     admins = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         null=True, blank=True,
@@ -123,9 +123,15 @@ class Conference(models.Model):
 
     @classmethod
     def get_current(cls):
-        ret, created = cls.objects.get_or_create(defaults={
-            'name': _('Default conference'),
-        }, site__id=settings.SITE_ID)
+        ret, created = None, None
+        try:
+            ret, created = cls.objects.get_or_create(defaults={
+                'name': _('Default conference'),
+            }, site__id=settings.SITE_ID)
+        except OperationalError:
+            ret = Conference(name=_('Empty conference'))
+            created = True
+            ret.save()
         if created:
             start = datetime.now()
             duration = timedelta(days=365)
@@ -140,7 +146,7 @@ class Conference(models.Model):
             ret.publications_submission_period = tp
             tp = TimePeriod(start=start, end=start + duration)
             tp.save()
-            ret.registration_periods = tp
+            ret.registration_periods.add(tp)
         return ret
 
     @classmethod
@@ -451,6 +457,7 @@ class Balance(models.Model):
     def __unicode__(self):
         return '%s - %.2f PLN' % (self.user, self.available)
 
+
 class Payment(models.Model):
     balance = models.ForeignKey(
         Balance,
@@ -484,7 +491,7 @@ class Payment(models.Model):
         self.balance.set_paid(self)
 
     def __unicode__(self):
-        return '[%s %.2f %s] %s' %(self.balance.user, self.amount, self.currency, self.short_description)
+        return '[%s %.2f %s] %s' % (self.balance.user, self.amount, self.currency, self.short_description)
 
 
 class UserProfile(models.Model):
