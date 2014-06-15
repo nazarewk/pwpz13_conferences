@@ -47,7 +47,6 @@ p {
     color: #37363D;
     font-size: 14px;
     line-height: 1.6;
-    margin-bottom: 17px;
 }
 
 /* Lists ---------------------- */
@@ -216,4 +215,10 @@ ul.tree .icons {
 .topleft-header
 {
     float:left;
+}
+
+#id_filter li
+{
+    list-style-type: none;
+    display:inline;
 }

@@ -284,9 +284,8 @@ def session_edit(request, pk):
 def session_delete(request, pk):
     context_dict = {}
     session = get_object_or_404(Session, pk=pk)
-    context_dict['session'] = session
-    session_del = session.delete()
-    context_dict['sessions_del'] = session_del
+    context_dict['session_name'] = session.name
+    session.delete()
 
     return render(request, 'conferences/sessions/remove_session.html',
                   context_dict)
