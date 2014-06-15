@@ -11,6 +11,7 @@ from django.contrib.sites.managers import CurrentSiteManager
 from django.db.models import Q, Manager
 from django.db.models.query import EmptyQuerySet
 from django.db.models.signals import post_save
+from django.utils.timezone import utc
 from django.utils.translation import ugettext as _
 from django.db import models, OperationalError
 from django.contrib.sites.models import Site
@@ -133,7 +134,7 @@ class Conference(models.Model):
             created = True
             ret.save()
         if created:
-            start = datetime.now()
+            start = datetime.utcnow().replace(tzinfo=utc)
             duration = timedelta(days=365)
             tp = TimePeriod(start=start, end=start + duration)
             tp.save()
@@ -147,6 +148,8 @@ class Conference(models.Model):
             tp = TimePeriod(start=start, end=start + duration)
             tp.save()
             ret.registration_periods.add(tp)
+            ret.site_id = settings.SITE_ID
+            ret.save()
         return ret
 
     @classmethod
