@@ -47,7 +47,6 @@ p {
     color: #37363D;
     font-size: 14px;
     line-height: 1.6;
-    margin-bottom: 17px;
 }
 
 /* Lists ---------------------- */
@@ -170,17 +169,19 @@ ul.errorlist {
     border: solid #000000 1px;
 }
 
-.blog h1 {
-    border: solid #000000 1px;
+.blog div h1 {
+    border-bottom: solid #000000 1px;
     padding: 10px;
-    margin-top: 10px;
 }
 
-.blog p {
-    padding: 5px;
-    border-left: solid #000000 1px;
-    border-right: solid #000000 1px;
-    border-bottom: solid #000000 1px;
+.blog div {
+    border: solid #000000 1px;
+    margin-bottom:20px;
+}
+
+.blog div p{
+    padding:5px;
+    padding-left:10px;
 }
 
 table {
@@ -188,6 +189,12 @@ table {
     border-style: outset;
     border-color: #000000;
     border-collapse: collapse;
+}
+th{
+    padding: 4px;
+    border-width: 1px;
+    border-style: inset;
+    border-color: #000000;
 }
 
 td {
@@ -215,4 +222,37 @@ ul.tree .icons {
 
 .helptext {
     font-size: smaller;
+}
+
+.topleft-header
+{
+    float:left;
+}
+
+#id_filter li
+{
+    list-style-type: none;
+    display:inline;
+}
+
+.lecture-container
+{
+    list-style-type: none;
+}
+
+.lecture-container li
+{
+    margin-bottom:5px;
+}
+
+.lecture-container ul
+{
+    margin-top:5px;
+    margin-left: 20px;
+    list-style-type: disc;
+}
+
+#id_group li
+{
+    list-style-type: none;
 }

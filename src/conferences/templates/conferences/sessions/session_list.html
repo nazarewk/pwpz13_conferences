@@ -13,17 +13,16 @@
                         <a href="{% url 'session-details' session.id %}">
                             {{ session.name }}
                         </a>
-                        <a href="{% url 'session-edit' session.id %}"
-                           title="{% trans 'Edytuj' %}">
-                            <img src="{% static 'conferences/img/editicon.png' %}"
-                                 class="icon-small"/>
-                        </a>
-                        <a href="{% url 'session-delete' session.id %}"
-                           onclick="return confirm('{% trans 'Usunąć sesje?' %}');"
-                           title="{% trans 'Usuń' %}">
-                            <img src="{% static 'conferences/img/deleteicon.png' %}"
-                                 class="icon-small"/>
-                        </a>
+                        {% if IS_CONFERENCE_ADMIN %}
+                            <a href="{% url 'session-edit' session.id %}" title="{% trans 'Edytuj' %}"><img src="{% static 'conferences/img/editicon.png' %}"
+                                    class="icon-small"/></a>
+                            <a href="{% url 'session-delete' session.id %}"
+                            onclick="return confirm('{% trans 'Usunąć sesje?' %}');"
+                            title="{% trans 'Usuń' %}">
+                                <img src="{% static 'conferences/img/deleteicon.png' %}"
+                                    class="icon-small"/>
+                            </a>
+                        {% endif %}
                     </li>
 
                 {% endfor %}
@@ -32,7 +31,9 @@
             <p>{% trans 'Nie została utworzona jeszcze żadna sesja.' %}</p>
         {% endif %}
     </div>
+    {% if IS_CONFERENCE_ADMIN %}
     <input class="createBtn" type="button" value="{% trans 'Dodaj sesję' %}"
            onclick='window.location.href="{% url 'session-add' %}"'>
+    {% endif %}
 {% endif %}
 {% endblock %}

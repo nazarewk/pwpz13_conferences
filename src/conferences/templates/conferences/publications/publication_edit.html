@@ -1,12 +1,23 @@
 {% extends "conferences/base.html" %}
 {% load i18n %}
 {% block content %}
+    <h1>Publikacja</h1>
+    <ul>
+        <li style="padding:5px">{% trans 'Autor:' %} {{ publication.author.get_full_name }}</li>
+        <li style="padding:5px">{% trans 'Plik:' %} {{ publication.original_filename }} <a href="{{ publication.url }}">[pobierz]</a></li>
+    </ul>
+    <br />
+    {% if reviews %}
+        <div>Przypisani recenzenci</div>
+        <ul>
+        {% for r in reviews %}
+            <li style="padding:5px">{{ r.reviewer }} <a href="{% url 'review-delete' r.pk %}" >[anuluj zlecenie recenzji]</a> </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    <br />
 <form method="post" enctype='multipart/form-data'>
 	{% csrf_token %}
-    <ul>
-        <li>{% trans 'Autor:' %} {{ publication.author }}</li>
-        <li>{% trans 'Plik:' %} {{ publication.original_filename }} <a href="{{ publication.url }}">[pobierz]</a></li>
-    </ul>
 	{{ form.as_p }}
 	<input type="submit" value="{% trans 'Zapisz' %}" />
 </form>

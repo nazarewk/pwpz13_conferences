@@ -1,7 +1,7 @@
 {% load staticfiles i18n cms_tags sekizai_tags %}
 <html>
 <head>
-    <title>Konferencje naukowe!</title>
+    <title>Konferencja GigaCon!</title>
     <link href="{% static 'conferences/css/style.css' %}" type="text/css" rel="stylesheet"/>
     <link rel="stylesheet" type="text/css" href="{% static 'admin/css/widgets.css' %}"/>
     {% render_block "css" %}
@@ -10,16 +10,16 @@
 {% cms_toolbar %}
 <div id="wrapper">
     <div id="header">
-        <h1>{% trans 'Konferencje django!' %}</h1>
+        <div class="topleft-header"><h1>{% trans 'Konferencja GigaCon!' %}</h1></div>
         {% if not user.is_authenticated %}
             <div class="userInfo">
                 <a href="{% url 'user-login' %}">{% trans 'Zaloguj się' %}</a>
                 <br>
-                {% trans 'Nie masz konta?' %}
+                <span>{% trans 'Nie masz konta?' %}</span>
                 <a href="{% url 'user-registration' %}">{% trans 'Zarejestruj się' %}</a>
             </div>
         {% else %}
-            <div class="userInfo">{% trans 'Jestes zalogowany jako' %} <b>{{ user.username }}</b>. <a
+            <div class="userInfo">{% trans 'Jesteś zalogowany jako' %} <b>{{ user.username }}</b>. <a
                     href="{% url 'user-logout' %}">{% trans 'Wyloguj' %}</a></div>
         {% endif %}
     </div>
@@ -37,8 +37,7 @@
     <div class="push"></div>
 </div>
 <div id="footer">
-    <div class="footer_block">Tu będzie jakaś stopka np. W celu usprawnienia
-        systemu prosimy kierować uwagi na <a href="mailto:kontakt">kontakt@konferencje.pl</a>
+    <div class="footer_block">W celu usprawnienia systemu prosimy kierować uwagi na <a href="mailto:kontakt">kontakt@konferencje.pl</a>
     </div>
 </div>
 {% render_block "js" %}

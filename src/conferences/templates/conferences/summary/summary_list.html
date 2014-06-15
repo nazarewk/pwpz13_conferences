@@ -2,7 +2,6 @@
 {% load i18n %}
 {% block content %}
     <h1>{% trans 'Streszczenia' %}</h1>
-
     <form method="GET" action="{% url 'summary-list' %}" >
         {{ filter_form.as_p }}
         <input type="submit" value="Filtruj" />
@@ -14,17 +13,37 @@
                     <th>{% trans 'Autor ' %}</th>
                     <th>{% trans 'Plik ' %}</th>
                     <th>{% trans 'Status ' %}</th>
-                    <th>{% trans 'Zaakceptowało recenzentów ' %}</th>
-                    <th>{% trans 'Przypisano recenzentów ' %}</th>
+                    <th>{% trans 'Przypisani recenzenci ' %}</th>
+                    <th>{% trans 'Zaakceptowali' %}</th>
+                    <th>{% trans 'Odrzucili' %}</th>
                     <th>{% trans 'Akcje ' %}</th>
                 </thead>
                 {% for s in summaries %}
                 <tr>
-                    <td>{{ s.author }}</td>
+                    <td>{{ s.author.get_full_name }}</td>
                     <td>{{ s.original_filename }}</td>
                     <td>{{ s.status_verbose }}</td>
-                    <td>{{ s.accepted_count }}</td>
-                    <td>{{ s.review_count }}</td>
+                    <td>
+                        {% if s.reviewers %}
+                            {{ s.reviewers|join:", " }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if s.reviewers_accepted %}
+                            {{ s.reviewers_accepted|join:", " }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if s.reviewers_rejected %}
+                            {{ s.reviewers_rejected|join:", " }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
                     <td>
                         <a href="{% url 'summary-edit' s.id %}">[edytuj]</a>&nbsp
                         <a href="{% url 'review-add' s.id %}">[zleć recenzje]</a>&nbsp

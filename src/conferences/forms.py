@@ -16,8 +16,9 @@ from .models import Session, Conference, TimePeriod, Summary, Topic, Price
 class FilterForm(forms.Form):
     FILTERS = [('', _('Wszystkie')),
                ('accepted', _('Zaakceptowane')),
-               ('waiting', _('Oczekujące')),
+               ('waiting', _('Oczekujące na recenzje')),
                ('rejected', _('Odrzucone')),
+               ('ready', _('Gotowe na decyzję')),
                ('questionable', _('Sporne')),
     ]
     filter = forms.ChoiceField(choices=FILTERS,

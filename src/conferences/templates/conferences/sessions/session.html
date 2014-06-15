@@ -1,14 +1,19 @@
 {% extends "conferences/base.html" %}
 {% load i18n %}
 {% block content %}
-	<h1>{% trans 'Sesja' %}: {{ session.name }}<br></h1>
-	<ul>
-		<li>{% trans 'Temat' %}: {{ session.topic.name }}</li>
-		<li>{% trans 'Czas trwania' %}: {{ session.duration.start }} - {{ session.duration.end }} </li>
-		<li>{% trans 'Konferencja' %}: {{ session.conference.name }}</li>
-		{% for admin in session.admins.all %}
-			<li> {% trans 'Admin' %}: {{ admin }}</li>
-		{% endfor %}
+
+<ul class="lecture-container">
+        <li>{% trans 'Sesja' %}: {{ session.name }}</li>
+		<li>{% trans 'Początek' %}: {{ session.duration.start }}</li>
+        <li>{% trans 'Koniec' %}: {{ session.duration.end }} </li>
+        <li>
+            {% trans 'Przewodniczący sesji' %}:
+        </li>
+            <ul>
+                {% for admin in session.admins.all %}
+			    <li>  {{ admin.get_full_name }}</li>
+                {% endfor %}
+            </ul>
         <h2>{% trans 'Referaty należące do sesji' %}:</h2>
         {% if lectures %}
         <ul>
@@ -19,5 +24,5 @@
 	    {% else %}
 		<p>{% trans 'Nie został utworzony jeszcze żaden referat' %}</p>
 	    {% endif %}
-	</ul>
+</ul>
 {% endblock %}

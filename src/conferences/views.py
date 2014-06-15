@@ -5,6 +5,7 @@ from django import forms
 from django.contrib.auth.models import User
 
 from django.core.mail import send_mail
+from django.http import HttpResponseRedirect
 from django.core import mail
 from django.db.models import Q
 from django.forms import widgets
@@ -155,6 +156,10 @@ def review_edit(request, pk):
     return render(request, 'conferences/reviews/review_edit.html',
                   {'form': form})
 
+def review_delete(request,pk):
+    review=get_object_or_404(Review, pk=pk)
+    review.delete()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 def topic_details(request, pk):
     topic = get_object_or_404(Topic, pk=pk)
@@ -284,9 +289,8 @@ def session_edit(request, pk):
 def session_delete(request, pk):
     context_dict = {}
     session = get_object_or_404(Session, pk=pk)
-    context_dict['session'] = session
-    session_del = session.delete()
-    context_dict['sessions_del'] = session_del
+    context_dict['session_name'] = session.name
+    session.delete()
 
     return render(request, 'conferences/sessions/remove_session.html',
                   context_dict)
@@ -526,11 +530,13 @@ def summary_edit(request, pk):
             return redirect('summary-list')
     else:
         form = SummaryUpdateForm(instance=summary)
+        reviews = []
+        for r in summary.review_set.all():
+            reviews.append(r)
         if not Conference.get_current().is_admin(request.user):
             form.fields['owner'].widget = widgets.HiddenInput()
     return render(request, 'conferences/summary/summary_edit.html',
-                  {'summary': summary, 'form': form})
-
+                  {'summary': summary,'reviews':reviews, 'form': form})
 
 def summary_list(request):
     user = request.user
@@ -539,6 +545,8 @@ def summary_list(request):
             filter = request.GET.get('filter')
             if filter == 'accepted':
                 summaries = Summary.objects.filter(status='OK')
+            if filter == 'ready':
+                summaries = Summary.objects.filter(status='RD')
             elif filter == 'waiting':
                 summaries = Summary.objects.filter(status='PR')
             elif filter == 'rejected':
@@ -548,8 +556,15 @@ def summary_list(request):
         else:
             summaries = Summary.objects.all()
         for s in summaries:
-            s.review_count = s.review_set.all().count()
-            s.accepted_count = s.review_set.filter(status='OK').count()
+            s.reviewers =[]
+            s.reviewers_accepted = []
+            s.reviewers_rejected = []
+            for r in s.review_set.all():
+                s.reviewers.append(r.reviewer)
+            for r in s.review_set.filter(status='OK'):
+                s.reviewers_accepted.append(r.reviewer)
+            for r in s.review_set.filter(status='RE'):
+                s.reviewers_rejected.append(r.reviewer)
         filter_form = FilterForm(request.GET)
         return render(request, 'conferences/summary/summary_list.html',
                       {'summaries': summaries, 'filter_form': filter_form})
@@ -618,20 +633,43 @@ def publication_edit(request, pk):
             print form.errors
     else:
         form = PublicationUpdateForm(instance=publication)
-
+        reviews = []
+        for r in publication.review_set.all():
+            reviews.append(r)
     return render(request, 'conferences/publications/publication_edit.html',
-                  {'publication': publication, 'form': form})
+                  {'publication': publication,'reviews':reviews, 'form': form})
 
 
 def publication_list(request):
     user = request.user
     if Conference.is_admin(user):
-        publications = Publication.objects.all()
+        if request.GET.get('filter'):
+            filter = request.GET.get('filter')
+            if filter == 'accepted':
+                publications = Publication.objects.filter(status='OK')
+            if filter == 'ready':
+                publications = Publication.objects.filter(status='RD')
+            elif filter == 'waiting':
+                publications = Publication.objects.filter(status='PR')
+            elif filter == 'rejected':
+                publications = Publication.objects.filter(status='NO')
+            elif filter == 'questionable':
+                publications = Publication.objects.all()
+        else:
+            publications = Publication.objects.all()
         for p in publications:
-            p.review_count = p.review_set.all().count()
-            p.accepted_count = p.review_set.filter(status='OK').count()
+            p.reviewers =[]
+            p.reviewers_accepted = []
+            p.reviewers_rejected = []
+            for r in p.review_set.all():
+                p.reviewers.append(r.reviewer)
+            for r in p.review_set.filter(status='OK'):
+                p.reviewers_accepted.append(r.reviewer)
+            for r in p.review_set.filter(status='RE'):
+                p.reviewers_rejected.append(r.reviewer)
+        filter_form = FilterForm(request.GET)
         return render(request, 'conferences/publications/publication_list.html',
-                      {'publications': publications})
+                      {'publications': publications, 'filter_form': filter_form})
     else:
         text = _('Musisz być zalogowany, aby przesłać publikacje')
         context = {'message': text}
@@ -719,9 +757,11 @@ def multi_email_send(request):
 
 def payments_list(request):
     context_dict = {}
-    users = User.objects.all()
+    users = []
+    for u in User.objects.all():
+        if u.balance.payments.count():
+            users.append(u)
     context_dict['users'] = users
-
     return render(request, 'conferences/payments/payment_list.html', context_dict)
 
 

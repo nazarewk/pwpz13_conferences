@@ -19,7 +19,7 @@
                     <tr>
                         <td>{{ lecture.duration.start }}</td>
                         <td>{{ lecture.duration.end }}</td>
-                        <td>{{ lecture.title }}</td>
+                        <td><a href="{% url 'lecture-details' lecture.id %}">{{ lecture.title }}</a></td>
                         <td><a href="{{ lecture.summary.url}}">{{ lecture.summary }}</a></td>
                         <td>
                             <a href="{% url 'lecture-edit' lecture.id %}" title="Edytuj">
