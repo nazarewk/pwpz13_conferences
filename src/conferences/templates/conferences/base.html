@@ -10,7 +10,7 @@
 {% cms_toolbar %}
 <div id="wrapper">
     <div id="header">
-        <h1>{% trans 'Konferencje django!' %}</h1>
+        <div class="topleft-header"><h1>{% trans 'Konferencje django!' %}</h1></div>
         {% if not user.is_authenticated %}
             <div class="userInfo">
                 <a href="{% url 'user-login' %}">{% trans 'Zaloguj się' %}</a>
