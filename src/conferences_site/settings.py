@@ -193,6 +193,8 @@ SOUTH_MIGRATION_MODULES = {
 #    CMS    #
 #############
 
+CMS_PLUGIN_CACHE = False
+
 MIDDLEWARE_CLASSES += {
     'django.contrib.messages.middleware.MessageMiddleware',
     'cms.middleware.page.CurrentPageMiddleware',
