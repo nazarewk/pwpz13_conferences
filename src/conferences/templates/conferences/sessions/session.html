@@ -1,14 +1,24 @@
 {% extends "conferences/base.html" %}
 {% load i18n %}
 {% block content %}
-	<h1>{% trans 'Sesja' %}: {{ session.name }}<br></h1>
-	<ul>
-		<li>{% trans 'Temat' %}: {{ session.topic.name }}</li>
-		<li>{% trans 'Czas trwania' %}: {{ session.duration.start }} - {{ session.duration.end }} </li>
-		<li>{% trans 'Konferencja' %}: {{ session.conference.name }}</li>
-		{% for admin in session.admins.all %}
-			<li> {% trans 'Admin' %}: {{ admin }}</li>
-		{% endfor %}
+    <div class="listContainer">
+            <table>
+                <thead>
+                    <th>Temat</th>
+                    <th>Początek</th>
+                    <th>Koniec</th>
+                    <th>Administratorzy</th>
+                </thead>
+                    <tr>
+                        <td>{{ session.topic.name }}</td>
+                        <td>{{ session.duration.start }}</td>
+                        <td>{{ session.duration.end }}</td>
+                        {% for admin in session.admins.all %}
+                        <td>{{ admin.get_full_name }}</td>
+                        {% endfor %}
+                    </tr>
+            </table>
+        <br>
         <h2>{% trans 'Referaty należące do sesji' %}:</h2>
         {% if lectures %}
         <ul>
@@ -19,5 +29,5 @@
 	    {% else %}
 		<p>{% trans 'Nie został utworzony jeszcze żaden referat' %}</p>
 	    {% endif %}
-	</ul>
+    </div>
 {% endblock %}
