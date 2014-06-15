@@ -20,7 +20,7 @@
                 </thead>
                 {% for s in summaries %}
                 <tr>
-                    <td>{{ s.author }}</td>
+                    <td>{{ s.author.get_full_name }}</td>
                     <td>{{ s.original_filename }}</td>
                     <td>{{ s.status_verbose }}</td>
                     <td>

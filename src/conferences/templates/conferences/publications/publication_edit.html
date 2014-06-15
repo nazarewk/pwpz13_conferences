@@ -3,7 +3,7 @@
 {% block content %}
     <h1>Publikacja</h1>
     <ul>
-        <li style="padding:5px">{% trans 'Autor:' %} {{ publication.author }}</li>
+        <li style="padding:5px">{% trans 'Autor:' %} {{ publication.author.get_full_name }}</li>
         <li style="padding:5px">{% trans 'Plik:' %} {{ publication.original_filename }} <a href="{{ publication.url }}">[pobierz]</a></li>
     </ul>
     <br />

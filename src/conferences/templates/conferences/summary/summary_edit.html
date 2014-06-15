@@ -3,7 +3,7 @@
 {% block content %}
     <h1>Streszczenie</h1>
     <ul>
-        <li style="padding:5px">{% trans 'Autor:' %} {{ summary.author }}</li>
+        <li style="padding:5px">{% trans 'Autor:' %} {{ summary.author.get_full_name }}</li>
         <li style="padding:5px">{% trans 'Plik:' %} {{ summary.original_filename }} <a href="{{ summary.url }}">[pobierz]</a></li>
     </ul>
     <br />
