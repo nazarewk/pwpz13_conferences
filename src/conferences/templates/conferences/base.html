@@ -41,6 +41,7 @@
         systemu prosimy kierować uwagi na <a href="mailto:kontakt">kontakt@konferencje.pl</a>
     </div>
 </div>
+{% render_block "js" %}
 <script type="text/javascript" src="{% url 'django.views.i18n.javascript_catalog' %}"></script>
 <script type="text/javascript" src="{% static 'admin/js/core.js' %}"></script>
 <script type="text/javascript" src="{% static 'admin/js/admin/RelatedObjectLookups.js' %}"></script>
@@ -52,6 +53,5 @@
 <script type="text/javascript">
     window.__admin_media_prefix__ = "{% filter escapejs %}{% static 'admin/' %}{% endfilter %}";
 </script>
-{% render_block "js" %}
 </body>
 </html>
