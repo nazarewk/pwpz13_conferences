@@ -188,6 +188,12 @@ table {
     border-color: #000000;
     border-collapse: collapse;
 }
+th{
+    padding: 4px;
+    border-width: 1px;
+    border-style: inset;
+    border-color: #000000;
+}
 
 td {
     border-width: 1px;

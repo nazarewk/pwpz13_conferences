@@ -752,9 +752,11 @@ def multi_email_send(request):
 
 def payments_list(request):
     context_dict = {}
-    users = User.objects.all()
+    users = []
+    for u in User.objects.all():
+        if u.balance.payments.count():
+            users.append(u)
     context_dict['users'] = users
-
     return render(request, 'conferences/payments/payment_list.html', context_dict)
 
 
