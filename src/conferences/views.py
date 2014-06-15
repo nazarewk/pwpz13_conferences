@@ -552,7 +552,7 @@ def summary_list(request):
             elif filter == 'rejected':
                 summaries = Summary.objects.filter(status='NO')
             elif filter == 'questionable':
-                summaries = Summary.objects.all()
+                summaries = Summary.objects.filter(status='IQ')
         else:
             summaries = Summary.objects.all()
         for s in summaries:
@@ -654,7 +654,7 @@ def publication_list(request):
             elif filter == 'rejected':
                 publications = Publication.objects.filter(status='NO')
             elif filter == 'questionable':
-                publications = Publication.objects.all()
+                publications = Publication.objects.filter(status='IQ')
         else:
             publications = Publication.objects.all()
         for p in publications:
