@@ -1,6 +1,7 @@
 {% extends "conferences/base.html" %}
 {% load staticfiles i18n %}
 {% block content %}
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
 <script src="{% static 'conferences/js/reviewers.js' %}"></script>
 <form method="post">
 	{% csrf_token %}

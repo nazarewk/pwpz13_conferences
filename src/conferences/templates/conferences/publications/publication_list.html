@@ -10,7 +10,7 @@
                     <th>{% trans 'Plik ' %}</th>
                     <th>{% trans 'Status ' %}</th>
                     <th>{% trans 'Zaakceptowało recenzentów ' %}</th>
-                    <th>{% trans 'Przypisano recenzentów ' %}</th>
+                    <th>{% trans 'Przypisani recenzenci ' %}</th>
                     <th>{% trans 'Akcje ' %}</th>
                 </thead>
                 {% for p in publications %}
@@ -19,7 +19,13 @@
                     <td>{{ p.original_filename }}</td>
                     <td>{{ p.status_verbose }}</td>
                     <td>{{ p.accepted_count }}</td>
-                    <td>{{ p.review_count }}</td>
+                    <td>
+                        {% if p.reviewers %}
+                            {{ p.reviewers|join:", " }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
                     <td>
                         <a href="{% url 'publication-edit' p.id %}">[edytuj]</a>
                         <a href="{% url 'review-add' p.id %}">[zleć recenzje]</a>

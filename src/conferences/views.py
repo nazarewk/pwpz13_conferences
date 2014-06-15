@@ -543,7 +543,9 @@ def summary_list(request):
         else:
             summaries = Summary.objects.all()
         for s in summaries:
-            s.review_count = s.review_set.all().count()
+            s.reviewers =[]
+            for r in s.review_set.all():
+                s.reviewers.append(r.reviewer)
             s.accepted_count = s.review_set.filter(status='OK').count()
         filter_form = FilterForm(request.GET)
         return render(request, 'conferences/summary/summary_list.html',
@@ -623,7 +625,9 @@ def publication_list(request):
     if Conference.is_admin(user):
         publications = Publication.objects.all()
         for p in publications:
-            p.review_count = p.review_set.all().count()
+            p.reviewers =[]
+            for r in p.review_set.all():
+                p.reviewers.append(r.reviewer)
             p.accepted_count = p.review_set.filter(status='OK').count()
         return render(request, 'conferences/publications/publication_list.html',
                       {'publications': publications})

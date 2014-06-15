@@ -15,7 +15,7 @@
                     <th>{% trans 'Plik ' %}</th>
                     <th>{% trans 'Status ' %}</th>
                     <th>{% trans 'Zaakceptowało recenzentów ' %}</th>
-                    <th>{% trans 'Przypisano recenzentów ' %}</th>
+                    <th>{% trans 'Przypisani recenzenci ' %}</th>
                     <th>{% trans 'Akcje ' %}</th>
                 </thead>
                 {% for s in summaries %}
@@ -24,7 +24,13 @@
                     <td>{{ s.original_filename }}</td>
                     <td>{{ s.status_verbose }}</td>
                     <td>{{ s.accepted_count }}</td>
-                    <td>{{ s.review_count }}</td>
+                    <td>
+                        {% if s.reviewers %}
+                            {{ s.reviewers|join:", " }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
                     <td>
                         <a href="{% url 'summary-edit' s.id %}">[edytuj]</a>&nbsp
                         <a href="{% url 'review-add' s.id %}">[zleć recenzje]</a>&nbsp
