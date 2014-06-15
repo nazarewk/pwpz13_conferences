@@ -4,6 +4,7 @@ from django import forms
 from django.contrib.auth.models import User
 
 from django.core.mail import send_mail
+from django.http import HttpResponseRedirect
 from django.core import mail
 from django.forms import widgets
 from django.shortcuts import render
@@ -150,6 +151,10 @@ def review_edit(request, pk):
     return render(request, 'conferences/reviews/review_edit.html',
                   {'form': form})
 
+def review_delete(request,pk):
+    review=get_object_or_404(Review, pk=pk)
+    review.delete()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 def topic_details(request, pk):
     topic = get_object_or_404(Topic, pk=pk)
@@ -521,11 +526,13 @@ def summary_edit(request, pk):
             return redirect('summary-list')
     else:
         form = SummaryUpdateForm(instance=summary)
+        reviews = []
+        for r in summary.review_set.all():
+            reviews.append(r)
         if not Conference.get_current().is_admin(request.user):
             form.fields['owner'].widget = widgets.HiddenInput()
     return render(request, 'conferences/summary/summary_edit.html',
-                  {'summary': summary, 'form': form})
-
+                  {'summary': summary,'reviews':reviews, 'form': form})
 
 def summary_list(request):
     user = request.user
@@ -622,9 +629,11 @@ def publication_edit(request, pk):
             print form.errors
     else:
         form = PublicationUpdateForm(instance=publication)
-
+        reviews = []
+        for r in publication.review_set.all():
+            reviews.append(r)
     return render(request, 'conferences/publications/publication_edit.html',
-                  {'publication': publication, 'form': form})
+                  {'publication': publication,'reviews':reviews, 'form': form})
 
 
 def publication_list(request):

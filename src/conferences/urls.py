@@ -63,6 +63,10 @@ urlpatterns += patterns(
         views.review_edit,
         name='review-edit'
     ),
+    url(r'^reviews/delete/(?P<pk>\d+)/$',
+        views.review_delete,
+        name='review-delete'
+    ),
 )
 
 urlpatterns += patterns(
