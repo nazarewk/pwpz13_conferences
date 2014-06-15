@@ -1,0 +1,13 @@
+{% extends "conferences/base.html" %}
+{% load staticfiles i18n %}
+{% block content %}
+    {% if not user.is_authenticated %}
+        <p>{{ message }}</p>
+    {% else %}
+        <form method="post">
+            {% csrf_token %}
+            {% include 'conferences/payments/payment_user_edit_snippet.html' %}
+            <input type="submit" value="{% trans 'Zapisz' %}"/>
+        </form>
+    {% endif %}
+{% endblock %}

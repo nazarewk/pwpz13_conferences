@@ -216,8 +216,24 @@ urlpatterns += patterns(
 
 urlpatterns += patterns(
     '',
+    url(r'^conference-registration',
+        views.conference_registration,
+        name='conference-registration'
+    ),
     url(r'^payments/$',
         views.payments_list,
         name='payments-list'
+    ),
+    url(r'^payments/(?P<pk>\d+)/pay$',
+        views.payments_pay,
+        name='payments-pay'
+    ),
+    url(r'^payments/(?P<pk>\d+)/confirm$',
+        views.payment_confirm,
+        name='payments-confirm'
+    ),
+    url(r'^payments/(?P<pk>\d+)/delete$',
+        views.payment_delete,
+        name='payments-delete'
     ),
 )

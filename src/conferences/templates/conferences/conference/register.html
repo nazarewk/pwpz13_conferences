@@ -2,9 +2,11 @@
 {% load i18n %}
 {% block content %}
     {{ message }}
-    <form method="post">
+    <form class="signup" method="get">
         {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="{% trans 'Zapisz się na konferencję' %}" />
+        <table>
+            {{ form.as_table }}
+        </table>
+        <input type="submit" value="{% trans 'Zapisz się na konferencję' %}"/>
     </form>
 {% endblock %}

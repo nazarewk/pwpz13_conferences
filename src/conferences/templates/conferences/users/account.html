@@ -1,5 +1,5 @@
 {% extends "conferences/base.html" %}
-{% load i18n %}
+{% load i18n staticfiles %}
 {% block content %}
     {{ message }}
     <form method="POST">
@@ -25,22 +25,40 @@
                 <th>Opis</th>
                 <th>Za streszczenie</th>
                 <th>Do zapłaty</th>
-                <th>Waluta</th>
                 <th>Status</th>
+                <th>&nbsp;</th>
             </tr>
             </thead>
-            {% for p in user.balance.payments.all %}
+            {% for p in user.balance.payments.all reversed %}
                 <tr>
                     <td>{{ p.time_to_pay.end }}</td>
                     <td title="{{ p.full_description }}">{{ p.short_description }}</td>
                     <td>{% if p.summary %}{{ p.summary }}{% else %}{% endif %}</td>
-                    <td>{{ p.amount }}</td>
-                    <td>{{ p.currency }}</td>
+                    <td>{{ p.amount }} {{ p.currency }}</td>
                     <td>
                         {% if p.is_paid %}
                             {% trans 'Zapłacone' %}
                         {% else %}
                             {% trans 'Nie zapłacono' %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if not p.is_confirmed %}
+                            <a href="{% url 'payments-confirm' p.pk %}" title="{% trans 'Potwierdź dane' %}"><img
+                                    src="{% static 'conferences/img/question-mark.png' %}" class="icon-small"/></a>
+                        {% else %}
+                            {% if not p.is_paid and p.amount <= user.balance.available %}
+                                <a href="{% url 'payments-pay' pk=p.pk %}">
+                                    <img src="{% static 'conferences/img/payment.png' %}"
+                                         class="icon-small" title="{% trans 'Zapłać' %}"/>
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                        {% if not p.is_paid %}
+                            <a href="{% url 'payments-delete' pk=p.pk %}">
+                                <img src="{% static 'conferences/img/deleteicon.png' %}"
+                                     class="icon-small" title="{% trans 'Anuluj płatność' %}"/>
+                            </a>
                         {% endif %}
                     </td>
                 </tr>

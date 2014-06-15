@@ -1,0 +1,11 @@
+{% load i18n %}
+{% with form.instance as p %}
+    <h1>{{ p.short_description }}</h1>
+    <div style="margin-left: 15px">
+    <p>
+        {% trans 'Do zapłaty' %}:
+        <b>{{ p.amount }} {{ p.currency }}</b>
+    </p>
+{% endwith %}
+{{ form.as_p }}
+</div>

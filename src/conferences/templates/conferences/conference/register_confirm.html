@@ -1,0 +1,15 @@
+{% extends "conferences/base.html" %}
+{% load i18n %}
+{% block content %}
+    {{ message }}
+    <form class="registerConfirm" method="post">
+        {% csrf_token %}
+        {% for form in formset %}
+            <div>
+                {% include 'conferences/payments/payment_user_edit_snippet.html' %}
+            </div>
+        {% endfor %}
+        {{ formset.management_form }}
+        <input type="submit" value="{% trans 'Potwierdź' %}"/>
+    </form>
+{% endblock %}

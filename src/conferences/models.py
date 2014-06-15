@@ -448,10 +448,13 @@ class Balance(models.Model):
     is_student = models.BooleanField(default=False, verbose_name=_('Czy jest studentem?'))
 
     def set_paid(self, payment):
+        if self.available < payment.amount:
+            return False
         self.available -= payment.amount
         payment.is_paid = True
         payment.save()
         self.save()
+        return True
 
     @staticmethod
     def add_user_balance(sender, instance, **kwargs):
@@ -478,7 +481,7 @@ class Payment(models.Model):
 
     currency = models.CharField(max_length=3, choices=(
         ('PLN', _('Złote polskie'), ),
-    ), verbose_name=_('Waluta'))
+    ), verbose_name=_('Waluta'), default='PLN')
     amount = models.DecimalField(max_digits=10, decimal_places=3, verbose_name=_('Kwota płatności'))
 
     is_paid = models.BooleanField(_('Czy zapłacono?'), default=False)
@@ -489,6 +492,8 @@ class Payment(models.Model):
         related_name='payment',
         blank=True, null=True
     )
+
+    is_confirmed = models.BooleanField(_('Czy jest potwierdzona?'), default=False)
 
     def set_paid(self):
         self.balance.set_paid(self)
@@ -549,6 +554,9 @@ class Price(models.Model):
 
     def __unicode__(self):
         return '[%.2f] %s' % (self.value, self.title)
+
+    def get_all_current(self):
+        return
 
 
 def get_display(key, list):

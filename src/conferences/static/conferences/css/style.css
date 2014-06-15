@@ -212,3 +212,7 @@ ul.tree .icons {
 .highlight:hover {
     background-color: #829aa8;
 }
+
+.helptext {
+    font-size: smaller;
+}

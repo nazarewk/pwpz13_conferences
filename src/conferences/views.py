@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from datetime import timedelta
 from django import forms
 from django.contrib.auth.models import User
 
 from django.core.mail import send_mail
 from django.core import mail
+from django.db.models import Q
 from django.forms import widgets
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
+from django.utils.timezone import utc
 from django.utils.translation import ugettext as _
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -17,13 +21,14 @@ from django.core.files.base import ContentFile
 from django.conf import settings
 from django.utils.datetime_safe import datetime
 
-from .forms import ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm, SummaryForm, PublicationCreateForm, \
-    PublicationUpdateForm, ReviewCreateForm, TopicForm, \
-    ReviewUpdateForm, SendingEmailForm, SummaryUpdateForm, SendingEmailsForm, FilterForm, AccountForm, \
-    ConferenceRegistrationForm
-from .models import Reviewer, Session, Lecture, UserProfile, Review, ConferencesFile, Summary, Publication, Topic, \
-    Balance, \
-    Conference
+from .forms import (ReviewerForm, SessionForm, TimePeriodForm, LectureForm, UserForm, SummaryForm,
+                    PublicationCreateForm,
+                    PublicationUpdateForm, ReviewCreateForm, TopicForm,
+                    ReviewUpdateForm, SendingEmailForm, SummaryUpdateForm, SendingEmailsForm, FilterForm, AccountForm,
+                    ConferenceRegistrationForm, PaymentsConfirmFormSet, PaymentConfirmForm)
+from .models import (Reviewer, Session, Lecture, UserProfile, Review, ConferencesFile, Summary, Publication, Topic,
+                     Balance,
+                     Conference, Price, Payment, TimePeriod)
 
 
 def home(request):
@@ -471,7 +476,7 @@ def summary_add(request):
         if request.method == 'POST':
             summary_form = SummaryForm(request.POST, request.FILES)
             if summary_form.is_valid():
-                    # Handle uploaded file
+                # Handle uploaded file
                 f = request.FILES['file']
                 file_data = ContentFile(f.read())
                 file_data.name = f.name
@@ -487,7 +492,7 @@ def summary_add(request):
                     'content': _('Dodano streszczenie <a href="%(summary)s">%(summary)s</a>,') % {
                         'summary': summary.url
                     }
-                    })
+                })
             else:
                 print summary_form.errors
         else:
@@ -678,7 +683,7 @@ def multi_email_send(request):
                 users = User.objects.all()
                 for u in users:
                     email = mail.EmailMessage(subject, message, settings.EMAIL_HOST_USER,
-                          [u.email], connection=connection)
+                                              [u.email], connection=connection)
                     email.send()
                 text = _("Wysłano masową wiadomość.")
                 context = {'message': text, 'form': form}
@@ -688,7 +693,7 @@ def multi_email_send(request):
                 reviewers = Reviewer.objects.all()
                 for r in reviewers:
                     email = mail.EmailMessage(subject, message, settings.EMAIL_HOST_USER,
-                          [r.user_account.email], connection=connection)
+                                              [r.user_account.email], connection=connection)
                     email.send()
 
             sessions = Session.objects.all()
@@ -697,7 +702,7 @@ def multi_email_send(request):
                     admins = s.admins.all()
                     for a in admins:
                         email = mail.EmailMessage(subject, message, settings.EMAIL_HOST_USER,
-                          [a.email], connection=connection)
+                                                  [a.email], connection=connection)
                         email.send()
             connection.close()
             text = _("Wysłano masową wiadomość.")
@@ -748,9 +753,96 @@ def account(request):
         context = {'message': text}
         return render(request, 'conferences/misc/no_rights.html', context)
 
-def conference_register(request):
-    ConferenceRegistrationForm
-    ctx = {
 
-    }
-    return render(request, 'conferences/conference/register.html', ctx)
+@login_required
+def conference_registration(request):
+    if request.method == 'GET' and request.GET:
+        form = ConferenceRegistrationForm(request.GET)
+        if form.is_valid():
+            balance = request.user.balance
+            now = datetime.utcnow().replace(tzinfo=utc)
+            pay_until = now + timedelta(days=7)
+            ids = []
+            prefix = ConferenceRegistrationForm.prefix
+            for name, count in form.cleaned_data.items():
+                if count and name.startswith(prefix):
+                    price_id = int(name[len(prefix):])
+                    price = get_object_or_404(Price, id=price_id)
+                    for i in range(count):
+                        tp = TimePeriod(start=now, end=pay_until)
+                        tp.save()
+                        p = Payment(
+                            balance=balance,
+                            short_description=price.title,
+                            time_to_pay=tp,
+                            amount=price.value
+                        )
+                        p.save()
+                        ids.append(p.id)
+            formset = PaymentsConfirmFormSet(
+                queryset=Payment.objects.filter(id__in=ids))
+            for f in formset:
+                f.fields['summary'].queryset = Summary.objects.filter(payment__isnull=True, owner=request.user)
+            return render(request, 'conferences/conference/register_confirm.html', {
+                'formset': formset
+            })
+        return render(request, 'conferences/conference/register.html', {
+            'form': form
+        })
+    elif request.method == 'POST':
+        formset = PaymentsConfirmFormSet(request.POST)
+        for f in formset:
+            f.fields['summary'].queryset = Summary.objects.filter(payment__isnull=True, owner=request.user)
+        if formset.is_valid():
+            formset.save()
+            return redirect('account')
+        return render(request, 'conferences/conference/register_confirm.html', {
+            'formset': formset
+        })
+    else:
+        form = ConferenceRegistrationForm()
+        return render(request, 'conferences/conference/register.html', {
+            'form': form
+        })
+
+
+@login_required
+def payment_confirm(request, pk):
+    payment = request.user.balance.payments.get(id=pk)
+    if not payment:
+        return render(request, 'conferences/base.html', {
+            'content': _('Nie znaleziono płatności') % (payment,)
+        })
+    if request.method == 'POST':
+        form = PaymentConfirmForm(data=request.POST, instance=payment)
+        if form.is_valid():
+            form.save()
+            return redirect('account')
+    else:
+        form = PaymentConfirmForm(instance=payment)
+        form.fields['summary'].queryset = Summary.objects.filter(payment__isnull=True, owner=request.user)
+    return render(request, 'conferences/payments/payment_user_edit.html', {
+        'form': form
+    })
+
+
+@login_required
+def payment_delete(request, pk):
+    payment = request.user.balance.payments.get(id=pk)
+    if not payment:
+        return render(request, 'conferences/base.html', {
+            'content': _('Nie znaleziono płatności') % (payment,)
+        })
+    payment.delete()
+    return redirect('account')
+
+
+@login_required
+def payments_pay(request, pk):
+    balance = request.user.balance
+    payment = request.user.balance.payments.get(id=pk)
+    if balance.set_paid(payment):
+        return redirect('account')
+    return render(request, 'conferences/base.html', {
+        'content': _('Nie udało się zapłacić za %s') % (payment,)
+    })

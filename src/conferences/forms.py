@@ -4,13 +4,13 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.admin import widgets
 from django.contrib.auth.models import User
-from django.db.models.query import EmptyQuerySet
+from django.forms.models import modelformset_factory
 from django.utils.datetime_safe import datetime
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ValidationError
 
 from . import models
-from .models import Session, Conference, TimePeriod, Summary, Topic
+from .models import Session, Conference, TimePeriod, Summary, Topic, Price
 
 
 class FilterForm(forms.Form):
@@ -318,4 +318,38 @@ class AccountForm(forms.Form):
 
 
 class ConferenceRegistrationForm(forms.Form):
-    pass
+    prefix = 'price'
+
+    def __init__(self, *args, **kwargs):
+        pricing = Conference.get_current().pricing.all()
+        for price in pricing:
+            f = forms.IntegerField(
+                initial=0,
+                min_value=0,
+                label=price.title,
+                required=False,
+                help_text=_('Ile sztuk?')
+            )
+            self.base_fields['%s%s' % (self.prefix, price.id,)] = f
+        super(ConferenceRegistrationForm, self).__init__(*args, **kwargs)
+
+
+class PaymentConfirmForm(forms.ModelForm):
+    class Meta:
+        model = models.Payment
+        fields = ['full_description', 'summary', 'is_confirmed']
+
+    def __init__(self, *args, **kwargs):
+        super(PaymentConfirmForm, self).__init__(*args, **kwargs)
+        f = self.fields['full_description']
+        f.widget.attrs['rows'] = 2
+        f.widget.attrs['cols'] = 40
+        f.label = _('Informacje dodatkowe')
+        f = self.fields['summary']
+        f.empty_label = _('brak')
+        f = self.fields['is_confirmed']
+        f.label = _('Czy dane się zgadzają?')
+
+
+PaymentsConfirmFormSet = modelformset_factory(models.Payment, form=PaymentConfirmForm, extra=0)
+

@@ -19,6 +19,7 @@
     {% if user.is_authenticated %}
         <li><a href="{% url 'summary-add' %}"><img src="{% static 'conferences/img/document.png' %}" class="icon"/>{% trans 'Dodaj streszczenie' %}</a></li>
         <li><a href="{% url 'publication-add' %}"><img src="{% static 'conferences/img/diary.png' %}" class="icon"/>{% trans 'Dodaj publikację' %}</a></li>
+        <li><a href="{% url 'conference-registration' %}"><img src="{% static 'conferences/img/document.png' %}" class="icon"/>{% trans 'Wykup miejsca' %}</a></li>
         <li><a href="{% url 'account' %}"><img src="{% static 'conferences/img/man.png' %}" class="icon"/>{% trans 'Moje konto' %}</a></li>
     {% endif %}
 </ul>
