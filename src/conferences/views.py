@@ -534,6 +534,8 @@ def summary_list(request):
             filter = request.GET.get('filter')
             if filter == 'accepted':
                 summaries = Summary.objects.filter(status='OK')
+            if filter == 'ready':
+                summaries = Summary.objects.filter(status='RD')
             elif filter == 'waiting':
                 summaries = Summary.objects.filter(status='PR')
             elif filter == 'rejected':
@@ -628,7 +630,20 @@ def publication_edit(request, pk):
 def publication_list(request):
     user = request.user
     if Conference.is_admin(user):
-        publications = Publication.objects.all()
+        if request.GET.get('filter'):
+            filter = request.GET.get('filter')
+            if filter == 'accepted':
+                publications = Publication.objects.filter(status='OK')
+            if filter == 'ready':
+                publications = Publication.objects.filter(status='RD')
+            elif filter == 'waiting':
+                publications = Publication.objects.filter(status='PR')
+            elif filter == 'rejected':
+                publications = Publication.objects.filter(status='NO')
+            elif filter == 'questionable':
+                publications = Publication.objects.all()
+        else:
+            publications = Publication.objects.all()
         for p in publications:
             p.reviewers =[]
             p.reviewers_accepted = []
@@ -639,8 +654,9 @@ def publication_list(request):
                 p.reviewers_accepted.append(r.reviewer)
             for r in p.review_set.filter(status='RE'):
                 p.reviewers_rejected.append(r.reviewer)
+            filter_form = FilterForm(request.GET)
         return render(request, 'conferences/publications/publication_list.html',
-                      {'publications': publications})
+                      {'publications': publications, 'filter_form': filter_form})
     else:
         text = _('Musisz być zalogowany, aby przesłać publikacje')
         context = {'message': text}
