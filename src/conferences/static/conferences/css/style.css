@@ -228,3 +228,20 @@ ul.tree .icons {
     list-style-type: none;
     display:inline;
 }
+
+.lecture-container
+{
+    list-style-type: none;
+}
+
+.lecture-container li
+{
+    margin-bottom:5px;
+}
+
+.lecture-container ul
+{
+    margin-top:5px;
+    margin-left: 20px;
+    list-style-type: disc;
+}

@@ -2,27 +2,18 @@
 {% load i18n %}
 {% block content %}
 
-    <div class="listContainer">
-            <table>
-                <thead>
-                    <th>Tytuł</th>
-                    <th>Początek</th>
-                    <th>Koniec</th>
-                    <th>Streszczenie</th>
-                    <th>Referenci</th>
-
-                </thead>
-                    <tr>
-                        <td>{{ lecture.title }}</td>
-                        <td>{{ lecture.duration.start }}</td>
-                        <td>{{ lecture.duration.end }}</td>
-                        <td><a href="{{ lecture.summary.url}}">{{ lecture.summary }}</a></td>
-                        {% for referents in lecture.referents.all %}
-                        <td>{{ referents.get_full_name }}</td>
-                        {% endfor %}
-                    </tr>
-            </table>
-    </div>
-
-
+<ul class="lecture-container">
+        <li>{% trans 'Tytuł' %}: {{ lecture.title }}</li>
+        <li>{% trans 'Początek' %}: {{ lecture.duration.start }}</li>
+        <li>{% trans 'Koniec' %}: {{ lecture.duration.end }}</li>
+        <li>{% trans 'Streszczenie' %}: <a href="{{ lecture.summary.url}}">{{ lecture.summary }}</a></li>
+        <li>
+            Referenci:
+            <ul>
+                {% for referent in lecture.referents.all %}
+                    <li>{{ referent.get_full_name }}</li>
+                {% endfor %}
+            </ul>
+        </li>
+</ul>
 {% endblock %}
