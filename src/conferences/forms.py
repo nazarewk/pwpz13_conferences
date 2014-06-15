@@ -48,6 +48,7 @@ class ReviewUpdateForm(forms.ModelForm):
 class TopicForm(forms.ModelForm):
     class Meta:
         model = models.Topic
+        fields = ['name', 'parent']
 
 
 class SessionForm(forms.ModelForm):
