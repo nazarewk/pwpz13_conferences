@@ -1,7 +1,7 @@
 {% load staticfiles i18n cms_tags sekizai_tags %}
 <html>
 <head>
-    <title>Konferencje naukowe!</title>
+    <title>Konferencja GigaCon!</title>
     <link href="{% static 'conferences/css/style.css' %}" type="text/css" rel="stylesheet"/>
     <link rel="stylesheet" type="text/css" href="{% static 'admin/css/widgets.css' %}"/>
     {% render_block "css" %}
@@ -10,7 +10,7 @@
 {% cms_toolbar %}
 <div id="wrapper">
     <div id="header">
-        <div class="topleft-header"><h1>{% trans 'Konferencje django!' %}</h1></div>
+        <div class="topleft-header"><h1>{% trans 'Konferencja GigaCon!' %}</h1></div>
         {% if not user.is_authenticated %}
             <div class="userInfo">
                 <a href="{% url 'user-login' %}">{% trans 'Zaloguj się' %}</a>
