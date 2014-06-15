@@ -471,30 +471,23 @@ def summary_add(request):
         if request.method == 'POST':
             summary_form = SummaryForm(request.POST, request.FILES)
             if summary_form.is_valid():
-                start = summary_form.cleaned_data['conference'].summaries_submission_period.start.replace(tzinfo=None)
-                end = summary_form.cleaned_data['conference'].summaries_submission_period.end.replace(tzinfo=None)
-                if start <= datetime.now() <= end:
                     # Handle uploaded file
-                    f = request.FILES['file']
-                    file_data = ContentFile(f.read())
-                    file_data.name = f.name
+                f = request.FILES['file']
+                file_data = ContentFile(f.read())
+                file_data.name = f.name
 
-                    summary = Summary.objects.create(
-                        conference_id=request.POST['conference'],
-                        owner=request.user,
-                        original_filename=f.name,
-                        description=request.POST['description'],
-                        file=file_data)
-                    summary.save()
-                    return render(request, 'conferences/base.html', {
-                        'content': _('Dodano streszczenie <a href="%(summary)s">%(summary)s</a>,') % {
-                            'summary': summary.url
-                        }
+                summary = Summary.objects.create(
+                    conference=Conference.get_current(),
+                    owner=request.user,
+                    original_filename=f.name,
+                    description=request.POST['description'],
+                    file=file_data)
+                summary.save()
+                return render(request, 'conferences/base.html', {
+                    'content': _('Dodano streszczenie <a href="%(summary)s">%(summary)s</a>,') % {
+                        'summary': summary.url
+                    }
                     })
-                else:
-                    text = _('Minął czas przesyłania streszczeń.')
-                    context = {'message': text}
-                    return render(request, 'conferences/misc/no_rights.html', context)
             else:
                 print summary_form.errors
         else:

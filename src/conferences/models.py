@@ -530,7 +530,7 @@ class UserProfile(models.Model):
 class Price(models.Model):
     conference = models.ForeignKey(
         Conference,
-        default=Conference.get_current(),
+        default=lambda:Conference.get_current(),
         related_name='pricing')
     title = models.CharField(
         verbose_name=_('Krótki opis'),

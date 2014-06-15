@@ -182,8 +182,6 @@ class SummaryForm(forms.ModelForm):
             end = conference.summaries_submission_period.end.replace(tzinfo=None)
             if not (start <= datetime.now() <= end):
                 error_messages.append(ValidationError(_('Minął czas nadsyłania streszczeń.')))
-        if not conference:
-            error_messages.append(ValidationError(_('Musisz podać konferencję.')))
         if not description:
             error_messages.append(ValidationError(_('Musisz podać opis streszczenia.')))
         if not summary_file:
