@@ -24,6 +24,7 @@ FILE_STATUSES = (
     ('RD', _('Gotowy')),  # Ready for admin's decision to accept or reject
     ('OK', _('Akceptowany')),
     ('NO', _('Odrzucony')),
+    ('IQ', _('Sporny')),
     ('ER', _('Spam')),
 )
 
@@ -345,13 +346,17 @@ class Review(models.Model):
                 return rnd_str
 
     def save(self, *args, **kwargs):
-        file = self.file_reviewed
-        if file.review_set.filter(status='OK').count() >= 2:
-            file.status = 'RD'
-        if file.review_set.filter(status='RE').count() >= 1:
-            file.status = 'NO'
-        file.save()
         super(Review, self).save(*args, **kwargs)
+        file = self.file_reviewed
+        if file.review_set.filter(status='OK').count() == 1 and file.review_set.filter(status='RE').count()==1:
+            file.status = 'IQ'
+        elif file.review_set.filter(status='OK').count() >= 2:
+            file.status = 'OK'
+        elif file.review_set.filter(status='RE').count() >= 1:
+            file.status = 'NO'
+        else:
+            file.status = 'PR'
+        file.save()
 
 
 class Topic(models.Model):
