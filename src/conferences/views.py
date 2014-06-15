@@ -663,7 +663,7 @@ def publication_list(request):
                 p.reviewers_accepted.append(r.reviewer)
             for r in p.review_set.filter(status='RE'):
                 p.reviewers_rejected.append(r.reviewer)
-            filter_form = FilterForm(request.GET)
+        filter_form = FilterForm(request.GET)
         return render(request, 'conferences/publications/publication_list.html',
                       {'publications': publications, 'filter_form': filter_form})
     else:
