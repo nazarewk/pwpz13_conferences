@@ -245,3 +245,8 @@ ul.tree .icons {
     margin-left: 20px;
     list-style-type: disc;
 }
+
+#id_group li
+{
+    list-style-type: none;
+}
