@@ -19,7 +19,7 @@
                 <a href="{% url 'user-registration' %}">{% trans 'Zarejestruj się' %}</a>
             </div>
         {% else %}
-            <div class="userInfo">{% trans 'Jestes zalogowany jako' %} <b>{{ user.username }}</b>. <a
+            <div class="userInfo">{% trans 'Jesteś zalogowany jako' %} <b>{{ user.username }}</b>. <a
                     href="{% url 'user-logout' %}">{% trans 'Wyloguj' %}</a></div>
         {% endif %}
     </div>
@@ -37,8 +37,7 @@
     <div class="push"></div>
 </div>
 <div id="footer">
-    <div class="footer_block">Tu będzie jakaś stopka np. W celu usprawnienia
-        systemu prosimy kierować uwagi na <a href="mailto:kontakt">kontakt@konferencje.pl</a>
+    <div class="footer_block">W celu usprawnienia systemu prosimy kierować uwagi na <a href="mailto:kontakt">kontakt@konferencje.pl</a>
     </div>
 </div>
 {% render_block "js" %}
