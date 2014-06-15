@@ -9,8 +9,9 @@
                     <th>{% trans 'Autor ' %}</th>
                     <th>{% trans 'Plik ' %}</th>
                     <th>{% trans 'Status ' %}</th>
-                    <th>{% trans 'Zaakceptowało recenzentów ' %}</th>
                     <th>{% trans 'Przypisani recenzenci ' %}</th>
+                    <th>{% trans 'Zaakceptowali' %}</th>
+                    <th>{% trans 'Odrzucili' %}</th>
                     <th>{% trans 'Akcje ' %}</th>
                 </thead>
                 {% for p in publications %}
@@ -18,10 +19,23 @@
                     <td>{{ p.author }}</td>
                     <td>{{ p.original_filename }}</td>
                     <td>{{ p.status_verbose }}</td>
-                    <td>{{ p.accepted_count }}</td>
                     <td>
                         {% if p.reviewers %}
                             {{ p.reviewers|join:", " }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if p.reviewers_accepted %}
+                            {{ p.reviewers_accepted|join:", " }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if p.reviewers_rejected %}
+                            {{ p.reviewers_rejected|join:", " }}
                         {% else %}
                             -
                         {% endif %}

@@ -544,9 +544,14 @@ def summary_list(request):
             summaries = Summary.objects.all()
         for s in summaries:
             s.reviewers =[]
+            s.reviewers_accepted = []
+            s.reviewers_rejected = []
             for r in s.review_set.all():
                 s.reviewers.append(r.reviewer)
-            s.accepted_count = s.review_set.filter(status='OK').count()
+            for r in s.review_set.filter(status='OK'):
+                s.reviewers_accepted.append(r.reviewer)
+            for r in s.review_set.filter(status='RE'):
+                s.reviewers_rejected.append(r.reviewer)
         filter_form = FilterForm(request.GET)
         return render(request, 'conferences/summary/summary_list.html',
                       {'summaries': summaries, 'filter_form': filter_form})
@@ -626,9 +631,14 @@ def publication_list(request):
         publications = Publication.objects.all()
         for p in publications:
             p.reviewers =[]
+            p.reviewers_accepted = []
+            p.reviewers_rejected = []
             for r in p.review_set.all():
                 p.reviewers.append(r.reviewer)
-            p.accepted_count = p.review_set.filter(status='OK').count()
+            for r in p.review_set.filter(status='OK'):
+                p.reviewers_accepted.append(r.reviewer)
+            for r in p.review_set.filter(status='RE'):
+                p.reviewers_rejected.append(r.reviewer)
         return render(request, 'conferences/publications/publication_list.html',
                       {'publications': publications})
     else:
