@@ -22,28 +22,26 @@
                     </tr>
                     </thead>
                     {% for user in users %}
-                        <tr>
-                            {% if user.balance.payments.all %}
+                        {% for p in user.balance.payments.all %}
+                            <tr>
                                 <td>{{ user.username }}</td>
                                 <td>{{ user.first_name }}</td>
                                 <td>{{ user.last_name }}</td>
                                 <td>{{ user.balance.is_student|yesno:"+,-" }}</td>
-                                {% for p in user.balance.payments.all %}
-                                    <td title="{{ p.full_description }}">{{ p.short_description }}</td>
-                                    <td>{% if p.summary %}{{ p.summary }}{% else %}{% endif %}</td>
-                                    <td>{{ p.time_to_pay.end }}</td>
-                                    <td>{{ p.amount }}</td>
-                                    <td>{{ p.currency }}</td>
-                                    <td>
-                                        {% if p.is_paid %}
-                                            {% trans 'Zapłacone' %}
-                                        {% else %}
-                                            {% trans 'Nie zapłacono' %}
-                                        {% endif %}
-                                    </td>
-                                {% endfor %}
-                            {% endif %}
-                        </tr>
+                                <td title="{{ p.full_description }}">{{ p.short_description }}</td>
+                                <td>{% if p.summary %}{{ p.summary }}{% else %}{% endif %}</td>
+                                <td>{{ p.time_to_pay.end }}</td>
+                                <td>{{ p.amount }}</td>
+                                <td>{{ p.currency }}</td>
+                                <td>
+                                    {% if p.is_paid %}
+                                        {% trans 'Zapłacone' %}
+                                    {% else %}
+                                        {% trans 'Nie zapłacono' %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
                     {% endfor %}
                 </table>
             {% else %}

@@ -176,12 +176,12 @@ ul.errorlist {
 
 .blog div {
     border: solid #000000 1px;
-    margin-bottom:20px;
+    margin-bottom: 20px;
 }
 
-.blog div p{
-    padding:5px;
-    padding-left:10px;
+.blog div p {
+    padding: 5px;
+    padding-left: 10px;
 }
 
 table {
@@ -190,7 +190,8 @@ table {
     border-color: #000000;
     border-collapse: collapse;
 }
-th{
+
+th {
     padding: 4px;
     border-width: 1px;
     border-style: inset;
@@ -224,35 +225,30 @@ ul.tree .icons {
     font-size: smaller;
 }
 
-.topleft-header
-{
-    float:left;
+.topleft-header {
+    float: left;
+    display: inline-block;
 }
 
-#id_filter li
-{
+#id_filter li {
     list-style-type: none;
-    display:inline;
+    display: inline;
 }
 
-.lecture-container
-{
+.lecture-container {
     list-style-type: none;
 }
 
-.lecture-container li
-{
-    margin-bottom:5px;
+.lecture-container li {
+    margin-bottom: 5px;
 }
 
-.lecture-container ul
-{
-    margin-top:5px;
+.lecture-container ul {
+    margin-top: 5px;
     margin-left: 20px;
     list-style-type: disc;
 }
 
-#id_group li
-{
+#id_group li {
     list-style-type: none;
 }
