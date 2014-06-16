@@ -331,6 +331,7 @@ class ConferenceRegistrationForm(forms.Form):
                 required=False,
                 help_text=_('Ile sztuk?')
             )
+            f.widget.attrs['title'] = price.description
             self.base_fields['%s%s' % (self.prefix, price.id,)] = f
         super(ConferenceRegistrationForm, self).__init__(*args, **kwargs)
 
