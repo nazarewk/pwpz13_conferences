@@ -4,7 +4,6 @@
     {% if IS_CONFERENCE_ADMIN %}
     <li><a href="{% url 'payments-list' %}"><img src="{% static 'conferences/img/dollar-sign.png' %}" class="icon"/>{% trans 'Lista płatności' %}</a></li>
     <li><a href="{% url 'reviewer-list' %}"><img src="{% static 'conferences/img/graduation-cap.png' %}" class="icon"/>{% trans 'Recenzenci' %}</a></li>
-    <li><a href="{% url 'topic-list' %}"><img src="{% static 'conferences/img/drawer.png' %}" class="icon"/>{% trans 'Tematy' %}</a></li>
     {% endif %}
     {% if user.is_authenticated %}
     <li><a href="{% url 'session-list' %}"><img src="{% static 'conferences/img/calendar.png' %}" class="icon"/>{% trans 'Sesje' %}</a></li>
@@ -21,6 +20,7 @@
         <li><a href="{% url 'review-list' %}"><img src="{% static 'conferences/img/paperwork.png' %}" class="icon"/>{% trans 'Twoje recenzje' %}</a></li>
     {% endif %}
     {% if user.is_authenticated %}
+        <li><a href="{% url 'topic-list' %}"><img src="{% static 'conferences/img/drawer.png' %}" class="icon"/>{% trans 'Tematy' %}</a></li>
         <li><a href="{% url 'summary-add' %}"><img src="{% static 'conferences/img/document.png' %}" class="icon"/>{% trans 'Dodaj streszczenie' %}</a></li>
         <li><a href="{% url 'publication-add' %}"><img src="{% static 'conferences/img/diary.png' %}" class="icon"/>{% trans 'Dodaj publikację' %}</a></li>
         <li><a href="{% url 'conference-registration' %}"><img src="{% static 'conferences/img/document.png' %}" class="icon"/>{% trans 'Wykup miejsca' %}</a></li>

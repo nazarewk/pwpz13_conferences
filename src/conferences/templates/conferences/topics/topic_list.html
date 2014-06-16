@@ -12,7 +12,9 @@
                 <p>{% trans 'Nie został utworzony jeszcze żaden temat.' %}</p>
             {% endif %}
         </div>
-        <input class="createBtn" type="button" value="{% trans 'Dodaj temat' %}"
-               onclick='window.location.href="{% url 'topic-add' %}"'>
+        {% if IS_CONFERENCE_ADMIN %}
+            <input class="createBtn" type="button" value="{% trans 'Dodaj temat' %}"
+                   onclick='window.location.href="{% url 'topic-add' %}"'>
+        {% endif %}
     {% endif %}
 {% endblock %}
